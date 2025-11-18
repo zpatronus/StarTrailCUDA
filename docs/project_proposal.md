@@ -1,12 +1,13 @@
 # **StarTrailCUDA: GPU-Accelerated Rendering of Night-Sky Star Trails Video**
 **Team Members:** Zijun Yang <zijuny@andrew.cmu.edu> and Jiache Zhang <jiachez@andrew.cmu.edu>
 
+**Project Home Page:** [https://blog.zjyang.dev/StarTrailCUDA/](https://blog.zjyang.dev/StarTrailCUDA/)
+
+
+
 ![image-20251117192727072](./project_proposal.assets/image-20251117192727072.png)
 
 <center><a href="https://www.bilibili.com/video/BV1Q64y1a7FE/?share_source=copy_web&vd_source=248bf19a901960bb7bbfb1705c664b9c&t=79">https://www.bilibili.com/video/BV1Q64y1a7FE/?share_source=copy_web&vd_source=248bf19a901960bb7bbfb1705c664b9c&t=79</a></center>
-
-## URL
-Project web page: [TODO: Insert project web page URL]
 
 ## SUMMARY
 We will build a GPU-accelerated rendering pipeline that converts a large sequence of fixed-camera night-sky photographs into a star-trail time-lapse video using CUDA. Our implementation will parallelize pixel-level operations across thousands of GPU threads, focusing on efficient kernel design, memory hierarchy utilization, and overlapping data transfers with computation to overcome I/O and PCIe bandwidth constraints.
