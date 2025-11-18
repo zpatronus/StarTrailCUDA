@@ -1,235 +1,109 @@
-# StarTrailMPI: Parallel Rendering of Night-Sky Star Trails with MPI
+# **StarTrailCUDA: GPU-Accelerated Rendering of Night-Sky Star Trails Video**
+**Team Members:** Zijun Yang <zijuny@andrew.cmu.edu> and Jiache Zhang <jiachez@andrew.cmu.edu>
 
-## TITLE
+![image-20251117192727072](./project_proposal.assets/image-20251117192727072.png)
 
-**StarTrailMPI: Parallel Rendering of Night-Sky Star Trails with MPI**  
-**Team Members:** Zijun Yang (zijuny@andrew.cmu.edu) and Jiache Zhang (jiachez@andrew.cmu.edu)
+<center><a href="https://www.bilibili.com/video/BV1Q64y1a7FE/?share_source=copy_web&vd_source=248bf19a901960bb7bbfb1705c664b9c&t=79">https://www.bilibili.com/video/BV1Q64y1a7FE/?share_source=copy_web&vd_source=248bf19a901960bb7bbfb1705c664b9c&t=79</a></center>
 
 ## URL
-
 Project web page: [TODO: Insert project web page URL]
 
----
-
 ## SUMMARY
-
-We will build a parallel rendering pipeline that converts a large sequence of fixed-camera night-sky photographs (e.g., one image per minute over an entire night) into a star-trail time-lapse video. Our implementation will use MPI to distribute frames and intermediate compositing across processes on GHC machines (and optionally AWS), focusing on parallel image compositing, load balancing, and communication-efficient reductions. 
-
-The core serial algorithm is conceptually simple: for each new frame, we blend it with an accumulated image using either alpha blending or a max-compositing rule, and we output a sequence of accumulated images that gradually reveal longer star trails. The project challenge is to scale this process to thousands of high-resolution frames under realistic I/O constraints, while preserving visual quality and exploring different parallelization strategies.
-
----
+We will build a GPU-accelerated rendering pipeline that converts a large sequence of fixed-camera night-sky photographs into a star-trail time-lapse video using CUDA. Our implementation will parallelize pixel-level operations across thousands of GPU threads, focusing on efficient kernel design, memory hierarchy utilization, and overlapping data transfers with computation to overcome I/O and PCIe bandwidth constraints.
 
 ## BACKGROUND
 
-Long-exposure “star trail” photographs and time-lapse videos are a popular way to visualize the apparent motion of stars across the night sky. Traditionally, a single long exposure is used, which can easily overexpose bright regions and is vulnerable to noise, sensor artifacts, and transient occlusions (e.g., airplanes, clouds). A more robust and flexible approach is to capture a sequence of shorter-exposure images from a fixed camera and then digitally composite these frames to create star trails and time-lapse animations.
+Star-trail videos differ fundamentally from conventional time-lapse photography in their requirement for per-frame image accumulation. While time-lapse simply plays back captured frames at an accelerated rate, star-trail videos must composite each new frame onto a growing accumulation to create visible star motion trails. Based on the maximum number of images in the stack, three generation methods exist: unlimited stacking where all historical frames contribute indefinitely, limited stacking where only the most recent N frames contribute, and limited stacking of recent N frames with linear luminance fading. 
 
-A simple serial algorithm for generating star trails from a sequence of frames works as follows:
+```text
+// Method 1: Unlimited stacking (no fading)
+A = load_image(frame_0)
+save_image(A, output_0)
+for t = 1 to T-1:
+    F = load_image(frame_t)
+    for each pixel (x,y):
+        A[x,y] = max(A[x,y], F[x,y])
+    save_image(A, output_t)
 
-1. Start from an initial accumulated image `A_0` equal to the first frame.
-2. For each new frame `F_t` (t = 1..T-1):
-   - Optionally apply a brightness and noise filter to `F_t`.
-   - Compute `A_t = alpha * A_{t-1} + (1 - alpha) * F_t` (per-pixel blending), or use a max-compositing rule  
-     `A_t(x, y) = max(A_{t-1}(x, y), F_t(x, y))` on selected color channels to emphasize star trails.
-3. Use the sequence `{A_t}` to generate a time-lapse video that gradually reveals longer and longer star trails.
+// Method 2: Limited stacking (recent N frames, no fading)
+window_size = N
+buffer = circular_buffer(N)
+for t = 0 to T-1:
+    F = load_image(frame_t)
+    buffer.push(F)
+    
+    A = zeros()
+    for each frame in buffer:
+        for each pixel (x,y):
+            A[x,y] = max(A[x,y], frame[x,y])
+    save_image(A, output_t)
 
-This workload is naturally data-parallel in two dimensions:
+// Method 3: Limited stacking with linear luminance fading
+window_size = N
+buffer = circular_buffer(N)
+weights = compute_linear_weights(N) // [1.0, (N-1)/N, ..., 1/N]
+for t = 0 to T-1:
+    F = load_image(frame_t)
+    buffer.push(F)
+    
+    A = zeros()
+    for i = 0 to buffer.size()-1:
+        weight = weights[i]
+        frame = buffer[(i + t) % N]
+        for each pixel (x,y):
+            weighted_pixel = frame[x,y] * weight
+            A[x,y] = max(A[x,y], weighted_pixel)
+    save_image(A, output_t)
+```
 
-- **Across pixels**: Each pixel’s new value depends only on its own previous history and the current frame’s pixel, not on neighboring pixels.
-- **Across frames**: Different subsets of frames can be partially composited in parallel and then combined via tree-structured reductions.
+Although mature and simple tools exist for creating static star-trail images, producing star-trail videos remains technically challenging for average users, motivating our GPU-accelerated solution. This workload is naturally data-parallel across pixels, as each pixel's new value depends only on its own history and the current frame's pixel, not on neighboring pixels. This maps directly to CUDA threads operating on independent pixels. The per-pixel computations are simple arithmetic operations, making them ideal for GPU acceleration.
 
-The challenge for this project is to take this conceptually simple algorithm and design an implementation that (1) scales across many cores and processes using MPI, (2) effectively hides or manages I/O and communication overheads, and (3) supports higher-level features such as brightness normalization, thresholding, and robust outlier removal without losing performance.
-
-We previously implemented a parallel image renderer in a course assignment, where we rendered many circles in parallel into a single image. That assignment focused mostly on per-pixel parallelism and atomic updates inside a shared image. In contrast, this project emphasizes distributed compositing across many frames and MPI processes, as well as careful management of I/O and communication.
-
----
 
 ## THE CHALLENGE
+The primary challenge stems from the sheer scale of the problem. We target high-resolution astrophotography exceeding 10 million pixels per frame: a two order of magnitude increase from our previous circle rendering assignment. This project is substantially more compute-intensive and vastly more memory-intensive. The limited stacking method exemplifies this: maintaining a sliding window of N frames requires buffering multiple high-resolution images simultaneously, then iterating through all N frames for every output timestep. With N potentially reaching hundreds, we face memory footprints exceeding several gigabytes, far surpassing the 48KB of fast shared memory available per streaming multiprocessor. This severe constraint forces difficult decisions about memory placement: what data merits precious shared memory, what must reside in high-latency global memory, and how to structure memory accesses to maximize coalescing. Furthermore, as N grows large, the computational cost of iterating through the frame stack becomes non-negligible relative to memory access time. The naive approach of simply loading and processing each frame in sequence risks becoming compute-bound, requiring sophisticated algorithmic optimizations and heuristics to balance the workload.
 
-Although the per-pixel computations are simple, achieving good speedup for large image sequences on a distributed-memory MPI system introduces several challenges:
+Compounding the memory challenge is the immense I/O volume. A typical night-long capture generates thousands of raw frames, each tens of megabytes, resulting in total dataset sizes approaching dozens or hundreds of gigabytes. Disk I/O speed emerges as a critical bottleneck that can easily saturate even high-performance SSDs. The challenge therefore lies in structuring the pipeline to overlap computation with I/O, ensuring the disk-CPU-GPU connection never idles while waiting for processing. We must design a streaming architecture that keeps the disk constantly reading, and the PCIe bus fully utilized. This requires careful orchestration of asynchronous memory copies and prefetching strategies to hide processing time.
 
-### Workload Characteristics
 
-- **Frame-based reduction dependency**: The naive algorithm is inherently sequential in time: `A_t` depends on `A_{t-1}`. We must restructure the algorithm to enable parallelism across frames (e.g., by having each MPI rank composite a subset of frames locally and then performing a reduction across ranks) without changing the final result.
-- **High I/O volume**: A night-long capture can easily contain thousands of high-resolution RAW or JPEG images. Loading these frames can dominate runtime if not overlapped with computation. The I/O pattern is streaming and mostly sequential, but it is large relative to memory.
-- **Mostly regular memory access**: For compositing, memory access is regular and cache-friendly (linear scans over image buffers). This suggests the computation may be memory-bandwidth-bound, so we need to be careful to not let communication costs overwhelm any benefit from parallelism.
-- **Optional irregular processing**: If we include outlier rejection (e.g., removing airplanes, satellites, or clouds) or per-pixel thresholding based on temporal statistics, the workload may include conditional branches and diverging per-pixel workloads.
+## RESOURCES AND PLATFORM CHOICE
+We will use GHC machines with NVIDIA RTX 2080 GPUs as our primary development platform. These machines provide accessible GPU resources integrated with our course environment and enable debugging and profiling. If needed, especially given the tight disk storage quota limitations on GHC machines, we may also use AWS GPU instances.
 
-### System Constraints and Parallelization Challenges
+We will write the core pipeline from scratch in C++/CUDA. For image I/O, we will use libraries like stb_image, libpng, or OpenCV with CUDA support. 
 
-- **Distributed-memory compositing**: With MPI, each process will hold a subset of frames and compute a partial composite. We must design a scalable reduction scheme (e.g., tree-based `MPI_Reduce`/`Allreduce`) to combine partial composites into a global result for each time step or for a set of checkpoints.
-- **Communication vs. computation trade-off**: A naive scheme that communicates a full-resolution image after every frame would be communication-dominated and scale poorly. We need to explore strategies such as:
-  - batching multiple frames before communication,
-  - using a logarithmic-depth reduction tree for compositing,
-  - minimizing data movement by keeping compositing local as long as possible.
-- **Synchronization overhead**: If we render every intermediate `A_t` exactly, we may require frequent global barriers to ensure all processes have contributed their partial composites. We need to decide where barriers are necessary and where we can tolerate eventual consistency (e.g., only synchronize at selected time steps used in the exported video).
-- **Load balancing**: If the number of frames is not evenly divisible by the number of MPI ranks, or if frames have varying sizes / processing complexity (e.g., different camera settings or file formats), simple static partitioning may result in some ranks finishing earlier and waiting at barriers.
-- **I/O and storage constraints on GHC machines**: On GHC machines, each user has a very small local storage quota (on the order of ~2 GB). This means large image sequences and generated output frames will need to live primarily on remote storage (e.g., AFS or departmental network storage), where access latency and bandwidth may dominate runtime. We must design experiments and instrumentation that clearly separate local computation time from remote I/O time and understand how networked storage impacts our parallel scaling.
+We will prepare input data in two ways: artificially created star field images with parameterized star positions, brightness, and motion for easy development like the CUDA circle rendering assignment, and real night-sky time-lapse sequences from astronomy observatories and astrophotography communities. For output video generation, we will use Python or ffmpeg to convert image sequences into videos. We may optionally leverage NVIDIA Performance Primitives (NPP) for optimized image operations.
 
-By addressing these challenges, we hope to deepen our understanding of distributed reductions, communication-efficient parallel algorithms for image processing, and the practical performance limits of MPI-based rendering workloads under realistic I/O conditions.
-
----
-
-## RESOURCES
-
-- **Compute resources**:
-  - We plan to use **GHC machines** (departmental Linux servers/workstations) as our primary development and experimental platform for MPI.  
-  - If time and budget permit, we may also run selected experiments on **Amazon Web Services (AWS)** to evaluate performance when large input datasets can be staged on local SSD-backed storage.
-  - [TODO: Add any specific GHC machine types or AWS instance types once we decide.]
-
-- **Starter code and previous assignments**:
-  - Our own solutions from Assignment 2 (parallel image rendering with circles) and Assignment 3/4 (if relevant) will serve as references for basic image data structures, file I/O patterns, and performance measurement infrastructure.
-  - We will write the core star-trail compositing pipeline from scratch in C/C++ with MPI, but will reuse patterns and helper utilities where appropriate.
-
-- **Input data**:
-  - Publicly available night-sky time-lapse sequences and fixed-camera astrophotography image sets from astronomy observatories or astrophotography communities.  
-  - As a fallback, we can extract frames from existing star-trail or night-sky time-lapse videos on platforms like YouTube (for personal academic use only), and batch-convert them into still images.
-
-- **Software stack**:
-  - MPI (e.g., MPICH or Open MPI) installed on GHC machines (and on AWS instances if we use them).
-  - Standard C/C++ toolchain and image processing libraries (e.g., `stb_image` or `libpng`) for reading and writing images.
-  - Python or `ffmpeg` for converting sequences of still images into output videos for the final demo.
-
-- **References**:
-  - Online tutorials and documentation on digital star trail compositing and astrophotography post-processing.  
-  - MPI documentation and class notes for collective communication and reduction patterns.
-
-We do not anticipate needing any special hardware beyond what is already available on GHC machines and standard cloud instances, but we may reach out to the course staff if we discover we need access to higher-core-count machines for scaling experiments.
-
----
 
 ## GOALS AND DELIVERABLES
+*Plan to Achieve:*
 
-### Plan to Achieve (Baseline Goals)
+**25% Goal (Pipeline Infrastructure)**: By the end of Week 1 (Nov 23), we will have a complete serial pipeline that can import PNG/JPEG images, output processed frames, and convert frame sequences into videos using ffmpeg. We will implement a pseudo star image generator that creates parameterized star fields with controlled positions, brightness, and motion vectors. We will also source real night-sky photograph datasets. This infrastructure provides the foundation for algorithm development and correctness validation.
 
-1. **Correct serial implementation of star-trail compositing**
-   - Implement a robust serial reference that:
-     - Loads a sequence of input images from disk.
-     - Applies a configurable blending rule (e.g., linear alpha blend or per-channel max) to generate accumulated images `A_t`.
-     - Outputs both the final composite and an image sequence suitable for time-lapse video generation.
-   - Verify correctness visually on small sequences and ensure deterministic results.
+**75% Goal (Basic GPU Implementation)**: By the end of Week 2 (Nov 30), we will implement functional CUDA kernels for unlimited stacking (no fading) and limited stacking with linear luminance fading. The implementation will use synchronous memory transfers and basic global memory access. We will also profile the program, find bottlenecks and propose ways to achieve potential performance improvements.
 
-2. **MPI-based parallel compositing across frames**
-   - Design and implement an MPI program where:
-     - Each rank loads and processes a subset of frames.
-     - Ranks compute local partial composites for their subset.
-     - The program combines local partial composites via an MPI reduction (e.g., tree-structured) to obtain the same final result as the serial implementation.
-   - Use static partitioning initially, and measure speedup versus a single-process baseline for various numbers of ranks.
+**100% Goal (Optimized Real-World Pipeline)**: By the end of Week 3 (Dec 7), we will deliver a polished CUDA implementation with optimized memory access patterns, supporting both unlimited stacking and limited stacking with linear luminance fading. The pipeline will work on real night-sky photographs. 
 
-3. **Performance evaluation on realistic image sets**
-   - Run experiments on several datasets with varying numbers of frames and resolutions (e.g., 1080p and higher, hundreds to thousands of frames).
-   - Collect and plot:
-     - Execution time vs. number of MPI ranks.
-     - Speedup and efficiency curves.
-     - Breakdown of time spent in I/O, computation, and communication.
-   - Provide a qualitative and quantitative analysis of where the performance is limited (I/O, memory bandwidth, or communication), especially under the small-local-storage / remote-I/O constraints of GHC machines.
+*Hope to Achieve:*
 
-4. **Poster-session demo**
-   - Prepare at least one visually appealing star-trail time-lapse video generated by our MPI implementation.
-   - Prepare speedup and time-breakdown plots for display at the poster session.
+**125% Goal (Additional Stacking Mode)**: If ahead of schedule in Week 4, we will implement the limited stacking (recent N frames, no fading) method using a circular buffer on the GPU. This mode composites only the most recent N frames without luminance fading. This requires more complex memory management.
 
-### Hope to Achieve (Stretch Goals)
+**150% Goal (Advanced Overlapping)**: As our stretch goal, we will implement CUDA streams to overlap PCIe data transfers with kernel computation, hiding I/O latency. 
 
-1. **Communication-efficient incremental compositing**
-   - Explore strategies where ranks produce partial composites for contiguous time segments and only synchronize at selected time steps (e.g., every k frames) used in the final video.
-   - Evaluate the trade-off between communication overhead and temporal resolution of the output.
-
-2. **Improved visual quality features**
-   - Implement optional per-pixel processing such as:
-     - brightness/contrast normalization across frames,
-     - threshold-based star enhancement (emphasizing bright stars while suppressing noise),
-     - basic outlier rejection to remove transient artifacts (e.g., airplanes).
-   - Measure how much additional computation these features introduce and how they affect parallel scalability.
-
-3. **Hybrid data parallelism within each rank**
-   - Inside each MPI rank, use OpenMP or vectorization to parallelize per-pixel operations over the local image tiles.
-   - Compare “MPI only” vs. “MPI + OpenMP” performance.
-
-### Goals if Things Go Slower Than Expected
-
-If we encounter unexpected difficulties (e.g., with I/O, data formats, or MPI environment issues), we will scale down our goals as follows:
-
-1. Restrict input resolutions and dataset sizes to smaller images and fewer frames to ensure we can still conduct meaningful experiments.
-2. Focus on a single blending rule (e.g., max-compositing) rather than supporting multiple modes and advanced image processing features.
-3. Limit experiments to single-node MPI runs (multiple processes on one machine) if multi-node experiments or AWS setup prove unreliable, while still providing a careful analysis of intra-node scaling and communication costs.
-
-Even in the reduced-scope scenario, we will prioritize having:
-- a working serial and MPI implementation, and
-- a solid performance evaluation with clear analysis of bottlenecks.
-
----
+**Team Division**: Honestly we will work together on most  parts, especially during the optimization phase (which should be the heaviest part), but here's a rough division. Zijun Yang will be responsible for pipeline development (synthetic data generation, image I/O integration, video output generation) and the limited stacking with linear luminance fading method. Jiache Zhang will be responsible for baseline development and the unlimited stacking (no fading) method. Both members will collaborate on algorithm design, optimization, debugging, and final performance analysis.
 
 ## PLATFORM CHOICE
 
-We plan to implement our renderer in C/C++ with MPI and run it primarily on GHC machines (departmental Linux servers/workstations) and, if needed, on Amazon Web Services (AWS) for larger-scale experiments.
+CUDA on NVIDIA GPUs is ideal for this workload because the problem exhibits massive data parallelism across pixels, with each pixel operation being independent. GPUs provide thousands of concurrent threads that can process millions of pixels simultaneously, far exceeding CPU core counts. The availability of GHC GPU workstations provides accessible development and profiling tools, making CUDA the natural choice for accelerating this image processing pipeline.
 
-- **GHC machines (primary platform)**:
-  - **Advantages**:
-    - Easily accessible with our existing course accounts and toolchains.
-    - No monetary cost to run experiments.
-    - Well-integrated with our development workflow and course environment (debugging, profiling, and job management).
-  - **Disadvantages**:
-    - Very limited local disk capacity (on the order of ~2 GB per user), which makes it difficult to store large collections of high-resolution input images and generated output videos locally.
-    - We will likely need to store most input frames and intermediate outputs on remote storage (e.g., AFS, departmental network storage, or cloud storage). This introduces **additional I/O latency** over the network, which may become a significant bottleneck for our workload.
-    - Because our per-pixel computation is relatively simple, the observed end-to-end performance may be dominated by network I/O and file system behavior rather than pure CPU throughput.
-
-  To mitigate these issues, we plan to:
-  - Carefully stage data (e.g., copy smaller subsets of frames to local scratch space when possible).
-  - Measure and report I/O time separately from computation and communication.
-  - Design experiments that highlight the parallel scaling of the compositing kernel itself, while still discussing realistic end-to-end performance under networked storage.
-
-- **AWS (secondary / optional platform)**:
-  - **Advantages**:
-    - Access to instances with more cores, more memory, and larger local disks (e.g., SSD-backed ephemeral storage), which can reduce I/O bottlenecks when all image data is staged locally on the instance.
-    - Flexibility to scale up or down depending on the size of the input dataset and the number of MPI ranks we wish to test.
-  - **Disadvantages**:
-    - Monetary cost and setup overhead (AMI configuration, security groups, MPI setup).
-    - Less tightly integrated with our existing course environment and automation.
-
-Our plan is to implement, debug, and validate the serial and MPI versions on GHC machines (where development is convenient and free). If time and budget permit, we may replicate key experiments on one or more AWS instances to compare performance in an environment with larger local storage and potentially higher aggregate I/O bandwidth. This comparison will help us understand how much of our performance is limited by networked storage versus CPU and MPI communication.
-
-If time permits, we may optionally add OpenMP parallelism within each MPI rank to explore hybrid programming models and better utilize multi-core CPUs.
-
----
 
 ## SCHEDULE
+**Week 1 (Nov 17-Nov 23):** We will implement the serial reference pipeline capable of importing PNG/JPEG images, outputting processed frames, and generating videos via ffmpeg. Concurrently, we will develop a parameterized pseudo star image generator with controlled positions, brightness, and motion vectors while sourcing real night-sky photograph datasets. This week also includes designing CUDA kernel specifications, thread block configurations, and memory layout strategies for both unlimited and limited stacking algorithms.
 
-We expect to have approximately four weeks to complete the project from proposal approval to the final deadline. Below is our compressed week-by-week schedule.
+**Week 2 (Nov 24-Nov 30):** We will implement functional CUDA kernels for unlimited stacking (no fading) and limited stacking with linear luminance fading, utilizing synchronous memory transfers and basic global memory access. The host code for memory management and pinned memory allocation will be developed alongside integrated timing instrumentation to separate I/O, transfer, and compute times. We will profile the application to identify bottlenecks and propose concrete performance improvements.
 
-### Week 1 (Nov 17–Nov 23)
+**Week 3 (Dec 1-Dec 7):** We will deliver a polished CUDA implementation with optimized memory access patterns for coalescing, supporting both unlimited and limited stacking with linear luminance fading. The pipeline will process real night-sky photographs, validating the system on authentic data. Systematic performance experiments will be conducted on extensive synthetic frame sequences at multiple resolutions, collecting speedup and time-breakdown metrics to quantify optimization gains.
 
-- Finalize data sources and decide on the image format (e.g., PNG or JPEG).
-- Implement and validate the serial reference pipeline:
-  - image loading and saving,
-  - basic blending rules (alpha blend and per-channel max),
-  - generation of a sequence of accumulated images suitable for time-lapse.
-- Begin designing the MPI decomposition (frame partitioning, reduction strategy, communication frequency).
-- Set up and test basic MPI environment on GHC machines.
+**Week 4 (?-Dec 8):** If ahead of schedule, we will implement the advanced limited stacking mode using a circular buffer on the GPU to composite the most recent N frames without fading, and add CUDA streams to overlap PCIe transfers with kernel computation. Comprehensive experiments will compare all trail modes and parameter settings across both synthetic and real datasets. We will generate final star-trail videos, prepare performance visualizations for the poster, and complete the final project report integrating all experimental results and analysis.
 
-### Week 2 (Nov 24–Nov 30)
+**Team Division** from previous section:
 
-- Implement the initial MPI version with static partitioning:
-  - Each rank loads and processes a subset of frames.
-  - Ranks compute local partial composites and participate in a reduction to produce the final composite image.
-- Extend the MPI implementation to support generating selected intermediate accumulated images (for the video) if time permits.
-- Add timing instrumentation to separate I/O, computation, and communication.
-- Run small- to medium-scale experiments to verify correctness and obtain preliminary performance results on GHC machines.
-
-### Week 3 (Dec 1–Dec 7)
-
-- Optimize communication patterns (e.g., tree-based reductions, batched frame compositing) to reduce synchronization and data movement overhead.
-- Explore simple load-balancing strategies if needed (e.g., adjusting frame assignments or basic dynamic scheduling).
-- Implement at least one visual quality feature (e.g., brightness normalization or threshold-based star enhancement) in both serial and MPI versions.
-- Collect more systematic performance data on larger datasets and multiple process counts.
-- If feasible, perform initial experiments on an AWS instance to compare local-SSD-based performance with GHC’s remote-storage-based performance.
-
-### Week 4 (Dec 8–Dec 14)
-
-- Finalize the set of visual quality features and ensure the MPI implementation remains correct and stable.
-- Run comprehensive performance experiments:
-  - multiple dataset sizes and resolutions,
-  - different numbers of MPI ranks (and nodes/instances if possible),
-  - different compositing strategies (e.g., per-frame vs. batched synchronization).
-- Generate final star-trail videos and choose the best examples for the demo.
-- Prepare speedup, efficiency, and time-breakdown plots (including I/O vs computation vs communication).
-- Prepare the poster (overview, algorithm, parallel design, experimental results, visuals).
-- Write and finalize the final project report, incorporating insights from all experiments.
+> **Team Division**: Honestly we will work together on most  parts, especially during the optimization phase (which should be the heaviest part), but here's a rough division. Zijun Yang will be responsible for pipeline development (synthetic data generation, image I/O integration, video output generation) and the limited stacking with linear luminance fading method. Jiache Zhang will be responsible for baseline development and the unlimited stacking (no fading) method. Both members will collaborate on algorithm design, optimization, debugging, and final performance analysis.
