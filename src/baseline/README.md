@@ -23,3 +23,19 @@ sudo apt install -y libgdal-dev
 make
 ./test_opencv
 ```
+
+## Downloading videos from youtube
+```bash
+pip3 install yt-dlp # Install yt-dlp
+./download_youtube.sh -h # Use the script to download from youtube
+# Example usage
+./download_youtube.sh -o . -n test_starrail -i Bbp1-p2FoXU
+```
+
+## For Developers
+```bash
+sudo apt install -y clang-format # Install clang-format
+pip install --user pre-commit # Install pre-commit
+cd StarTrailCUDA # Switch to project directory
+pre-commit install # Enable pre-commit
+```

@@ -1,0 +1,30 @@
+name: CI Build (compile only)
+
+on:
+  push: {}
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential cmake pkg-config
+          sudo apt-get install -y libopencv-dev libsqlite3-dev libgdal-dev
+          sudo apt-get install -y clang-format
+
+      - name: Show versions
+        run: |
+          gcc --version
+          pkg-config --modversion opencv4 || pkg-config --modversion opencv || true
+          clang-format --version || true
+
+      - name: Build src/baseline
+        run: |
+          # Fail early if formatting check fails (Makefile invokes check-format)
+          make -C src/baseline

@@ -1,0 +1,27 @@
+name: Check formatting
+
+on:
+  pull_request:
+  push: {}
+
+jobs:
+  clang-format:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install clang-format
+        run: sudo apt-get update && sudo apt-get install -y clang-format
+      - name: Run clang-format check
+        run: |
+          set -e
+          DIFF=0
+          for f in $(git ls-files '*.cpp' '*.cc' '*.h' '*.hpp'); do
+            if ! clang-format --style=file "$f" | diff -u "$f" - >/dev/null; then
+              echo "Formatting difference in $f"
+              DIFF=1
+            fi
+          done
+          if [ "$DIFF" -ne 0 ]; then
+            echo "::error::Formatting issues found. Run clang-format -i to fix."
+            exit 1
+          fi
