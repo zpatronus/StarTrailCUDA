@@ -101,6 +101,7 @@ void VideoRenderer::render() {
         break;
     case EXPONENTIAL:
         exponentialRenderer();
+        break;
     case DUMMY:
         dummyRenderer();
         break;
