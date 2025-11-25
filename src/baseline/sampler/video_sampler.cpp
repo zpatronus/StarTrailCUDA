@@ -1,4 +1,5 @@
 #include "video_sampler.h"
+#include "../utils/utils.h"
 
 using std::string;
 
@@ -13,20 +14,6 @@ void print_video_metadata(cv::VideoCapture& cap) {
               << "  FPS        : " << fps << "\n"
               << "  FrameCount : " << frameCount << "\n"
               << "  Duration   : " << durationSec << " seconds\n";
-}
-
-void print_progress(int current, int total) {
-    const int width = 50;
-    double ratio = total ? (double)current / total : 0.0;
-    int filled = (int)(ratio * width);
-
-    // Print bar, then current/total, then percentage
-    std::cout << "\r[" << std::string(filled, '=') << std::string(width - filled, ' ') << "] "
-              << current << "/" << total << " " << std::setw(3) << (int)(ratio * 100) << "%";
-    std::cout.flush();
-
-    if (current >= total)
-        std::cout << std::endl;
 }
 
 int sample_video(const string& video_path, unsigned int frame_step,

@@ -21,7 +21,10 @@ sudo apt install -y libgdal-dev
 ## Compile and run
 ```bash
 make
-./test_opencv
+./build/startrail_baseline
+# For video sampler
+make sampler
+./build/video_sampler
 ```
 
 ## Downloading videos from youtube
