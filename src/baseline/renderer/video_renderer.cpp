@@ -114,50 +114,27 @@ void VideoRenderer::linearRenderer() {
 }
 
 void VideoRenderer::linearApproxRenderer() {
-    using std::max;
-    std::deque<cv::Mat> render_window;
-    const int RENDER_WINDOW_SIZE = 16;
+    const int N = 200;
     const double L = 10.0;
+    const double decay_factor = exp(-1.0 / (L * N));
 
-    std::vector<float> weights(RENDER_WINDOW_SIZE);
-    double y = 1.0; // Value at step = 0
-    weights[0] = static_cast<float>(y);
-
-    const double c = std::exp(1.0 / (L * RENDER_WINDOW_SIZE));
-
-    for (int step = 1; step < RENDER_WINDOW_SIZE; ++step) {
-        // y_{k+1} = max((L+1) - (1 + y_k) * e^(1/(L*N)), 0)
-        y = max(0.0, (L + 1.0) - (1.0 + L - y) * c);
-        weights[step] = static_cast<float>(y);
-    }
-
+    cv::Mat yFrame;
     while (true) {
         auto frameOpt = frame_reader->nextFrame();
         if (frameOpt.has_value()) {
-            const cv::Mat& frame8u = frameOpt.value();
+            cv::Mat frame32f;
+            frameOpt.value().convertTo(frame32f, CV_32FC3);
 
-            render_window.push_front(frame8u);
-            if (static_cast<int>(render_window.size()) > RENDER_WINDOW_SIZE) {
-                render_window.pop_back();
-            }
-
-            cv::Mat accFrame(frame8u.rows, frame8u.cols, CV_32FC3, cv::Scalar(0, 0, 0));
-
-            const int windowSize = static_cast<int>(render_window.size());
-
-            for (int i = 0; i < windowSize; ++i) {
-                // i = 0 is the latest frame
-                double w = weights[i];
-
-                cv::Mat curr32f;
-                render_window[i].convertTo(curr32f, CV_32FC3, (w / 255.0));
-
-                // A(x,y) = max(A(x,y), w_i * F_i(x,y))
-                cv::max(accFrame, curr32f, accFrame);
+            if (yFrame.empty()) {
+                yFrame = frame32f.clone();
+            } else {
+                // Linear approximation: y = max(y * decay_factor, current_frame)
+                yFrame *= decay_factor;
+                yFrame = cv::max(yFrame, frame32f);
             }
 
             cv::Mat output_frame;
-            accFrame.convertTo(output_frame, CV_8UC3, 255.0);
+            yFrame.convertTo(output_frame, CV_8UC3);
             writer.write(output_frame);
         } else {
             break;
