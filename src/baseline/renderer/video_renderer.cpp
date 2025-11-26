@@ -4,7 +4,7 @@
 void VideoRenderer::averageRenderer() {
     cv::Mat acc;
     std::queue<cv::Mat> render_window;
-    const unsigned int RENDER_WINDOW_SIZE = 12;
+    const unsigned int RENDER_WINDOW_SIZE = window_size;
 
     while (1) {
         auto frame = frame_reader->nextFrame();
@@ -80,7 +80,7 @@ void VideoRenderer::exponentialRenderer() {
 
 void VideoRenderer::linearRenderer() {
     std::deque<cv::Mat> render_window;
-    const int RENDER_WINDOW_SIZE = 16;
+    const int RENDER_WINDOW_SIZE = window_size;
 
     while (1) {
         auto frame = frame_reader->nextFrame();
@@ -114,9 +114,9 @@ void VideoRenderer::linearRenderer() {
 }
 
 void VideoRenderer::linearApproxRenderer() {
-    const int N = 200;
+    const int N = window_size;
     const double L = 10.0;
-    const double decay_factor = exp(-1.0 / (L * N));
+    const double factor = exp(1.0 / (L * N));
 
     cv::Mat yFrame;
     while (true) {
@@ -124,17 +124,18 @@ void VideoRenderer::linearApproxRenderer() {
         if (frameOpt.has_value()) {
             cv::Mat frame32f;
             frameOpt.value().convertTo(frame32f, CV_32FC3);
+            frame32f /= 255.0;
 
             if (yFrame.empty()) {
                 yFrame = frame32f.clone();
             } else {
-                // Linear approximation: y = max(y * decay_factor, current_frame)
-                yFrame *= decay_factor;
+                cv::Mat temp = (L + 1) - ((1 + L) - yFrame) * factor;
+                yFrame = cv::max(temp, cv::Mat::zeros(temp.size(), temp.type()));
                 yFrame = cv::max(yFrame, frame32f);
             }
 
             cv::Mat output_frame;
-            yFrame.convertTo(output_frame, CV_8UC3);
+            yFrame.convertTo(output_frame, CV_8UC3, 255.0);
             writer.write(output_frame);
         } else {
             break;
