@@ -15,7 +15,8 @@ void print_help(const char* program_name) {
     std::cout << "  -f, --fps FPS               Output video fps (required, must be > 0)\n";
     std::cout
         << "  -s, --step STEP             Input video sampling step (required, must be > 0)\n";
-    std::cout << "  -a, --algorithm ALGORITHM   Render algorithm: MAX, AVERAGE, EXPONENTIAL, DUMMY "
+    std::cout << "  -a, --algorithm ALGORITHM   Render algorithm: MAX, AVERAGE, EXPONENTIAL, "
+                 "LINEAR, LINEARAPPROX, DUMMY "
                  "(required)\n";
     std::cout << "  -h, --help                  Show this help message\n\n";
     std::cout << "Example:\n";
@@ -29,10 +30,15 @@ RenderAlgo parse_algorithm(const std::string& algo_str) {
         return AVGRAGE;
     if (algo_str == "EXPONENTIAL")
         return EXPONENTIAL;
+    if (algo_str == "LINEAR")
+        return LINEAR;
+    if (algo_str == "LINEARAPPROX")
+        return LINEARAPPROX;
     if (algo_str == "DUMMY")
         return DUMMY;
-    throw std::invalid_argument("Invalid algorithm: " + algo_str +
-                                ". Must be one of: MAX, AVERAGE, EXPONENTIAL, DUMMY");
+    throw std::invalid_argument(
+        "Invalid algorithm: " + algo_str +
+        ". Must be one of: MAX, AVERAGE, EXPONENTIAL, LINEAR, LINEARAPPROX, DUMMY");
 }
 
 int main(int argc, char* argv[]) {

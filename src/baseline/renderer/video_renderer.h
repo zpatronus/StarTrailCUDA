@@ -2,7 +2,7 @@
 #include "../frame_reader/frame_reader.h"
 #include <string>
 
-enum RenderAlgo { AVGRAGE, MAX, EXPONENTIAL, DUMMY };
+enum RenderAlgo { AVGRAGE, MAX, EXPONENTIAL, LINEAR, LINEARAPPROX, DUMMY };
 
 class VideoRenderer {
   private:
@@ -16,6 +16,8 @@ class VideoRenderer {
     void averageRenderer();
     void maxRenderer();
     void exponentialRenderer();
+    void linearRenderer();
+    void linearApproxRenderer();
     void dummyRenderer();
 
   public:
