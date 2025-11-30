@@ -8,7 +8,7 @@ Run 5: 131.36s
 
 Average of middle 3 runs: 133.07 seconds
 
-
+-------------------------------------
 
 ./build/startrail_baseline -i ../video_download/test_starrail_15sec_h264.mp4 -o output.mp4 -a LINEARAPPROX
 
@@ -20,3 +20,26 @@ Run 4: 152.55s
 Run 5: 150.49s
 
 Average of middle 3 runs: 152.33 seconds
+
+
+-------------------------------------
+
+./build/startrail_baseline -i ../video_download/test_starrail_15sec_h264.mp4 -o output.mp4 -a LINEAR
+
+
+
+1125.37s
+
+
+-------------------------------------
+
+ ./build/startrail_cuda -i ../video_download/test_starrail_15sec_h264.mp4 -o output.mp4 -a LINEARAPPROX
+
+
+ Run 1: 40.92s
+Run 2: 40.93s
+Run 3: 40.93s
+Run 4: 40.95s
+Run 5: 40.97s
+
+Average of middle 3 runs: 40.94 seconds

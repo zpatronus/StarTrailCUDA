@@ -1,3 +1,4 @@
 .vscode/
 .venv
 *.mp4
+cuda_pipeline
