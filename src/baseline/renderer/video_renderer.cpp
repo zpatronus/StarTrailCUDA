@@ -105,7 +105,8 @@ void VideoRenderer::linearRenderer() {
             }
 
             cv::Mat output_frame;
-            accFrame.convertTo(output_frame, CV_8UC3, 255.0); // [0,1] -> [0,255]
+            accFrame.convertTo(output_frame, CV_8UC3,
+                               255.0); // [0,1] -> [0,255]
             writer.write(output_frame);
         } else {
             break;

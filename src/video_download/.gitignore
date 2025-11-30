@@ -1,1 +1,3 @@
 *.mp4
+!test_starrail_15sec.mp4
+!test_starrail_15sec_h264.mp4
