@@ -1,0 +1,22 @@
+./build/startrail_baseline_nvenc -i ../video_download/test_starrail_15sec_h264.mp4 -o output.mp4 -a LINEARAPPROX
+
+Run 1: 134.58s
+Run 2: 134.83s
+Run 3: 132.56s
+Run 4: 131.81s
+Run 5: 131.36s
+
+Average of middle 3 runs: 133.07 seconds
+
+
+
+./build/startrail_baseline -i ../video_download/test_starrail_15sec_h264.mp4 -o output.mp4 -a LINEARAPPROX
+
+
+Run 1: 151.69s
+Run 2: 152.72s
+Run 3: 151.71s
+Run 4: 152.55s
+Run 5: 150.49s
+
+Average of middle 3 runs: 152.33 seconds
