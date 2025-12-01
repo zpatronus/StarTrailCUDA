@@ -1026,19 +1026,19 @@ input */
 </head>
 <body class='typora-export'><div class='typora-export-content'>
 <div id='write'  class=''><h1 id='startrailcuda-gpu-accelerated-rendering-of-night-sky-star-trails-video---milestone-report'><strong><span>StarTrailCUDA: GPU-Accelerated Rendering of Night-Sky Star Trails Video</span></strong><span> - Milestone Report</span></h1><p><strong><span>Team Members:</span></strong><span> Zijun Yang &lt;zijuny@andrew.cmu.edu&gt; and Jiache Zhang &lt;jiachez@andrew.cmu.edu&gt;</span></p><p><strong><span>Project Home Page:</span></strong><span> </span><a href='https://blog.zjyang.dev/StarTrailCUDA/'><span>https://blog.zjyang.dev/StarTrailCUDA/</span></a></p><p><img src="./project_proposal.assets/image-20251117192727072.png" alt="image-20251117192727072"></p><center><a href="https://www.bilibili.com/video/BV1Q64y1a7FE/?share_source=copy_web&vd_source=248bf19a901960bb7bbfb1705c664b9c&t=79">https://www.bilibili.com/video/BV1Q64y1a7FE/?share_source=copy_web&vd_source=248bf19a901960bb7bbfb1705c664b9c&t=79</a></center><h2 id='work-completed-so-far'><span>WORK COMPLETED SO FAR</span></h2><p><span>explore different algo:</span></p><ul><li><p><span>max (zjc)</span></p></li><li><p><span>average (zjc)</span></p></li><li><p><span>exponential (zjc)</span></p><ul><li><p><span>hard to control tail length (zjc)</span></p></li></ul></li><li><p><span>linear (zjc)</span></p></li><li><p><span>linear approx</span></p></li><li><p><span>baseline (zjc)</span></p></li><li><p><span>baseline with hardware codec</span></p></li><li><p><span>cuda</span></p></li></ul><h2 id='preliminary-results'><span>PRELIMINARY RESULTS </span></h2><h3 id='rendering-algorithms'><span>RENDERING ALGORITHMS</span></h3><p><span>explain the source</span></p><p><span>some explanation of why we start from video instead of images (zjc)</span></p><ul><li><p><span>too large to store them in images </span></p></li></ul><video width="100%"   controls muted autoplay loop>
-  <source src="./videos/source.mp4" type="video/mp4">
+  <source src="https://github.com/zpatronus/StarTrailCUDA/raw/refs/heads/main/docs/videos/source.mp4" type="video/mp4">
   Your browser does not support the video tag.
-</video><center>Test video from Drew Cotten: <a href="https://www.youtube.com/watch?v=Bbp1-p2FoXU">https://www.youtube.com/watch?v=Bbp1-p2FoXU</a></center><p>&nbsp;</p><h4 id='max-algorithm'><span>MAX Algorithm</span></h4><video width="100%"   controls muted autoplay loop>
-  <source src="./videos/max.mp4" type="video/mp4">
+</video><center>Test video from Drew Cotten: <a href="https://www.youtube.com/watch?v=Bbp1-p2FoXU">https://www.youtube.com/watch?v=Bbp1-p2FoXU</a></center><p>&nbsp;</p><p>&nbsp;</p><h4 id='max-algorithm'><span>MAX Algorithm</span></h4><video width="100%"   controls muted autoplay loop>
+  <source src="https://github.com/zpatronus/StarTrailCUDA/raw/refs/heads/main/docs/videos/max.mp4" type="video/mp4">
   Your browser does not support the video tag.
 </video><center>MAX Algorithm</center><p><span>(zjc)</span></p><h4 id='linear-algorithm'><span>LINEAR Algorithm</span></h4><video width="100%"   controls muted autoplay loop>
-  <source src="./videos/linear.mp4" type="video/mp4">
+  <source src="https://github.com/zpatronus/StarTrailCUDA/raw/refs/heads/main/docs/videos/linear.mp4" type="video/mp4">
   Your browser does not support the video tag.
 </video><center>LINEAR Algorithm</center><p><span>(zjc)</span></p><h4 id='linearapprox-algorithm'><span>LINEARAPPROX Algorithm</span></h4><video width="100%"   controls muted autoplay loop>
-  <source src="./videos/linearapprox.mp4" type="video/mp4">
+  <source src="https://github.com/zpatronus/StarTrailCUDA/raw/refs/heads/main/docs/videos/linearapprox.mp4" type="video/mp4">
   Your browser does not support the video tag.
 </video><center>LINEARAPPROX Algorithm</center><video width="100%"   controls muted autoplay loop>
-  <source src="./videos/linearapprox_90w.mp4" type="video/mp4">
+  <source src="https://github.com/zpatronus/StarTrailCUDA/raw/refs/heads/main/docs/videos/linearapprox_90w.mp4" type="video/mp4">
   Your browser does not support the video tag.
 </video><center>LINEARAPPROX Algorithm with a window size of 90 frames</center><h3 id='baseline-renderer'><span>BASELINE RENDERER</span></h3><p><span>(zjc)</span></p><h3 id='baseline-renderer-with-hardware-codec'><span>BASELINE RENDERER WITH HARDWARE CODEC</span></h3><h3 id='cuda-renderer'><span>CUDA RENDERER</span></h3><h2 id='current-concerns'><span>CURRENT CONCERNS</span></h2><h2 id='plan-for-the-next-week'><span>PLAN FOR THE NEXT WEEK</span></h2><p><span>explore pipelining and queuing, which is our 150% goal. 3 phase pipeline: decode-render-encode</span></p><p><span>aiming at around 10s given the current data</span></p><p><span>(zjc)</span></p><h2 id='expected-deliverables-at-the-end'><span>EXPECTED DELIVERABLES AT THE END</span></h2><p><span>(zjc)</span></p></div></div>
 </body>

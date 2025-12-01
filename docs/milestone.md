@@ -33,16 +33,17 @@ some explanation of why we start from video instead of images (zjc)
 - too large to store them in images 
 
 <video width="100%"   controls muted autoplay loop>
-  <source src="./videos/source.mp4" type="video/mp4">
+  <source src="https://github.com/zpatronus/StarTrailCUDA/raw/refs/heads/main/docs/videos/source.mp4" type="video/mp4">
   Your browser does not support the video tag.
 </video><center>Test video from Drew Cotten: <a href="https://www.youtube.com/watch?v=Bbp1-p2FoXU">https://www.youtube.com/watch?v=Bbp1-p2FoXU</a></center>
+
 
 
 
 #### MAX Algorithm
 
 <video width="100%"   controls muted autoplay loop>
-  <source src="./videos/max.mp4" type="video/mp4">
+  <source src="https://github.com/zpatronus/StarTrailCUDA/raw/refs/heads/main/docs/videos/max.mp4" type="video/mp4">
   Your browser does not support the video tag.
 </video><center>MAX Algorithm</center>
 (zjc)
@@ -50,20 +51,21 @@ some explanation of why we start from video instead of images (zjc)
 #### LINEAR Algorithm
 
 <video width="100%"   controls muted autoplay loop>
-  <source src="./videos/linear.mp4" type="video/mp4">
+  <source src="https://github.com/zpatronus/StarTrailCUDA/raw/refs/heads/main/docs/videos/linear.mp4" type="video/mp4">
   Your browser does not support the video tag.
 </video><center>LINEAR Algorithm</center>
+
 (zjc)
 
 #### LINEARAPPROX Algorithm
 
 <video width="100%"   controls muted autoplay loop>
-  <source src="./videos/linearapprox.mp4" type="video/mp4">
+  <source src="https://github.com/zpatronus/StarTrailCUDA/raw/refs/heads/main/docs/videos/linearapprox.mp4" type="video/mp4">
   Your browser does not support the video tag.
 </video><center>LINEARAPPROX Algorithm</center>
 
 <video width="100%"   controls muted autoplay loop>
-  <source src="./videos/linearapprox_90w.mp4" type="video/mp4">
+  <source src="https://github.com/zpatronus/StarTrailCUDA/raw/refs/heads/main/docs/videos/linearapprox_90w.mp4" type="video/mp4">
   Your browser does not support the video tag.
 </video><center>LINEARAPPROX Algorithm with a window size of 90 frames</center>
 ### BASELINE RENDERER
