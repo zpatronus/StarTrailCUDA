@@ -8,7 +8,7 @@
 
 <center><a href="https://www.bilibili.com/video/BV1Q64y1a7FE/?share_source=copy_web&vd_source=248bf19a901960bb7bbfb1705c664b9c&t=79">https://www.bilibili.com/video/BV1Q64y1a7FE/?share_source=copy_web&vd_source=248bf19a901960bb7bbfb1705c664b9c&t=79</a></center>
 
-## WORK COMPLETED SO FAR
+## LIST OF WORK COMPLETED SO FAR
 
 explore different algo:
 
@@ -17,12 +17,17 @@ explore different algo:
 - exponential (zjc)
   - hard to control tail length (zjc)
 - linear (zjc)
-- linear approx
-- baseline (zjc)
-- baseline with hardware codec
-- cuda
+- LINEARAPPROX: Uses mathematical heuristics to approximate the LINEAR algorithm with $O(1)$ cost instead of $O(window size)$ to render each frame. (Zijun Yang)
 
-## PRELIMINARY RESULTS 
+We explored different implementations:
+
+- baseline (zjc)
+- Baseline with hardware codec: Similar to baseline, but with both video decoding and encoding replaced with hardware-accelerated implementations (using NVENC for encoding and CUVID for decoding) for improved performance. (Jiache Zhang and Zijun Yang)
+- CUDA: Similar to baseline with hardware codec, but with the rendering phase replaced with pixel-wise parallelism using CUDA kernels for high-performance computation of star trail effects. (Zijun Yang)
+
+## PRELIMINARY RESULTS
+
+> NOTICE: Most videos in this page is in 4K. If you notice any aliasing, viewing it in full screen usually helps.
 
 ### RENDERING ALGORITHMS
 
@@ -30,15 +35,12 @@ explain the source
 
 some explanation of why we start from video instead of images (zjc)
 
-- too large to store them in images 
+- too large to store them in images
 
 <video width="100%"   controls muted autoplay loop>
   <source src="https://github.com/zpatronus/StarTrailCUDA/raw/refs/heads/main/docs/videos/source.mp4" type="video/mp4">
   Your browser does not support the video tag.
 </video><center>Test video from Drew Cotten: <a href="https://www.youtube.com/watch?v=Bbp1-p2FoXU">https://www.youtube.com/watch?v=Bbp1-p2FoXU</a></center>
-
-
-
 
 #### MAX Algorithm
 
