@@ -13,3 +13,7 @@
 ## PROJECT PROPOSAL
 
 [https://blog.zjyang.dev/StarTrailCUDA/project_proposal](https://blog.zjyang.dev/StarTrailCUDA/project_proposal)
+
+## MIDWAY MILESTONE REPORT
+
+[https://blog.zjyang.dev/StarTrailCUDA/milestone](https://blog.zjyang.dev/StarTrailCUDA/milestone)
