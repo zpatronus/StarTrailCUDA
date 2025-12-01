@@ -314,7 +314,7 @@ span.cm-strikethrough { text-decoration: line-through; }
   --blur-text-color: #80808080;
   --bg-color: #191919;
   --select-text-bg-color: #663f3f !important;
-  --monospace: "IBM Plex Mono", "Fira Code", "微软雅黑", monospace !important;
+  --monospace: "IBM Plex Mono", "Fira Code", "SF Mono", "Monaco", "Menlo", ui-monospace, monospace !important;
   --window-border: 1px solid #404040;
   --rawblock-edit-panel-bd: #212121;
   --mermaid-theme: dark;
@@ -344,8 +344,8 @@ html {
 }
 
 body {
-  font-family: "Source Han Sans SC VF", "Open Sans", "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", "IBM Plex Sans", "Microsoft YaHei", "微软雅黑", "Clear Sans", "Helvetica Neue",
-    Helvetica, Arial, sans-serif;
+  font-family: "Source Han Sans SC VF", "Open Sans", "IBM Plex Sans", "Microsoft YaHei", "Clear Sans", "Helvetica Neue", Helvetica, Arial, -apple-system, BlinkMacSystemFont, "SF Pro SC", "SF Pro Text", "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif !important;
+    font-variant-numeric: tabular-nums !important;
   color: #d0d0d0;
   background-color: var(--bg-color);
   line-height: 1.75;
