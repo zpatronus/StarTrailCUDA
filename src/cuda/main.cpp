@@ -123,7 +123,6 @@ int main(int argc, char* argv[]) {
         }
     }
 
-    // Check required arguments
     if (input_path.empty() || output_path.empty() || algorithm_str.empty()) {
         std::cerr << "Error: Missing required arguments." << std::endl;
         std::cerr << "Required: --input, --output, --algorithm" << std::endl;
@@ -131,7 +130,6 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
-    // Parse and validate algorithm
     RenderAlgo algorithm;
     try {
         algorithm = parse_algorithm(algorithm_str);
@@ -145,12 +143,9 @@ int main(int argc, char* argv[]) {
     std::unique_ptr<FrameReader> frame_reader =
         std::make_unique<VideoFrameReader>(input_path, step);
 
-    // Get input video fps if not specified
     if (fps == -1) {
-        // VideoFrameReader will handle fps extraction internally
-        // For now, default to 30 if not specified
         fps = 30;
-    } // Set window_size default to fps if not specified
+    }
     if (window_size == 0) {
         window_size = fps;
     }
@@ -164,6 +159,9 @@ int main(int argc, char* argv[]) {
     std::cout << "  Window Size: " << window_size << std::endl;
     std::cout << std::endl;
 
+    if (algorithm == LINEAR) {
+        window_size = int(window_size * 0.8);
+    }
     VideoRenderer renderer(std::move(frame_reader), output_path, fps, algorithm, window_size);
     renderer.render();
 

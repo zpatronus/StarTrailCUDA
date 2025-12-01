@@ -156,7 +156,6 @@ int main(int argc, char* argv[]) {
         }
     }
 
-    // Set window_size default to fps if not specified
     if (window_size == 0) {
         window_size = fps;
     }
@@ -169,6 +168,9 @@ int main(int argc, char* argv[]) {
     std::cout << "  Algorithm: " << algorithm_str << std::endl;
     std::cout << "  Window Size: " << window_size << std::endl;
     std::cout << std::endl;
+    if (algorithm == LINEAR) {
+        window_size = int(window_size * 0.8);
+    }
 
     VideoRenderer renderer(std::move(frame_reader), output_path, fps, algorithm, window_size);
     renderer.render();
