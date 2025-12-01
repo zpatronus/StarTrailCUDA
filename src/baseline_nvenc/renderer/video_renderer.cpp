@@ -222,7 +222,7 @@ void VideoRenderer::averageRenderer() {
 
 void VideoRenderer::maxRenderer() {
     cv::Mat maxFrame;
-    const double DECAY_FACTOR = 0.95;
+    const double DECAY_FACTOR = 0.999;
     while (1) {
         auto start_time = std::chrono::high_resolution_clock::now();
         auto frame = frame_reader->nextFrame();

@@ -348,7 +348,7 @@ void VideoRenderer::maxRenderer() {
     int height = frame_size.height;
     int channels = 3;
     int pitch = width * channels;
-    const float DECAY_FACTOR = 0.95f;
+    const float DECAY_FACTOR = 0.999f;
 
     uint8_t *d_max = nullptr, *d_input = nullptr, *d_output = nullptr;
     cudaMalloc(&d_output, width * height * channels);
@@ -474,8 +474,7 @@ void VideoRenderer::linearRenderer() {
 
     std::vector<float> h_weights(RENDER_WINDOW_SIZE);
     for (int i = 0; i < RENDER_WINDOW_SIZE; ++i) {
-        h_weights[i] =
-            static_cast<float>(i + 1) / static_cast<float>(RENDER_WINDOW_SIZE);
+        h_weights[i] = static_cast<float>(i + 1) / static_cast<float>(RENDER_WINDOW_SIZE);
     }
     cudaMemcpy(d_weights, h_weights.data(), RENDER_WINDOW_SIZE * sizeof(float),
                cudaMemcpyHostToDevice);
