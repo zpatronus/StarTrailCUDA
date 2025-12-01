@@ -1,58 +1,58 @@
-## Install opencv
+# StarTrailCUDA: GPU-Accelerated Rendering of Night-Sky Star Trails Video
 
-For Ubuntu:
+![StarTrail Example](./docs/project_proposal.assets/image-20251117192727072.png)
 
-1. Download Opencv
+**Team Members:** Zijun Yang <zijuny@andrew.cmu.edu> and Jiache Zhang <jiachez@andrew.cmu.edu>
+
+StarTrailCUDA is a GPU-accelerated rendering pipeline that converts a large sequence of fixed-camera night-sky frames into stunning star-trail time-lapse videos using CUDA. 
+
+## Environment
+
+The project has been verified to work on AWS EC2 g4dn.xlarge instance, but should work on any Ubuntu machine with NVIDIA GPU support.
+
+## Setup
+
+The setup process is simple:
+
+1. Run `./setup-aws.sh`
+2. Reboot your machine
+3. You're done!
+
+## Video Download
+
+To download videos, check out `src/video_download`. You might want to change the encoding from AV1 to H264 for better compatibility.
+
+## Build and Run
+
+To build and run implementations, navigate to the respective folders in `src` and run `make`:
 
 ```bash
-sudo apt update
-sudo apt install -y libopencv-dev
-```
-
-2. Verify installation
-
-```bash
-pkg-config --modversion opencv4 #Should print 4.2.0 / 4.5.x / 4.6.x
-```
-
-3. Download sqlite3 and gdal
-
-```bash
-sudo apt install -y libsqlite3-dev
-sudo apt install -y libgdal-dev
-```
-
-## Compile and run
-
-```bash
+cd src/baseline
 make
-./build/startrail_baseline -i input.mp4 -o output.mp4 -a ALGORITHM
-# For video sampler
-make sampler
-./build/video_sampler
 ```
 
-### Usage
+The implementations have a similar argument list. Here are examples using the CUDA implementation:
+
+**Running MAX algorithm:**
 
 ```bash
-./build/startrail_baseline -i INPUT -o OUTPUT -a ALGORITHM [OPTIONS]
-
-Required:
-  -i, --input VIDEO_PATH      Input video file path
-  -o, --output VIDEO_PATH     Output video file path
-  -a, --algorithm ALGORITHM   Render algorithm: MAX, AVERAGE, EXPONENTIAL, LINEAR, LINEARAPPROX, DUMMY
-
-Optional:
-  -f, --fps FPS               Output video fps (default: input video fps)
-  -s, --step STEP             Input video sampling step (default: 1)
-  -w, --window-size SIZE      Window size for AVERAGE, LINEAR, LINEARAPPROX (default: fps)
-  -h, --help                  Show help message
-
-Examples:
-  ./build/startrail_baseline -i input.mp4 -o output.mp4 -a MAX
-  ./build/startrail_baseline -i input.mp4 -o output.mp4 -a LINEARAPPROX -w 60
-  ./build/startrail_baseline -i input.mp4 -o output.mp4 -a AVERAGE -w 12 -f 30 -s 2
+./build/startrail_cuda -i ../video_download/test_starrail_15sec_h264.mp4 -o output.mp4 -a MAX
 ```
+
+**Running LINEARAPPROX algorithm with window size specified:**
+
+```bash
+./build/startrail_cuda -i ../video_download/test_starrail_15sec_h264.mp4 -o output.mp4 -a LINEARAPPROX -w 60
+```
+
+The main arguments are:
+
+- `-i`: input video path
+- `-o`: output video path
+- `-a`: algorithm (MAX, LINEARAPPROX, etc.)
+- `-w`: window size (for algorithms that support it)
+
+The test video used in the examples is `test_starrail_15sec_h264.mp4`.
 
 ## For Developers
 
