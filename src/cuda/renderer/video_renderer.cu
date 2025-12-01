@@ -475,7 +475,7 @@ void VideoRenderer::linearRenderer() {
     std::vector<float> h_weights(RENDER_WINDOW_SIZE);
     for (int i = 0; i < RENDER_WINDOW_SIZE; ++i) {
         h_weights[i] =
-            static_cast<float>(RENDER_WINDOW_SIZE - i) / static_cast<float>(RENDER_WINDOW_SIZE);
+            static_cast<float>(i + 1) / static_cast<float>(RENDER_WINDOW_SIZE);
     }
     cudaMemcpy(d_weights, h_weights.data(), RENDER_WINDOW_SIZE * sizeof(float),
                cudaMemcpyHostToDevice);
