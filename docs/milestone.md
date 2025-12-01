@@ -61,15 +61,34 @@ some explanation of why we start from video instead of images (zjc)
 
 #### LINEARAPPROX Algorithm
 
+In the LINEAR algorithm, it is very expensive both memory and computation to trace back $W$ input frames to calculate a single output frame, given that an ideal effect requires a window size of 30 to 120. To improve this, our first idea was to use exponential decay since it only need the last output frame and the new input frame to generate the new output frame. However, it is very hard to control the tail length using exponential decay and the visual effect tend to be the head is too heavy while the tail is too faint.
+
+To solve this issue, we leverage the fact that the exponential function has a derivative of 1 near $x=0$ and we can approximate a LINEAR decay with the following formula:
+
+$$y=1+L-L e^{\frac{x}{WL}}$$
+
+, where $L$ is some number larger than 5 and a greater $L$ gives a better approximation.
+
+Here's a comparison between the ground truth (the blue line) and our heuristic (the green line) under $W=4$ and $L=10$.
+
+![image-20251201110544491](./milestone.assets/image-20251201110544491.png)
+
+With this heuristic, the new output frame can be approximated using only the last output frame and the new input frame using this formula in $O(1)$:
+
+$$NewOutputFrame=\max\left((L+1)-(L+1-LastOutputFrame)e^{\frac{1}{LN}},NewInputFrame\right)$$
+
 <video width="100%"   controls muted autoplay loop>
   <source src="https://github.com/zpatronus/StarTrailCUDA/raw/refs/heads/main/docs/videos/linearapprox.mp4" type="video/mp4">
   Your browser does not support the video tag.
 </video><center>LINEARAPPROX Algorithm</center>
 
+The LINEARAPPROX algorithm looks very similar to the LINEAR algorithm on controlling the tail length and window size expect for being slightly darker. We suspect the difference mainly comes from floating point precision and rounding errors. Also, both of us think it actually looks better than the LINEAR algorithm because it emphasize on the bright stars and supress the darker ones, creating a cleaner video.
+
 <video width="100%"   controls muted autoplay loop>
   <source src="https://github.com/zpatronus/StarTrailCUDA/raw/refs/heads/main/docs/videos/linearapprox_90w.mp4" type="video/mp4">
   Your browser does not support the video tag.
 </video><center>LINEARAPPROX Algorithm with a window size of 90 frames</center>
+
 ### BASELINE RENDERER
 
 (zjc)
