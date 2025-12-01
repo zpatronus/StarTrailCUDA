@@ -29,6 +29,8 @@ We explored different implementations:
 
 > NOTICE: Most videos on this page are in 4K. If you notice any aliasing, viewing it in full screen usually helps.
 
+> Unless otherwise stated, the results are from an AWS EC2 g4dn.xlarge instance (4 vCPUs, 16GB RAM, NVIDIA T4, gp2 storage with 100 IOPS).
+
 ### RENDERING ALGORITHMS
 
 explain the source
