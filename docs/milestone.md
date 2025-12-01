@@ -10,7 +10,7 @@
 
 ## LIST OF WORK COMPLETED SO FAR
 
-explore different algo:
+exploring different algorithms:
 
 - max (zjc)
 - average (zjc)
@@ -27,7 +27,7 @@ We explored different implementations:
 
 ## PRELIMINARY RESULTS
 
-> NOTICE: Most videos in this page is in 4K. If you notice any aliasing, viewing it in full screen usually helps.
+> NOTICE: Most videos on this page are in 4K. If you notice any aliasing, viewing it in full screen usually helps.
 
 ### RENDERING ALGORITHMS
 
@@ -61,7 +61,7 @@ some explanation of why we start from video instead of images (zjc)
 
 #### LINEARAPPROX Algorithm
 
-In the LINEAR algorithm, it is very expensive both memory and computation to trace back $W$ input frames to calculate a single output frame, given that an ideal effect requires a window size of 30 to 120. To improve this, our first idea was to use exponential decay since it only need the last output frame and the new input frame to generate the new output frame. However, it is very hard to control the tail length using exponential decay and the visual effect tend to be the head is too heavy while the tail is too faint.
+In the LINEAR algorithm, it is very expensive both in memory and computation to trace back $W$ input frames to calculate a single output frame, given that an ideal effect requires a window size of 30 to 120. To improve this, our first idea was to use exponential decay since it only needs the last output frame and the new input frame to generate the new output frame. However, it is very hard to control the tail length using exponential decay and the visual effect tends to be that the head is too bright while the tail is too dark.
 
 To solve this issue, we leverage the fact that the exponential function has a derivative of 1 near $x=0$ and we can approximate a LINEAR decay with the following formula:
 
@@ -82,7 +82,9 @@ $$NewOutputFrame=\max\left((L+1)-(L+1-LastOutputFrame)e^{\frac{1}{LN}},NewInputF
   Your browser does not support the video tag.
 </video><center>LINEARAPPROX Algorithm</center>
 
-The LINEARAPPROX algorithm looks very similar to the LINEAR algorithm on controlling the tail length and window size expect for being slightly darker. We suspect the difference mainly comes from floating point precision and rounding errors. Also, both of us think it actually looks better than the LINEAR algorithm because it emphasize on the bright stars and supress the darker ones, creating a cleaner video.
+The LINEARAPPROX algorithm looks very similar to the LINEAR algorithm in controlling the tail length and window size except for being slightly darker. We suspect the difference mainly comes from floating point precision and rounding errors. Also, both of us think it actually looks better than the LINEAR algorithm because it emphasizes bright stars and suppresses the darker ones, creating a cleaner video.
+
+In the baseline implementation, we compared the performance difference for the LINEAR algorithm and the LINEARAPPROX algorithm under default parameters given the test input ($W=30$). The LINEAR algorithm takes 1125s to complete while the LINEARAPPROX only takes 152s, which is a huge 7.4x speedup gifted by math.
 
 <video width="100%"   controls muted autoplay loop>
   <source src="https://github.com/zpatronus/StarTrailCUDA/raw/refs/heads/main/docs/videos/linearapprox_90w.mp4" type="video/mp4">
@@ -95,9 +97,51 @@ The LINEARAPPROX algorithm looks very similar to the LINEAR algorithm on control
 
 ### BASELINE RENDERER WITH HARDWARE CODEC
 
+Given that it takes a long time to encode output frames to output videos as seen in the baseline, and that we plan to use NVIDIA GPU, we leverage NVIDIA's codec library to decode and encode videos using hardware acceleration.
+
+**Performance Results:**
+
+Average time: 133.07s
+
+**Timing Breakdown from a Typical Run:**
+
+| Stage  | Time (ms) | Percentage |
+| ------ | --------- | ---------- |
+| Decode | 13,023.2  | 9.8%       |
+| Render | 111,430   | 84.4%      |
+| Encode | 7,673.19  | 5.8%       |
+| Total  | 132,127   | 100%       |
+
+The implementation shows significant improvement in encoding time compared to the baseline (reduced from 35.7s to 7.7s), demonstrating the efficiency of hardware-accelerated video processing.
+
+The speedup so far is 8.5x
+
+It is pretty clear that the bottleneck now is the rendering time.
+
 ### CUDA RENDERER
 
+This implementation replaces the sequential CPU-based rendering computations with GPU-accelerated CUDA kernels that execute pixel-wise operations in parallel, dramatically reducing the rendering computation time.
+
+**Performance Results:**
+
+Average time: 40.94s
+
+**Timing Breakdown from a Typical Run:**
+
+| Stage  | Time (ms) | Percentage |
+| ------ | --------- | ---------- |
+| Decode | 19,553.5  | 39.1%      |
+| Render | 12,100.1  | 24.2%      |
+| Encode | 18,316.9  | 36.7%      |
+| Total  | 49,970.4  | 100%       |
+
+The CUDA implementation dramatically improves rendering time with a 9.2x speedup (from 111.4s to 12.1s). The total speedup compared to the original baseline reaches 27.4x.
+
+Can we improve from here? Yes! We're working on it. Please refer to the PLAN FOR THE NEXT WEEK part.
+
 ## CURRENT CONCERNS
+
+No major concerns. Just a matter of coding and doing the work. The main concern is our unfamiliarity with video codecs and their respective SDKs. There might be some pitfalls, but so far the progress looks good.
 
 ## PLAN FOR THE NEXT WEEK
 
