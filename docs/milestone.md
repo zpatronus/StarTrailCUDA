@@ -26,11 +26,17 @@ explore different algo:
 
 ### RENDERING ALGORITHMS
 
-explain the source
+#### Source Material Selection
 
-some explanation of why we start from video instead of images (zjc)
+Our source material is a high-quality all-night sky recording (non-time-lapse) from YouTube (video source: https://www.youtube.com/watch?v=Bbp1-p2FoXU). This video provides excellent clarity and resolution (3840×2160), making it ideal for rendering star trail videos.
 
-- too large to store them in images 
+We considered alternative sources, particularly examining the database at https://data.phys.ucalgary.ca/, which contains comprehensive continuous nighttime recordings from observatories worldwide over recent years. While this database offers extensive and complete data, it presents a significant limitation: the cameras are primarily scientific instruments designed for research purposes rather than high-quality cinematography, resulting in insufficient clarity for star trail rendering. Therefore, we opted for clear videos recorded by amateur astronomy enthusiasts.
+
+#### Video vs. Image Format Consideration
+
+Theoretically, using video files versus collections of individual images as source media would yield equivalent results. However, storing media in image format requires prohibitively large storage space. Our test video, when stored as an MP4 file, occupies 101.77MB. When each frame of this video is saved in PNG format, the total storage requirement reaches 18GB; even with JPEG compression, it still requires 3.6GB. This storage demand is unacceptable for development and testing environments with limited storage capacity (for example, GHC servers impose a 2GB storage limit per user, insufficient for image-format media storage). Mounting remote storage would introduce additional I/O overhead.
+
+Consequently, we decided to store and process source media in video format to minimize local storage requirements. Additionally, MP4-compressed video maintains sufficient quality without affecting final rendering results, eliminating the need for uncompressed video or image inputs. 
 
 <video width="100%"   controls muted autoplay loop>
   <source src="https://github.com/zpatronus/StarTrailCUDA/raw/refs/heads/main/docs/videos/source.mp4" type="video/mp4">
@@ -46,7 +52,14 @@ some explanation of why we start from video instead of images (zjc)
   <source src="https://github.com/zpatronus/StarTrailCUDA/raw/refs/heads/main/docs/videos/max.mp4" type="video/mp4">
   Your browser does not support the video tag.
 </video><center>MAX Algorithm</center>
-(zjc)
+
+The MAX algorithm creates star trails by maintaining a cumulative maximum frame that preserves the brightest pixel values encountered over time. At each frame, the algorithm performs an element-wise maximum operation between the current input frame and the accumulated maximum frame, ensuring that bright stars leave persistent trails while darker background regions remain unaffected.
+
+Key implementation details:
+- **Decay Factor**: A decay factor of 0.999 is applied to the accumulated frame before comparison, causing older trails to gradually fade and preventing infinite accumulation of brightness values
+- **Pixel-wise Maximum**: For each pixel position, the algorithm selects the maximum value between the decayed accumulated frame and the current frame: `maxFrame = max(maxFrame × 0.999, currentFrame)`
+
+While this approach is conceptually simple and straightforward to implement, the practical results are suboptimal. The decay factor of 0.999 is insufficient to prevent excessive accumulation of brightness values over time. As the video progresses, bright points fade too slowly, causing an increasing number of luminous artifacts to persist in the frame. This leads to severe overexposure and blurring effects, where the accumulated trails become overly bright and lose definition. The resulting star trail video appears washed out with poor contrast and indistinct trail boundaries, making it difficult to discern individual star trajectories. Although the MAX algorithm successfully demonstrates the basic concept of trail preservation, its aggressive retention of bright pixels without adequate decay control produces unsatisfactory visual quality.
 
 #### LINEAR Algorithm
 
@@ -55,7 +68,16 @@ some explanation of why we start from video instead of images (zjc)
   Your browser does not support the video tag.
 </video><center>LINEAR Algorithm</center>
 
-(zjc)
+The LINEAR algorithm produces the highest quality star trail effects among all tested approaches by implementing a sophisticated sliding window technique with linear weight decay. This method maintains a fixed-size window of recent frames and applies linearly decreasing weights to create natural-looking trail fade effects.
+
+Key implementation details:
+- **Sliding Window**: Maintains a deque of the most recent W frames (where W is the window size), automatically removing the oldest frame when the window is full
+- **Linear Weight Decay**: Applies weights ranging from 1.0 (most recent frame) to 1/W (oldest frame in window), creating a smooth linear fade: `weight = (W - i) / W`
+- **Pixel-wise Maximum**: For each frame position, performs element-wise maximum operation between the weighted frame and the accumulated result: `accFrame = max(accFrame, weightedFrame)`
+
+This approach produces visually superior results with well-defined star trajectories, appropriate trail lengths, and natural fade characteristics. The linear weighting ensures that recent star positions are prominent while older positions gradually diminish, creating realistic motion blur effects that closely resemble long-exposure photography techniques.
+
+However, the algorithm's computational complexity is significantly higher due to the need to maintain and process the entire sliding window for each output frame. In our serial implementation, the LINEAR algorithm requires approximately 968 seconds to complete rendering, making it impractical for real-time or near-real-time applications. The performance bottleneck stems from the intensive memory operations and repeated maximum computations across the sliding window, highlighting the critical need for parallel optimization techniques.
 
 #### LINEARAPPROX Algorithm
 
@@ -68,6 +90,7 @@ some explanation of why we start from video instead of images (zjc)
   <source src="https://github.com/zpatronus/StarTrailCUDA/raw/refs/heads/main/docs/videos/linearapprox_90w.mp4" type="video/mp4">
   Your browser does not support the video tag.
 </video><center>LINEARAPPROX Algorithm with a window size of 90 frames</center>
+
 ### BASELINE RENDERER
 
 (zjc)
