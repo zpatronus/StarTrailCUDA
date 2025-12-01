@@ -12,16 +12,15 @@
 
 exploring different algorithms:
 
-- max (zjc)
-- average (zjc)
-- exponential (zjc)
-  - hard to control tail length (zjc)
-- linear (zjc)
+- MAX: The MAX algorithm maintains an accumulated per-pixel maximum with a small decay so that bright pixels persist as trails. (Jiache Zhang)
+- AVERAGE: The AVERAGE algorithm sums frames within a sliding window and outputs the per-pixel average, equally combining recent frames. (Jiache Zhang)
+- EXPONENTIAL: The EXPONENTIAL algorithm maintains an exponential moving average of frames ($\text{acc} = (1-\alpha) * \text{acc} + \alpha * \text{frame}$); however, it is hard to control the tail length. (Jiache Zhang)
+- LINEAR: The LINEAR algorithm keeps a fixed-size deque of recent frames and applies linearly decreasing weights with element-wise maxima across weighted frames. The cost of LINEAR algorithm is $O(window size)$. (Jiache Zhang)
 - LINEARAPPROX: Uses mathematical heuristics to approximate the LINEAR algorithm with $O(1)$ cost instead of $O(window size)$ to render each frame. (Zijun Yang)
 
 We explored different implementations:
 
-- baseline (zjc)
+- Baseline: The baseline implementation is a CPU-based, serial decode–render–encode pipeline built with OpenCV that serves as our correctness reference and performance benchmark; it exposes decoding/encoding and per-frame rendering as the primary bottlenecks on high-resolution inputs. (Jiache Zhang)
 - Baseline with hardware codec: Similar to baseline, but with both video decoding and encoding replaced with hardware-accelerated implementations (using NVENC for encoding and CUVID for decoding) for improved performance. (Jiache Zhang and Zijun Yang)
 - CUDA: Similar to baseline with hardware codec, but with the rendering phase replaced with pixel-wise parallelism using CUDA kernels for high-performance computation of star trail effects. (Zijun Yang)
 
@@ -117,7 +116,28 @@ In the baseline implementation, we compared the performance difference for the L
 
 ### BASELINE RENDERER
 
-(zjc)
+The baseline implementation serves as our reference CPU-based serial processing pipeline, built entirely around the OpenCV library for comprehensive video processing operations. This implementation provides a clean, modular architecture that handles video input, frame-by-frame rendering computations, and video output encoding in a sequential manner.
+
+Architecture Overview:
+- **Frame Reader Module**: Implements a `FrameReader` class hierarchy that abstracts video input sources, supporting both video files and image folder sequences. The module handles frame extraction, format conversion, and provides a unified interface for accessing sequential video frames regardless of the input format.
+- **Video Renderer**: Contains the core rendering logic with support for multiple star trail algorithms (MAX, LINEAR, LINEARAPPROX, etc.). The renderer processes frames sequentially on the CPU, applying the selected algorithm to generate star trail effects through pixel-wise operations and accumulation techniques.
+
+The baseline serves as both a correctness reference and a performance benchmark against which optimized implementations are measured. While this approach ensures maximum compatibility across different hardware configurations, it suffers from multiple performance bottlenecks. Beyond the purely serial nature of the rendering computations, the OpenCV-based software video decoding and encoding operations themselves become major time bottlenecks. In certain rendering algorithms, the combined decode and encode time can match or even exceed the algorithm computation time, making video I/O processing as critical a performance constraint as the rendering logic itself. For high-resolution 4K video inputs, these compounded inefficiencies result in total processing times extending to several hundred seconds.
+
+**Performance Results:**
+
+Average time: 152.33s
+
+**Timing Breakdown from a Typical Run:**
+
+| Stage  | Time (ms) | Percentage |
+| ------ | --------- | ---------- |
+| Decode | 4,531.59  | 3.0%       |
+| Render | 112,786   | 73.7%      |
+| Encode | 35,687.5  | 23.3%      |
+| Total  | 153,005   | 100%       |
+
+Comparing to LINEAR algorith, LINEARAPPROX has a speed up of approximatly 7.4x. As shown in the timing result above, the encode stage in the baseline consumes a non-negligible fraction of total runtime and therefore represents a clear optimization opportunity.
 
 ### BASELINE RENDERER WITH HARDWARE CODEC
 
@@ -169,12 +189,11 @@ No major concerns. Just a matter of coding and doing the work. The main concern 
 
 ## PLAN FOR THE NEXT WEEK
 
-explore pipelining and queuing, which is our 150% goal. 3 phase pipeline: decode-render-encode
+Over the next week we will focus on a three-stage processing pipeline (decode → render → encode) so decoding, rendering and encoding can proceed concurrently. The goal is to overlap work across stages to substantially reduce end-to-end runtime for the current test dataset, with a target near 10 seconds.
 
-aiming at around 10s given the current data
+We will proceed incrementally: first validate overlap with a small buffered design, then implement a full producer–consumer pipeline and measure improvements. Each step will include timing checks and visual verification to ensure we gain performance without changing output quality.
 
-(zjc)
 
 ## EXPECTED DELIVERABLES AT THE END
 
-(zjc)
+We will provide a pipeline-optimized CUDA implementation together with the baseline and the baseline-with-hardware-codec versions. The submission will include the original source video and rendered output videos from each algorithm and implementation for direct comparison.
