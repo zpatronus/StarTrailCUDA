@@ -1,5 +1,5 @@
-#include "video_renderer.h"
 #include "../frame_reader/frame_reader.h"
+#include "video_renderer.h"
 #include <deque>
 #include <iostream>
 #include <queue>
@@ -7,93 +7,99 @@
 #include <cuda_runtime.h>
 #include <stdint.h>
 
-__global__ void max_kernel(uint8_t* output, const uint8_t* input, uint8_t* max_frame, float decay_factor, int width, int height, int pitch) {
-	int x = blockIdx.x * blockDim.x + threadIdx.x;
-	int y = blockIdx.y * blockDim.y + threadIdx.y;
-	if (x < width && y < height) {
-		int idx = y * pitch + x * 3;
-		for (int c = 0; c < 3; c++) {
-			float decayed = max_frame[idx + c] * decay_factor;
-			float current = input[idx + c];
-			max_frame[idx + c] = fmaxf(decayed, current);
-			output[idx + c] = max_frame[idx + c];
-		}
-	}
+__global__ void max_kernel(uint8_t* output, const uint8_t* input, uint8_t* max_frame,
+                           float decay_factor, int width, int height, int pitch) {
+    int x = blockIdx.x * blockDim.x + threadIdx.x;
+    int y = blockIdx.y * blockDim.y + threadIdx.y;
+    if (x < width && y < height) {
+        int idx = y * pitch + x * 3;
+        for (int c = 0; c < 3; c++) {
+            float decayed = max_frame[idx + c] * decay_factor;
+            float current = input[idx + c];
+            max_frame[idx + c] = fmaxf(decayed, current);
+            output[idx + c] = max_frame[idx + c];
+        }
+    }
 }
 
-__global__ void average_kernel(uint8_t* output, const uint8_t** window, int window_count, int width, int height, int pitch) {
-	int x = blockIdx.x * blockDim.x + threadIdx.x;
-	int y = blockIdx.y * blockDim.y + threadIdx.y;
-	if (x < width && y < height) {
-		int idx = y * pitch + x * 3;
-		for (int c = 0; c < 3; c++) {
-			float sum = 0.0f;
-			for (int i = 0; i < window_count; i++) {
-				sum += window[i][idx + c];
-			}
-			output[idx + c] = (uint8_t)(sum / window_count);
-		}
-	}
+__global__ void average_kernel(uint8_t* output, const uint8_t** window, int window_count, int width,
+                               int height, int pitch) {
+    int x = blockIdx.x * blockDim.x + threadIdx.x;
+    int y = blockIdx.y * blockDim.y + threadIdx.y;
+    if (x < width && y < height) {
+        int idx = y * pitch + x * 3;
+        for (int c = 0; c < 3; c++) {
+            float sum = 0.0f;
+            for (int i = 0; i < window_count; i++) {
+                sum += window[i][idx + c];
+            }
+            output[idx + c] = (uint8_t)(sum / window_count);
+        }
+    }
 }
 
-__global__ void exponential_kernel(uint8_t* output, const uint8_t* input, uint8_t* acc_frame, float exp_factor, int width, int height, int pitch) {
-	int x = blockIdx.x * blockDim.x + threadIdx.x;
-	int y = blockIdx.y * blockDim.y + threadIdx.y;
-	if (x < width && y < height) {
-		int idx = y * pitch + x * 3;
-		for (int c = 0; c < 3; c++) {
-			float acc_val = acc_frame[idx + c];
-			float input_val = input[idx + c];
-			acc_frame[idx + c] = (1.0f - exp_factor) * acc_val + exp_factor * input_val;
-			output[idx + c] = acc_frame[idx + c];
-		}
-	}
+__global__ void exponential_kernel(uint8_t* output, const uint8_t* input, uint8_t* acc_frame,
+                                   float exp_factor, int width, int height, int pitch) {
+    int x = blockIdx.x * blockDim.x + threadIdx.x;
+    int y = blockIdx.y * blockDim.y + threadIdx.y;
+    if (x < width && y < height) {
+        int idx = y * pitch + x * 3;
+        for (int c = 0; c < 3; c++) {
+            float acc_val = acc_frame[idx + c];
+            float input_val = input[idx + c];
+            acc_frame[idx + c] = (1.0f - exp_factor) * acc_val + exp_factor * input_val;
+            output[idx + c] = acc_frame[idx + c];
+        }
+    }
 }
 
-__global__ void linear_kernel(uint8_t* output, const uint8_t** window, const float* weights, int window_count, int width, int height, int pitch) {
-	int x = blockIdx.x * blockDim.x + threadIdx.x;
-	int y = blockIdx.y * blockDim.y + threadIdx.y;
-	if (x < width && y < height) {
-		int idx = y * pitch + x * 3;
-		for (int c = 0; c < 3; c++) {
-			float max_val = 0.0f;
-			for (int i = 0; i < window_count; i++) {
-				float weighted_val = fmaxf(window[i][idx + c] * weights[i], max_val);
-				max_val = weighted_val;
-			}
-			output[idx + c] = (uint8_t)fminf(255.0f, max_val);
-		}
-	}
+__global__ void linear_kernel(uint8_t* output, const uint8_t** window, const float* weights,
+                              int window_count, int width, int height, int pitch) {
+    int x = blockIdx.x * blockDim.x + threadIdx.x;
+    int y = blockIdx.y * blockDim.y + threadIdx.y;
+    if (x < width && y < height) {
+        int idx = y * pitch + x * 3;
+        for (int c = 0; c < 3; c++) {
+            float max_val = 0.0f;
+            for (int i = 0; i < window_count; i++) {
+                float weighted_val = fmaxf(window[i][idx + c] * weights[i], max_val);
+                max_val = weighted_val;
+            }
+            output[idx + c] = (uint8_t)fminf(255.0f, max_val);
+        }
+    }
 }
 
-__global__ void linear_approx_kernel(uint8_t* output, const uint8_t* input, uint8_t* y_frame, float factor, float L, int width, int height, int pitch) {
-	int x = blockIdx.x * blockDim.x + threadIdx.x;
-	int y = blockIdx.y * blockDim.y + threadIdx.y;
-	if (x < width && y < height) {
-		int idx = y * pitch + x * 3;
-		for (int c = 0; c < 3; c++) {
-			float input_val = input[idx + c] / 255.0f;
-			float y_val = y_frame[idx + c] / 255.0f;
+__global__ void linear_approx_kernel(uint8_t* output, const uint8_t* input, uint8_t* y_frame,
+                                     float factor, float L, int width, int height, int pitch) {
+    int x = blockIdx.x * blockDim.x + threadIdx.x;
+    int y = blockIdx.y * blockDim.y + threadIdx.y;
+    if (x < width && y < height) {
+        int idx = y * pitch + x * 3;
+        for (int c = 0; c < 3; c++) {
+            float input_val = input[idx + c] / 255.0f;
+            float y_val = y_frame[idx + c] / 255.0f;
 
-			float temp = (L + 1) - ((1 + L) - y_val) * factor;
-			float new_y = fmaxf(temp, 0.0f);
-			new_y = fmaxf(new_y, input_val);
+            float temp = (L + 1) - ((1 + L) - y_val) * factor;
+            float new_y = fmaxf(temp, 0.0f);
+            new_y = fmaxf(new_y, input_val);
 
-			y_frame[idx + c] = (uint8_t)(new_y * 255.0f);
-			output[idx + c] = y_frame[idx + c];
-		}
-	}
+            y_frame[idx + c] = (uint8_t)(new_y * 255.0f);
+            output[idx + c] = y_frame[idx + c];
+        }
+    }
 }
 
-__global__ void copy_kernel(uint8_t* output, const uint8_t* input, int width, int height, int pitch) {
-	int x = blockIdx.x * blockDim.x + threadIdx.x;
-	int y = blockIdx.y * blockDim.y + threadIdx.y;
-	if (x < width && y < height) {
-		int idx = y * pitch + x * 3;
-		for (int c = 0; c < 3; c++) {
-			output[idx + c] = input[idx + c];
-		}
-	}
+__global__ void copy_kernel(uint8_t* output, const uint8_t* input, int width, int height,
+                            int pitch) {
+    int x = blockIdx.x * blockDim.x + threadIdx.x;
+    int y = blockIdx.y * blockDim.y + threadIdx.y;
+    if (x < width && y < height) {
+        int idx = y * pitch + x * 3;
+        for (int c = 0; c < 3; c++) {
+            output[idx + c] = input[idx + c];
+        }
+    }
 }
 
 VideoRenderer::VideoRenderer(std::unique_ptr<FrameReader> reader, std::string output_path, int fps,
@@ -199,6 +205,7 @@ void VideoRenderer::init_encoder() {
 }
 
 void VideoRenderer::encode_frame(const FrameData& frame) {
+    auto encode_start_time = std::chrono::high_resolution_clock::now();
     AVFrame* av_frame = av_frame_alloc();
     av_frame->format = codec_ctx_->pix_fmt;
     av_frame->width = codec_ctx_->width;
@@ -228,6 +235,10 @@ void VideoRenderer::encode_frame(const FrameData& frame) {
     }
 
     av_frame_free(&av_frame);
+    auto encode_end_time = std::chrono::high_resolution_clock::now();
+    auto encode_duration =
+        std::chrono::duration_cast<std::chrono::microseconds>(encode_end_time - encode_start_time);
+    encode_time_ms += encode_duration.count() / 1000.0;
 }
 
 void VideoRenderer::flush_encoder() {
@@ -268,17 +279,25 @@ void VideoRenderer::averageRenderer() {
     int channels = 3;
     int pitch = width * channels;
 
-    uint8_t **d_window = nullptr;
+    uint8_t** d_window = nullptr;
     cudaMalloc(&d_window, RENDER_WINDOW_SIZE * sizeof(uint8_t*));
-    uint8_t *d_output = nullptr;
+    uint8_t* d_output = nullptr;
     cudaMalloc(&d_output, width * height * channels);
 
     std::vector<uint8_t*> d_frames(RENDER_WINDOW_SIZE, nullptr);
     std::vector<FrameData> frame_window;
 
     while (1) {
+        auto start_time = std::chrono::high_resolution_clock::now();
         auto frame = frame_reader->nextFrame();
+        auto decode_end_time = std::chrono::high_resolution_clock::now();
+
         if (frame.has_value()) {
+            auto decode_duration =
+                std::chrono::duration_cast<std::chrono::microseconds>(decode_end_time - start_time);
+            decode_time_ms += decode_duration.count() / 1000.0;
+
+            auto render_start_time = std::chrono::high_resolution_clock::now();
             frame_window.push_back(frame.value());
             if (frame_window.size() > RENDER_WINDOW_SIZE) {
                 frame_window.erase(frame_window.begin());
@@ -286,26 +305,39 @@ void VideoRenderer::averageRenderer() {
 
             int actual_window_size = frame_window.size();
             for (int i = 0; i < actual_window_size; ++i) {
-                if (!d_frames[i]) cudaMalloc(&d_frames[i], width * height * channels);
-                cudaMemcpy(d_frames[i], frame_window[i].getRawData(), width * height * channels, cudaMemcpyHostToDevice);
+                if (!d_frames[i])
+                    cudaMalloc(&d_frames[i], width * height * channels);
+                cudaMemcpy(d_frames[i], frame_window[i].getRawData(), width * height * channels,
+                           cudaMemcpyHostToDevice);
             }
 
-            cudaMemcpy(d_window, d_frames.data(), actual_window_size * sizeof(uint8_t*), cudaMemcpyHostToDevice);
+            cudaMemcpy(d_window, d_frames.data(), actual_window_size * sizeof(uint8_t*),
+                       cudaMemcpyHostToDevice);
 
             dim3 block(16, 16);
             dim3 grid((width + block.x - 1) / block.x, (height + block.y - 1) / block.y);
-            average_kernel<<<grid, block>>>(d_output, (const uint8_t**)d_window, actual_window_size, width, height, pitch);
+            average_kernel<<<grid, block>>>(d_output, (const uint8_t**)d_window, actual_window_size,
+                                            width, height, pitch);
             cudaDeviceSynchronize();
 
             FrameData output_frame(width, height, channels);
-            cudaMemcpy(output_frame.getRawData(), d_output, width * height * channels, cudaMemcpyDeviceToHost);
+            cudaMemcpy(output_frame.getRawData(), d_output, width * height * channels,
+                       cudaMemcpyDeviceToHost);
+            auto render_end_time = std::chrono::high_resolution_clock::now();
+
+            auto render_duration = std::chrono::duration_cast<std::chrono::microseconds>(
+                render_end_time - render_start_time);
+            render_time_ms += render_duration.count() / 1000.0;
+
             encode_frame(output_frame);
         } else {
             break;
         }
     }
 
-    for (auto ptr : d_frames) if (ptr) cudaFree(ptr);
+    for (auto ptr : d_frames)
+        if (ptr)
+            cudaFree(ptr);
     cudaFree(d_window);
     cudaFree(d_output);
 }
@@ -324,21 +356,36 @@ void VideoRenderer::maxRenderer() {
     cudaMalloc(&d_max, width * height * channels);
     cudaMemset(d_max, 0, width * height * channels);
 
-    bool first = true;
     while (1) {
+        auto start_time = std::chrono::high_resolution_clock::now();
         auto frame = frame_reader->nextFrame();
+        auto decode_end_time = std::chrono::high_resolution_clock::now();
+
         if (frame.has_value()) {
-            cudaMemcpy(d_input, frame.value().getRawData(), width * height * channels, cudaMemcpyHostToDevice);
+            auto decode_duration =
+                std::chrono::duration_cast<std::chrono::microseconds>(decode_end_time - start_time);
+            decode_time_ms += decode_duration.count() / 1000.0;
+
+            auto render_start_time = std::chrono::high_resolution_clock::now();
+            cudaMemcpy(d_input, frame.value().getRawData(), width * height * channels,
+                       cudaMemcpyHostToDevice);
             dim3 block(16, 16);
             dim3 grid((width + block.x - 1) / block.x, (height + block.y - 1) / block.y);
-            max_kernel<<<grid, block>>>(d_output, d_input, d_max, DECAY_FACTOR, width, height, pitch);
+            max_kernel<<<grid, block>>>(d_output, d_input, d_max, DECAY_FACTOR, width, height,
+                                        pitch);
             cudaDeviceSynchronize();
 
             FrameData output_frame(width, height, channels);
-            cudaMemcpy(output_frame.getRawData(), d_output, width * height * channels, cudaMemcpyDeviceToHost);
+            cudaMemcpy(output_frame.getRawData(), d_output, width * height * channels,
+                       cudaMemcpyDeviceToHost);
+            auto render_end_time = std::chrono::high_resolution_clock::now();
+
+            auto render_duration = std::chrono::duration_cast<std::chrono::microseconds>(
+                render_end_time - render_start_time);
+            render_time_ms += render_duration.count() / 1000.0;
+
             encode_frame(output_frame);
             cudaMemcpy(d_max, d_output, width * height * channels, cudaMemcpyDeviceToDevice);
-            first = false;
         } else {
             break;
         }
@@ -363,9 +410,18 @@ void VideoRenderer::exponentialRenderer() {
 
     bool first = true;
     while (1) {
+        auto start_time = std::chrono::high_resolution_clock::now();
         auto frame = frame_reader->nextFrame();
+        auto decode_end_time = std::chrono::high_resolution_clock::now();
+
         if (frame.has_value()) {
-            cudaMemcpy(d_input, frame.value().getRawData(), width * height * channels, cudaMemcpyHostToDevice);
+            auto decode_duration =
+                std::chrono::duration_cast<std::chrono::microseconds>(decode_end_time - start_time);
+            decode_time_ms += decode_duration.count() / 1000.0;
+
+            auto render_start_time = std::chrono::high_resolution_clock::now();
+            cudaMemcpy(d_input, frame.value().getRawData(), width * height * channels,
+                       cudaMemcpyHostToDevice);
 
             if (first) {
                 cudaMemcpy(d_acc, d_input, width * height * channels, cudaMemcpyDeviceToDevice);
@@ -374,13 +430,21 @@ void VideoRenderer::exponentialRenderer() {
 
             dim3 block(16, 16);
             dim3 grid((width + block.x - 1) / block.x, (height + block.y - 1) / block.y);
-            exponential_kernel<<<grid, block>>>(d_output, d_input, d_acc, EXP_FACTOR, width, height, pitch);
+            exponential_kernel<<<grid, block>>>(d_output, d_input, d_acc, EXP_FACTOR, width, height,
+                                                pitch);
             cudaDeviceSynchronize();
 
             FrameData output_frame(width, height, channels);
-            cudaMemcpy(output_frame.getRawData(), d_output, width * height * channels, cudaMemcpyDeviceToHost);
+            cudaMemcpy(output_frame.getRawData(), d_output, width * height * channels,
+                       cudaMemcpyDeviceToHost);
+            auto render_end_time = std::chrono::high_resolution_clock::now();
+
+            auto render_duration = std::chrono::duration_cast<std::chrono::microseconds>(
+                render_end_time - render_start_time);
+            render_time_ms += render_duration.count() / 1000.0;
+
             encode_frame(output_frame);
-            cudaMemcpy(d_acc, d_output, width * height * channels, cudaMemcpyDeviceToDevice);
+            cudaMemcpy(d_acc, d_output, width * height * channels, cudaMemcpyDeviceToHost);
         } else {
             break;
         }
@@ -398,11 +462,11 @@ void VideoRenderer::linearRenderer() {
     int pitch = width * channels;
     const int RENDER_WINDOW_SIZE = window_size;
 
-    uint8_t **d_window = nullptr;
+    uint8_t** d_window = nullptr;
     cudaMalloc(&d_window, RENDER_WINDOW_SIZE * sizeof(uint8_t*));
-    uint8_t *d_output = nullptr;
+    uint8_t* d_output = nullptr;
     cudaMalloc(&d_output, width * height * channels);
-    float *d_weights = nullptr;
+    float* d_weights = nullptr;
     cudaMalloc(&d_weights, RENDER_WINDOW_SIZE * sizeof(float));
 
     std::vector<uint8_t*> d_frames(RENDER_WINDOW_SIZE, nullptr);
@@ -410,13 +474,23 @@ void VideoRenderer::linearRenderer() {
 
     std::vector<float> h_weights(RENDER_WINDOW_SIZE);
     for (int i = 0; i < RENDER_WINDOW_SIZE; ++i) {
-        h_weights[i] = static_cast<float>(RENDER_WINDOW_SIZE - i) / static_cast<float>(RENDER_WINDOW_SIZE);
+        h_weights[i] =
+            static_cast<float>(RENDER_WINDOW_SIZE - i) / static_cast<float>(RENDER_WINDOW_SIZE);
     }
-    cudaMemcpy(d_weights, h_weights.data(), RENDER_WINDOW_SIZE * sizeof(float), cudaMemcpyHostToDevice);
+    cudaMemcpy(d_weights, h_weights.data(), RENDER_WINDOW_SIZE * sizeof(float),
+               cudaMemcpyHostToDevice);
 
     while (1) {
+        auto start_time = std::chrono::high_resolution_clock::now();
         auto frame = frame_reader->nextFrame();
+        auto decode_end_time = std::chrono::high_resolution_clock::now();
+
         if (frame.has_value()) {
+            auto decode_duration =
+                std::chrono::duration_cast<std::chrono::microseconds>(decode_end_time - start_time);
+            decode_time_ms += decode_duration.count() / 1000.0;
+
+            auto render_start_time = std::chrono::high_resolution_clock::now();
             frame_window.push_back(frame.value());
             if (frame_window.size() > RENDER_WINDOW_SIZE) {
                 frame_window.erase(frame_window.begin());
@@ -424,26 +498,39 @@ void VideoRenderer::linearRenderer() {
 
             int actual_window_size = frame_window.size();
             for (int i = 0; i < actual_window_size; ++i) {
-                if (!d_frames[i]) cudaMalloc(&d_frames[i], width * height * channels);
-                cudaMemcpy(d_frames[i], frame_window[i].getRawData(), width * height * channels, cudaMemcpyHostToDevice);
+                if (!d_frames[i])
+                    cudaMalloc(&d_frames[i], width * height * channels);
+                cudaMemcpy(d_frames[i], frame_window[i].getRawData(), width * height * channels,
+                           cudaMemcpyHostToDevice);
             }
 
-            cudaMemcpy(d_window, d_frames.data(), actual_window_size * sizeof(uint8_t*), cudaMemcpyHostToDevice);
+            cudaMemcpy(d_window, d_frames.data(), actual_window_size * sizeof(uint8_t*),
+                       cudaMemcpyHostToDevice);
 
             dim3 block(16, 16);
             dim3 grid((width + block.x - 1) / block.x, (height + block.y - 1) / block.y);
-            linear_kernel<<<grid, block>>>(d_output, (const uint8_t**)d_window, d_weights, actual_window_size, width, height, pitch);
+            linear_kernel<<<grid, block>>>(d_output, (const uint8_t**)d_window, d_weights,
+                                           actual_window_size, width, height, pitch);
             cudaDeviceSynchronize();
 
             FrameData output_frame(width, height, channels);
-            cudaMemcpy(output_frame.getRawData(), d_output, width * height * channels, cudaMemcpyDeviceToHost);
+            cudaMemcpy(output_frame.getRawData(), d_output, width * height * channels,
+                       cudaMemcpyDeviceToHost);
+            auto render_end_time = std::chrono::high_resolution_clock::now();
+
+            auto render_duration = std::chrono::duration_cast<std::chrono::microseconds>(
+                render_end_time - render_start_time);
+            render_time_ms += render_duration.count() / 1000.0;
+
             encode_frame(output_frame);
         } else {
             break;
         }
     }
 
-    for (auto ptr : d_frames) if (ptr) cudaFree(ptr);
+    for (auto ptr : d_frames)
+        if (ptr)
+            cudaFree(ptr);
     cudaFree(d_window);
     cudaFree(d_output);
     cudaFree(d_weights);
@@ -466,17 +553,34 @@ void VideoRenderer::linearApproxRenderer() {
     cudaMemset(d_y_frame, 0, width * height * channels);
 
     while (1) {
+        auto start_time = std::chrono::high_resolution_clock::now();
         auto frame = frame_reader->nextFrame();
+        auto decode_end_time = std::chrono::high_resolution_clock::now();
+
         if (frame.has_value()) {
-            cudaMemcpy(d_input, frame.value().getRawData(), width * height * channels, cudaMemcpyHostToDevice);
+            auto decode_duration =
+                std::chrono::duration_cast<std::chrono::microseconds>(decode_end_time - start_time);
+            decode_time_ms += decode_duration.count() / 1000.0;
+
+            auto render_start_time = std::chrono::high_resolution_clock::now();
+            cudaMemcpy(d_input, frame.value().getRawData(), width * height * channels,
+                       cudaMemcpyHostToDevice);
 
             dim3 block(16, 16);
             dim3 grid((width + block.x - 1) / block.x, (height + block.y - 1) / block.y);
-            linear_approx_kernel<<<grid, block>>>(d_output, d_input, d_y_frame, factor, L, width, height, pitch);
+            linear_approx_kernel<<<grid, block>>>(d_output, d_input, d_y_frame, factor, L, width,
+                                                  height, pitch);
             cudaDeviceSynchronize();
 
             FrameData output_frame(width, height, channels);
-            cudaMemcpy(output_frame.getRawData(), d_output, width * height * channels, cudaMemcpyDeviceToHost);
+            cudaMemcpy(output_frame.getRawData(), d_output, width * height * channels,
+                       cudaMemcpyDeviceToHost);
+            auto render_end_time = std::chrono::high_resolution_clock::now();
+
+            auto render_duration = std::chrono::duration_cast<std::chrono::microseconds>(
+                render_end_time - render_start_time);
+            render_time_ms += render_duration.count() / 1000.0;
+
             encode_frame(output_frame);
         } else {
             break;
@@ -489,8 +593,21 @@ void VideoRenderer::linearApproxRenderer() {
 
 void VideoRenderer::dummyRenderer() {
     while (1) {
+        auto start_time = std::chrono::high_resolution_clock::now();
         auto frame = frame_reader->nextFrame();
+        auto decode_end_time = std::chrono::high_resolution_clock::now();
+
         if (frame.has_value()) {
+            auto decode_duration =
+                std::chrono::duration_cast<std::chrono::microseconds>(decode_end_time - start_time);
+            decode_time_ms += decode_duration.count() / 1000.0;
+
+            auto render_start_time = std::chrono::high_resolution_clock::now();
+            auto render_end_time = std::chrono::high_resolution_clock::now();
+            auto render_duration = std::chrono::duration_cast<std::chrono::microseconds>(
+                render_end_time - render_start_time);
+            render_time_ms += render_duration.count() / 1000.0;
+
             encode_frame(frame.value());
         } else {
             break;
@@ -524,4 +641,15 @@ void VideoRenderer::render() {
     }
 
     flush_encoder();
+    printTimingStats();
+}
+
+void VideoRenderer::printTimingStats() {
+    std::cout << "\n=== Timing Statistics ===" << std::endl;
+    std::cout << "Decode Time: " << decode_time_ms << " ms" << std::endl;
+    std::cout << "Render Time: " << render_time_ms << " ms" << std::endl;
+    std::cout << "Encode Time: " << encode_time_ms << " ms" << std::endl;
+    std::cout << "Total Time: " << (decode_time_ms + render_time_ms + encode_time_ms) << " ms"
+              << std::endl;
+    std::cout << "=========================" << std::endl;
 }

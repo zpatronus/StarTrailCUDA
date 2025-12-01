@@ -174,8 +174,16 @@ void VideoRenderer::averageRenderer() {
     const unsigned int RENDER_WINDOW_SIZE = window_size;
 
     while (1) {
+        auto start_time = std::chrono::high_resolution_clock::now();
         auto frame = frame_reader->nextFrame();
+        auto decode_end_time = std::chrono::high_resolution_clock::now();
+
         if (frame.has_value()) {
+            auto decode_duration =
+                std::chrono::duration_cast<std::chrono::microseconds>(decode_end_time - start_time);
+            decode_time_ms += decode_duration.count() / 1000.0;
+
+            auto render_start_time = std::chrono::high_resolution_clock::now();
             render_window.push(frame.value());
             if (acc.empty()) {
                 frame.value().convertTo(acc, CV_32FC3);
@@ -193,7 +201,19 @@ void VideoRenderer::averageRenderer() {
             }
             cv::Mat acc_write = acc / render_window.size();
             acc_write.convertTo(acc_write, CV_8UC3);
+            auto render_end_time = std::chrono::high_resolution_clock::now();
+
+            auto render_duration = std::chrono::duration_cast<std::chrono::microseconds>(
+                render_end_time - render_start_time);
+            render_time_ms += render_duration.count() / 1000.0;
+
+            auto encode_start_time = std::chrono::high_resolution_clock::now();
             encode_frame(acc_write);
+            auto encode_end_time = std::chrono::high_resolution_clock::now();
+
+            auto encode_duration = std::chrono::duration_cast<std::chrono::microseconds>(
+                encode_end_time - encode_start_time);
+            encode_time_ms += encode_duration.count() / 1000.0;
         } else {
             break;
         }
@@ -204,8 +224,16 @@ void VideoRenderer::maxRenderer() {
     cv::Mat maxFrame;
     const double DECAY_FACTOR = 0.95;
     while (1) {
+        auto start_time = std::chrono::high_resolution_clock::now();
         auto frame = frame_reader->nextFrame();
+        auto decode_end_time = std::chrono::high_resolution_clock::now();
+
         if (frame.has_value()) {
+            auto decode_duration =
+                std::chrono::duration_cast<std::chrono::microseconds>(decode_end_time - start_time);
+            decode_time_ms += decode_duration.count() / 1000.0;
+
+            auto render_start_time = std::chrono::high_resolution_clock::now();
             if (maxFrame.empty()) {
                 frame.value().convertTo(maxFrame, CV_32FC3);
             } else {
@@ -215,7 +243,19 @@ void VideoRenderer::maxRenderer() {
             }
             cv::Mat output_frame;
             maxFrame.convertTo(output_frame, CV_8UC3);
+            auto render_end_time = std::chrono::high_resolution_clock::now();
+
+            auto render_duration = std::chrono::duration_cast<std::chrono::microseconds>(
+                render_end_time - render_start_time);
+            render_time_ms += render_duration.count() / 1000.0;
+
+            auto encode_start_time = std::chrono::high_resolution_clock::now();
             encode_frame(output_frame);
+            auto encode_end_time = std::chrono::high_resolution_clock::now();
+
+            auto encode_duration = std::chrono::duration_cast<std::chrono::microseconds>(
+                encode_end_time - encode_start_time);
+            encode_time_ms += encode_duration.count() / 1000.0;
         } else {
             break;
         }
@@ -227,8 +267,16 @@ void VideoRenderer::exponentialRenderer() {
     const double EXP_FACTOR = 0.05;
 
     while (1) {
+        auto start_time = std::chrono::high_resolution_clock::now();
         auto frame = frame_reader->nextFrame();
+        auto decode_end_time = std::chrono::high_resolution_clock::now();
+
         if (frame.has_value()) {
+            auto decode_duration =
+                std::chrono::duration_cast<std::chrono::microseconds>(decode_end_time - start_time);
+            decode_time_ms += decode_duration.count() / 1000.0;
+
+            auto render_start_time = std::chrono::high_resolution_clock::now();
             if (accFrame.empty()) {
                 frame.value().convertTo(accFrame, CV_32FC3);
             } else {
@@ -238,7 +286,19 @@ void VideoRenderer::exponentialRenderer() {
             }
             cv::Mat output_frame;
             accFrame.convertTo(output_frame, CV_8UC3);
+            auto render_end_time = std::chrono::high_resolution_clock::now();
+
+            auto render_duration = std::chrono::duration_cast<std::chrono::microseconds>(
+                render_end_time - render_start_time);
+            render_time_ms += render_duration.count() / 1000.0;
+
+            auto encode_start_time = std::chrono::high_resolution_clock::now();
             encode_frame(output_frame);
+            auto encode_end_time = std::chrono::high_resolution_clock::now();
+
+            auto encode_duration = std::chrono::duration_cast<std::chrono::microseconds>(
+                encode_end_time - encode_start_time);
+            encode_time_ms += encode_duration.count() / 1000.0;
         } else {
             break;
         }
@@ -250,8 +310,16 @@ void VideoRenderer::linearRenderer() {
     const int RENDER_WINDOW_SIZE = window_size;
 
     while (1) {
+        auto start_time = std::chrono::high_resolution_clock::now();
         auto frame = frame_reader->nextFrame();
+        auto decode_end_time = std::chrono::high_resolution_clock::now();
+
         if (frame.has_value()) {
+            auto decode_duration =
+                std::chrono::duration_cast<std::chrono::microseconds>(decode_end_time - start_time);
+            decode_time_ms += decode_duration.count() / 1000.0;
+
+            auto render_start_time = std::chrono::high_resolution_clock::now();
             const cv::Mat& frame8u = frame.value(); // CV_8UC3
             render_window.push_front(frame8u);
             if (static_cast<int>(render_window.size()) > RENDER_WINDOW_SIZE) {
@@ -273,7 +341,19 @@ void VideoRenderer::linearRenderer() {
 
             cv::Mat output_frame;
             accFrame.convertTo(output_frame, CV_8UC3, 255.0); // [0,1] -> [0,255]
+            auto render_end_time = std::chrono::high_resolution_clock::now();
+
+            auto render_duration = std::chrono::duration_cast<std::chrono::microseconds>(
+                render_end_time - render_start_time);
+            render_time_ms += render_duration.count() / 1000.0;
+
+            auto encode_start_time = std::chrono::high_resolution_clock::now();
             encode_frame(output_frame);
+            auto encode_end_time = std::chrono::high_resolution_clock::now();
+
+            auto encode_duration = std::chrono::duration_cast<std::chrono::microseconds>(
+                encode_end_time - encode_start_time);
+            encode_time_ms += encode_duration.count() / 1000.0;
         } else {
             break;
         }
@@ -287,8 +367,16 @@ void VideoRenderer::linearApproxRenderer() {
 
     cv::Mat yFrame;
     while (true) {
+        auto start_time = std::chrono::high_resolution_clock::now();
         auto frameOpt = frame_reader->nextFrame();
+        auto decode_end_time = std::chrono::high_resolution_clock::now();
+
         if (frameOpt.has_value()) {
+            auto decode_duration =
+                std::chrono::duration_cast<std::chrono::microseconds>(decode_end_time - start_time);
+            decode_time_ms += decode_duration.count() / 1000.0;
+
+            auto render_start_time = std::chrono::high_resolution_clock::now();
             cv::Mat frame32f;
             frameOpt.value().convertTo(frame32f, CV_32FC3);
             frame32f /= 255.0;
@@ -303,7 +391,19 @@ void VideoRenderer::linearApproxRenderer() {
 
             cv::Mat output_frame;
             yFrame.convertTo(output_frame, CV_8UC3, 255.0);
+            auto render_end_time = std::chrono::high_resolution_clock::now();
+
+            auto render_duration = std::chrono::duration_cast<std::chrono::microseconds>(
+                render_end_time - render_start_time);
+            render_time_ms += render_duration.count() / 1000.0;
+
+            auto encode_start_time = std::chrono::high_resolution_clock::now();
             encode_frame(output_frame);
+            auto encode_end_time = std::chrono::high_resolution_clock::now();
+
+            auto encode_duration = std::chrono::duration_cast<std::chrono::microseconds>(
+                encode_end_time - encode_start_time);
+            encode_time_ms += encode_duration.count() / 1000.0;
         } else {
             break;
         }
@@ -312,9 +412,28 @@ void VideoRenderer::linearApproxRenderer() {
 
 void VideoRenderer::dummyRenderer() {
     while (1) {
+        auto start_time = std::chrono::high_resolution_clock::now();
         auto frame = frame_reader->nextFrame();
+        auto decode_end_time = std::chrono::high_resolution_clock::now();
+
         if (frame.has_value()) {
+            auto decode_duration =
+                std::chrono::duration_cast<std::chrono::microseconds>(decode_end_time - start_time);
+            decode_time_ms += decode_duration.count() / 1000.0;
+
+            auto render_start_time = std::chrono::high_resolution_clock::now();
+            auto render_end_time = std::chrono::high_resolution_clock::now();
+            auto render_duration = std::chrono::duration_cast<std::chrono::microseconds>(
+                render_end_time - render_start_time);
+            render_time_ms += render_duration.count() / 1000.0;
+
+            auto encode_start_time = std::chrono::high_resolution_clock::now();
             encode_frame(frame.value());
+            auto encode_end_time = std::chrono::high_resolution_clock::now();
+
+            auto encode_duration = std::chrono::duration_cast<std::chrono::microseconds>(
+                encode_end_time - encode_start_time);
+            encode_time_ms += encode_duration.count() / 1000.0;
         } else {
             break;
         }
@@ -347,4 +466,15 @@ void VideoRenderer::render() {
     }
 
     flush_encoder();
+    printTimingStats();
+}
+
+void VideoRenderer::printTimingStats() {
+    std::cout << "\n=== Timing Statistics ===" << std::endl;
+    std::cout << "Decode Time: " << decode_time_ms << " ms" << std::endl;
+    std::cout << "Render Time: " << render_time_ms << " ms" << std::endl;
+    std::cout << "Encode Time: " << encode_time_ms << " ms" << std::endl;
+    std::cout << "Total Time: " << (decode_time_ms + render_time_ms + encode_time_ms) << " ms"
+              << std::endl;
+    std::cout << "=========================" << std::endl;
 }

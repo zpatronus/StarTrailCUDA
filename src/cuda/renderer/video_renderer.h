@@ -1,5 +1,6 @@
 #pragma once
 #include "../frame_reader/frame_reader.h"
+#include <chrono>
 #include <string>
 
 extern "C" {
@@ -22,12 +23,15 @@ class VideoRenderer {
     int fps;
     int window_size;
 
-    // NVENC encoder
     AVFormatContext* fmt_ctx_;
     AVCodecContext* codec_ctx_;
     AVStream* stream_;
     SwsContext* sws_ctx_;
     int64_t pts_;
+
+    double decode_time_ms = 0.0;
+    double render_time_ms = 0.0;
+    double encode_time_ms = 0.0;
 
     void init_encoder();
     void encode_frame(const FrameData& frame);
@@ -46,4 +50,5 @@ class VideoRenderer {
                            RenderAlgo algorithm, int window_size = 0);
     ~VideoRenderer();
     void render();
+    void printTimingStats();
 };

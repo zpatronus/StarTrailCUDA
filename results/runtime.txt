@@ -8,6 +8,14 @@ Run 5: 131.36s
 
 Average of middle 3 runs: 133.07 seconds
 
+[=================================================>]  98% (444/450)
+=== Timing Statistics ===
+Decode Time: 13023.2 ms
+Render Time: 111430 ms
+Encode Time: 7673.19 ms
+Total Time: 132127 ms
+=========================
+
 -------------------------------------
 
 ./build/startrail_baseline -i ../video_download/test_starrail_15sec_h264.mp4 -o output.mp4 -a LINEARAPPROX
@@ -20,6 +28,13 @@ Run 4: 152.55s
 Run 5: 150.49s
 
 Average of middle 3 runs: 152.33 seconds
+
+=== Timing Statistics ===
+Decode Time: 4531.59 ms
+Render Time: 112786 ms
+Encode Time: 35687.5 ms
+Total Time: 153005 ms
+
 
 
 -------------------------------------
@@ -43,3 +58,11 @@ Run 4: 40.95s
 Run 5: 40.97s
 
 Average of middle 3 runs: 40.94 seconds
+
+
+
+=== Timing Statistics ===
+Decode Time: 19553.5 ms
+Render Time: 12100.1 ms
+Encode Time: 18316.9 ms
+Total Time: 49970.4 ms

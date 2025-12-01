@@ -1,5 +1,6 @@
 #pragma once
 #include "../frame_reader/frame_reader.h"
+#include <chrono>
 #include <string>
 
 enum RenderAlgo { AVGRAGE, MAX, EXPONENTIAL, LINEAR, LINEARAPPROX, DUMMY };
@@ -14,6 +15,10 @@ class VideoRenderer {
 
     cv::VideoWriter writer;
 
+    double decode_time_ms = 0.0;
+    double render_time_ms = 0.0;
+    double encode_time_ms = 0.0;
+
     void averageRenderer();
     void maxRenderer();
     void exponentialRenderer();
@@ -25,9 +30,8 @@ class VideoRenderer {
     explicit VideoRenderer(std::unique_ptr<FrameReader> reader, std::string output_path, int fps,
                            RenderAlgo algorithm, int window_size = 0)
         : frame_reader(std::move(reader)), output_path(output_path), fps(fps), algo(algorithm),
-          window_size(window_size){
-
-          };
+          window_size(window_size){};
     ~VideoRenderer(){};
     void render();
+    void printTimingStats();
 };
