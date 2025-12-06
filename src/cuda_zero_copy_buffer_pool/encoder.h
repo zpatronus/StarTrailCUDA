@@ -1,0 +1,72 @@
+#pragma once
+#include "buffer_pool.h"
+#include "frame_ref_queue.h"
+#include <atomic>
+#include <chrono>
+#include <condition_variable>
+#include <cuda_runtime.h>
+#include <memory>
+#include <mutex>
+#include <queue>
+#include <string>
+#include <thread>
+
+extern "C" {
+#include <libavcodec/avcodec.h>
+#include <libavformat/avformat.h>
+#include <libavutil/hwcontext.h>
+#include <libavutil/hwcontext_cuda.h>
+#include <libavutil/imgutils.h>
+#include <libavutil/opt.h>
+}
+
+class VideoEncoder {
+  private:
+    std::string output_path_;
+    int width_;
+    int height_;
+    int fps_;
+    std::shared_ptr<BufferPool> buffer_pool_;
+    std::shared_ptr<FrameRefQueue> input_queue_;
+
+    AVFormatContext* fmt_ctx_;
+    AVCodecContext* codec_ctx_;
+    AVStream* av_stream_;
+    AVFrame* av_frame_;
+    AVBufferRef* hw_device_ctx_;
+    AVBufferRef* hw_frames_ctx_;
+
+    std::thread encode_thread_;
+    std::thread write_thread_;
+    bool running_;
+    bool write_running_;
+    int64_t frame_count_;
+
+    cudaStream_t cuda_stream_;
+
+    std::queue<AVPacket*> write_queue_;
+    std::mutex write_mutex_;
+    std::condition_variable write_cv_;
+
+    std::atomic<long long> total_input_queue_pop_time_us_{0};
+    std::atomic<long long> total_gpu_upload_time_us_{0};
+    std::atomic<long long> total_encode_time_us_{0};
+    std::atomic<long long> total_packet_queue_push_time_us_{0};
+    std::atomic<long long> total_write_time_us_{0};
+    std::atomic<int> frames_encoded_{0};
+    std::atomic<int> packets_written_{0};
+    std::atomic<int> buffers_released_{0};
+
+    void encode_loop();
+    void write_loop();
+
+  public:
+    VideoEncoder(const std::string& output_path, int width, int height, int fps,
+                 std::shared_ptr<BufferPool> buffer_pool,
+                 std::shared_ptr<FrameRefQueue> input_queue);
+    ~VideoEncoder();
+
+    void start();
+    void wait();
+    void print_stats() const;
+};

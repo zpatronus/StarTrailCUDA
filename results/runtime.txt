@@ -66,3 +66,110 @@ Decode Time: 19553.5 ms
 Render Time: 12100.1 ms
 Encode Time: 18316.9 ms
 Total Time: 49970.4 ms
+
+
+
+
+
+--------
+
+convert to rgb and then render
+
+=== Decoder Statistics ===
+Packets read: 450
+Frames decoded: 444
+Avg read time per packet: 81 us
+Avg decode time per frame: 4337 us
+Avg GPU transfer time per frame: 5981 us
+
+=== Renderer Statistics ===
+Frames rendered: 444
+Avg render time per frame: 911 us
+
+=== Encoder Statistics ===
+Frames encoded: 444
+Packets written: 444
+Avg color conversion time per frame: 2904 us
+Avg encoding time per frame: 4773 us
+Avg write time per packet: 137 us
+
+
+
+render using nv12 directly
+
+
+
+Processing completed in 4689 ms (4.689 seconds)
+
+=== Decoder Statistics ===
+Packets read: 450
+Frames decoded: 444
+Avg read time per packet: 111 us
+Avg decode time per frame: 4816 us
+Avg GPU transfer time per frame: 5185 us
+
+=== Renderer Statistics ===
+Frames rendered: 444
+Avg render time per frame: 574 us
+
+=== Encoder Statistics ===
+Frames encoded: 444
+Packets written: 444
+Avg color conversion time per frame: 2362 us
+Avg encoding time per frame: 2974 us
+Avg write time per packet: 170 us
+
+
+
+---
+
+
+using buffer pool and zero copy
+
+
+
+[h264_cuvid @ 0x5aa203435f00] Invalid pkt_timebase, passing timestamps as-is.
+Video Information:
+  Resolution: 3840x2160
+  FPS: 30
+  Frame Step: 1
+
+Starting renderer...
+Starting encoder...
+Using hardware encoder: h264_nvenc
+[================================================= ] 444/450  98%
+Processing completed in 2531 ms (2.531 seconds)
+
+=== Decoder Statistics ===
+Packets read: 450
+Frames decoded: 444
+Frames pushed: 444
+Avg read time per packet: 73 us
+Avg decode time per frame: 6091 us
+Avg GPU copy time per frame: 23 us
+Avg output queue push time: 3 us
+
+=== Renderer Statistics ===
+Frames rendered: 444
+Avg input queue pop time: 5248 us
+Avg render time per frame: 1256 us
+Avg output queue push time: 0 us
+
+=== Encoder Statistics ===
+Frames encoded: 444
+Packets written: 444
+Buffers released: 444
+Avg input queue pop time: 1763 us
+Avg GPU upload time per frame: 422 us
+Avg encoding time per frame: 3490 us
+Avg packet queue push time: 3 us
+Avg write time per packet: 108 us
+
+=== Buffer Pool Statistics ===
+Total pool size: 60
+Available buffers at end: 60
+
+
+
+
+it is now bottle necked by decoding and we conclude this is the fastest with ffmpeg api. It can be further improved by NVIDIA Video Codec API but that will be way more complex.

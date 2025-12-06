@@ -30,6 +30,7 @@ sudo apt install -y libavformat-dev libavcodec-dev libavutil-dev libswscale-dev
 # Install nvidia-codec-headers for CUVID support
 echo "  Installing NVIDIA codec headers..."
 cd /tmp
+rm -rf nv-codec-headers
 git clone https://git.videolan.org/git/ffmpeg/nv-codec-headers.git
 cd nv-codec-headers
 make
@@ -39,6 +40,20 @@ cd ~
 # Install ffnvcodec runtime libraries
 echo "  Installing NVENC/NVDEC runtime libraries..."
 sudo apt install -y libnvidia-encode-580-server libnvidia-decode-580-server
+
+# Install NVIDIA Video Codec SDK
+echo "  Installing NVIDIA Video Codec SDK..."
+
+cd /tmp
+cp ~/StarTrailCUDA/Video_Codec_Interface_13.0.19.zip .
+sudo apt install -y unzip
+unzip -o Video_Codec_Interface_13.0.19.zip
+sudo mkdir -p /usr/local/nvidia-video-codec/Interface
+sudo cp -r Interface/*.h /usr/local/nvidia-video-codec/Interface/ 2>/dev/null || true
+sudo cp -r *.h /usr/local/nvidia-video-codec/Interface/ 2>/dev/null || true
+cd ~
+echo "  NVIDIA Video Codec SDK headers installed"
+
 
 # 6. Install OpenCV (for baseline version)
 echo "Step 6: Installing OpenCV..."
