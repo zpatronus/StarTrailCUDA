@@ -158,8 +158,12 @@ void VideoRenderer::print_stats() const {
     if (frames_rendered_ > 0) {
         std::cout << "Avg input queue pop time: "
                   << (total_input_queue_pop_time_us_ / frames_rendered_) << " us\n";
+        std::cout << "Avg buffer acquire time per frame: "
+                  << (total_buffer_acquire_time_us_ / frames_rendered_) << " us\n";
         std::cout << "Avg render time per frame: " << (total_render_time_us_ / frames_rendered_)
                   << " us\n";
+        std::cout << "Avg buffer release time per frame: "
+                  << (total_buffer_release_time_us_ / frames_rendered_) << " us\n";
         std::cout << "Avg output queue push time: "
                   << (total_output_queue_push_time_us_ / frames_rendered_) << " us\n";
     }
@@ -185,7 +189,13 @@ void VideoRenderer::max_renderer() {
 
         FrameBuffer* input_buf = &buffer_pool_->buffers_[input_ref.buffer_id];
 
+        auto buffer_acquire_start = std::chrono::high_resolution_clock::now();
         FrameBuffer* output_buf = buffer_pool_->acquire_buffer();
+        auto buffer_acquire_end = std::chrono::high_resolution_clock::now();
+        total_buffer_acquire_time_us_ += std::chrono::duration_cast<std::chrono::microseconds>(
+                                             buffer_acquire_end - buffer_acquire_start)
+                                             .count();
+
         output_buf->pts = input_ref.pts;
         output_buf->is_last = false;
 
@@ -207,10 +217,20 @@ void VideoRenderer::max_renderer() {
                 .count();
         frames_rendered_++;
 
+        auto buffer_release_start = std::chrono::high_resolution_clock::now();
         buffer_pool_->release_buffer(input_ref.buffer_id);
+        auto buffer_release_end = std::chrono::high_resolution_clock::now();
+        total_buffer_release_time_us_ += std::chrono::duration_cast<std::chrono::microseconds>(
+                                             buffer_release_end - buffer_release_start)
+                                             .count();
 
+        auto output_push_start = std::chrono::high_resolution_clock::now();
         FrameRef output_ref(output_buf->buffer_id, output_buf->pts);
         output_queue_->push(output_ref);
+        auto output_push_end = std::chrono::high_resolution_clock::now();
+        total_output_queue_push_time_us_ += std::chrono::duration_cast<std::chrono::microseconds>(
+                                                output_push_end - output_push_start)
+                                                .count();
     }
 
     output_queue_->finish();
@@ -244,7 +264,13 @@ void VideoRenderer::linear_approx_renderer() {
             first_frame = false;
         }
 
+        auto buffer_acquire_start = std::chrono::high_resolution_clock::now();
         FrameBuffer* output_buf = buffer_pool_->acquire_buffer();
+        auto buffer_acquire_end = std::chrono::high_resolution_clock::now();
+        total_buffer_acquire_time_us_ += std::chrono::duration_cast<std::chrono::microseconds>(
+                                             buffer_acquire_end - buffer_acquire_start)
+                                             .count();
+
         output_buf->pts = input_ref.pts;
         output_buf->is_last = false;
 
@@ -266,10 +292,20 @@ void VideoRenderer::linear_approx_renderer() {
                 .count();
         frames_rendered_++;
 
+        auto buffer_release_start = std::chrono::high_resolution_clock::now();
         buffer_pool_->release_buffer(input_ref.buffer_id);
+        auto buffer_release_end = std::chrono::high_resolution_clock::now();
+        total_buffer_release_time_us_ += std::chrono::duration_cast<std::chrono::microseconds>(
+                                             buffer_release_end - buffer_release_start)
+                                             .count();
 
+        auto output_push_start = std::chrono::high_resolution_clock::now();
         FrameRef output_ref(output_buf->buffer_id, output_buf->pts);
         output_queue_->push(output_ref);
+        auto output_push_end = std::chrono::high_resolution_clock::now();
+        total_output_queue_push_time_us_ += std::chrono::duration_cast<std::chrono::microseconds>(
+                                                output_push_end - output_push_start)
+                                                .count();
     }
 
     output_queue_->finish();

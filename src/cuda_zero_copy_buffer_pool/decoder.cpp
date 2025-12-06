@@ -222,7 +222,14 @@ void VideoDecoder::decode_loop() {
                 if (should_process) {
                     AVFrame* gpu_frame = decoded_frame;
 
+                    auto buffer_acquire_start = std::chrono::high_resolution_clock::now();
                     FrameBuffer* frame_buf = buffer_pool_->acquire_buffer();
+                    auto buffer_acquire_end = std::chrono::high_resolution_clock::now();
+                    total_buffer_acquire_time_us_ +=
+                        std::chrono::duration_cast<std::chrono::microseconds>(buffer_acquire_end -
+                                                                              buffer_acquire_start)
+                            .count();
+
                     frame_buf->pts = gpu_frame->pts;
                     frame_buf->is_last = false;
 
@@ -294,6 +301,8 @@ void VideoDecoder::print_stats() const {
                   << " us\n";
     }
     if (frames_pushed_ > 0) {
+        std::cout << "Avg buffer acquire time per frame: "
+                  << (total_buffer_acquire_time_us_ / frames_pushed_) << " us\n";
         std::cout << "Avg GPU copy time per frame: "
                   << (total_gpu_transfer_time_us_ / frames_pushed_) << " us\n";
         std::cout << "Avg output queue push time: "

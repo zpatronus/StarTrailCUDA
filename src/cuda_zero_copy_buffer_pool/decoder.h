@@ -48,6 +48,7 @@ class VideoDecoder {
 
     std::atomic<long long> total_read_time_us_{0};
     std::atomic<long long> total_decode_time_us_{0};
+    std::atomic<long long> total_buffer_acquire_time_us_{0};
     std::atomic<long long> total_gpu_transfer_time_us_{0};
     std::atomic<long long> total_output_queue_push_time_us_{0};
     std::atomic<int> packets_read_{0};

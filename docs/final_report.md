@@ -66,7 +66,7 @@ This underutilization motivates the use of a pipeline, where decoding, rendering
 
 ![img](./final_report.assets/cuda_pipeline.png)
 
-Given that the decode stage is the most time consuming stage in the CUDA implementation, costing 19553ms, a naive three stage pipeline would be limited by this duration. However, we decompose the workflow into five distinct concurrency units, which allows further parallelization and avoids being limited by the giant decode stage:
+Given that the decode stage is the most time-consuming stage in the CUDA implementation, costing 19553ms, a naive three-stage pipeline would be limited by this duration. However, we decompose the workflow into five distinct concurrency units, which allows further parallelization and avoids being limited by the giant decode stage:
 
 1. **Packet Reader**: Reads compressed video packets (H.264/HEVC/VP9/AV1) from disk to host memory
 2. **Hardware Decoder**: Transforms compressed packets from host memory to NV12 format on GPU
@@ -88,29 +88,66 @@ The following pipeline table illustrates how frames progress through different s
 
 Where: PR=Packet Reader, DE=Hardware Decoder, RE=Renderer, EN=Encoder, WR=File Writer
 
-Additionally, the CUDA implementation uses RGB format for frames, requiring transfers between CPU and GPU for format conversion. This causes NV12→RGB→NV12 conversions (CPU→GPU→CPU→GPU) that waste significant time and bandwidth. To optimize this, we modified the renderer to process NV12 frames directly, keeping frames in GPU memory from decode to encode without unnecessary transfers.
+Additionally, the CUDA implementation originally used RGB format for frames, requiring transfers between CPU and GPU for format conversion. This caused NV12→RGB→NV12 conversions (CPU→GPU→CPU→GPU) that wasted significant time and bandwidth. To optimize this, we modified the renderer to process NV12 frames directly, keeping frames in GPU memory from decode to encode without unnecessary transfers.
 
-This giv
+This results in a massive performance improvement with a runtime of 4.6s, which is a ~250x speedup compared to the baseline implementation.
 
 **Detailed Timing Breakdown:**
 
-| Operation                         | Time (us) |
-| --------------------------------- | --------- |
-| **Decoder**                       |           |
-| Packet read time                  | 213       |
-| Decode time per frame             | 548       |
-| GPU copy time per frame           | 1585      |
-| Decoder output queue push time    | 8557      |
-| **Renderer**                      |           |
-| Renderer input queue pop time     | 2         |
-| Render time per frame             | 1227      |
-| Renderer output queue push time   | 2         |
-| **Encoder**                       |           |
-| Encoder input queue pop time      | 368       |
-| Encoder GPU upload time per frame | 444       |
-| Encoding time per frame           | 90        |
-| Packet queue push time            | 4         |
-| Write time per packet             | 106       |
+| Operation         | Time per frame (us) |
+| ----------------- | ------------------- |
+| **Decoder**       |                     |
+| Packet read       | 213                 |
+| Decode            | 548                 |
+| GPU transfer      | 1585                |
+| Output queue push | 8557                |
+| **Renderer**      |                     |
+| Input queue pop   | 2                   |
+| Render            | 1227                |
+| Output queue push | 2                   |
+| **Encoder**       |                     |
+| Input queue pop   | 368                 |
+| GPU transfer      | 444                 |
+| Encoding          | 90                  |
+| Packet queue push | 4                   |
+| Write             | 106                 |
+
+**Total frames**: 444
+
+However, we found the result to be confusing:
+
+From the renderer's 2us pop and 2us push on input and output queue, we are sure that the renderer should be the bottleneck. This means that the decoder was waiting for the renderer to take the next frame and the encoder was waiting for the renderer to give the next frame, so there was little time the renderer spent on waiting. However, other stages take way more time than the 1227us the renderer takes per frame and 1227us x 444 frames does not equal 4.6 seconds.
+
+Examining our code, we found that we only included the computational time in the rendering phase, and not all the other construction and destruction steps which include malloc and free.
+
+We added logs on those items as well and the result was as follows:
+
+**Detailed Timing Breakdown with Memory Operations:**
+
+| Operation         | Time per frame (us) |
+| ----------------- | ------------------- |
+| **Decoder**       |                     |
+| Read              | 98                  |
+| Decode            | 637                 |
+| Memory alloc      | 1363                |
+| GPU transfer      | 544                 |
+| Output queue push | 8090                |
+| **Renderer**      |                     |
+| Input queue pop   | 3                   |
+| Memory alloc      | 0                   |
+| Render            | 1291                |
+| Memory free       | 8547                |
+| Output queue push | 3                   |
+| **Encoder**       |                     |
+| Input queue pop   | 451                 |
+| Frame alloc       | 2                   |
+| GPU transfer      | 406                 |
+| Encoding          | 128                 |
+| Packet queue push | 4                   |
+| Memory free       | 9343                |
+| Write             | 130                 |
+
+This indicates that the current bottleneck is indeed the renderer and the key issue was the excessive number of memory operations.
 
 #### CUDA + PIPELINE + ZERO COPY + BUFFER POOL
 
@@ -135,6 +172,40 @@ yzj
 | **Brainstorming, testing and documenting** | Zijun Yang, Jiache Zhang |
 
 Credit should be distributed 50-50.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+milestone:
+
+
 
 ---
 

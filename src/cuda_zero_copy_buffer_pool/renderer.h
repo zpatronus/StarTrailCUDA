@@ -28,8 +28,10 @@ class VideoRenderer {
     std::thread render_thread_;
     bool running_;
 
-    std::atomic<long long> total_render_time_us_{0};
     std::atomic<long long> total_input_queue_pop_time_us_{0};
+    std::atomic<long long> total_buffer_acquire_time_us_{0};
+    std::atomic<long long> total_render_time_us_{0};
+    std::atomic<long long> total_buffer_release_time_us_{0};
     std::atomic<long long> total_output_queue_push_time_us_{0};
     std::atomic<int> frames_rendered_{0};
 

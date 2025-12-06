@@ -52,9 +52,11 @@ class VideoEncoder {
     std::mutex buffer_release_mutex_;
 
     std::atomic<long long> total_input_queue_pop_time_us_{0};
+    std::atomic<long long> total_frame_alloc_time_us_{0};
     std::atomic<long long> total_gpu_upload_time_us_{0};
     std::atomic<long long> total_encode_time_us_{0};
     std::atomic<long long> total_packet_queue_push_time_us_{0};
+    std::atomic<long long> total_buffer_release_time_us_{0};
     std::atomic<long long> total_write_time_us_{0};
     std::atomic<int> frames_encoded_{0};
     std::atomic<int> packets_written_{0};

@@ -213,7 +213,7 @@ void VideoEncoder::encode_loop() {
         if (input_frame.is_last)
             break;
 
-        auto upload_start = std::chrono::high_resolution_clock::now();
+        auto frame_alloc_start = std::chrono::high_resolution_clock::now();
 
         if (av_hwframe_get_buffer(hw_frames_ctx_, av_frame_, 0) < 0) {
             std::cerr << "Failed to allocate hardware frame" << std::endl;
@@ -221,6 +221,13 @@ void VideoEncoder::encode_loop() {
             cudaFree(input_frame.d_uv_data);
             continue;
         }
+
+        auto frame_alloc_end = std::chrono::high_resolution_clock::now();
+        total_frame_alloc_time_us_ += std::chrono::duration_cast<std::chrono::microseconds>(
+                                          frame_alloc_end - frame_alloc_start)
+                                          .count();
+
+        auto upload_start = std::chrono::high_resolution_clock::now();
 
         av_frame_->format = AV_PIX_FMT_CUDA;
         av_frame_->width = width_;
@@ -276,8 +283,13 @@ void VideoEncoder::encode_loop() {
         frames_encoded_++;
         processed_frames++;
 
+        auto free_start = std::chrono::high_resolution_clock::now();
         cudaFree(input_frame.d_y_data);
         cudaFree(input_frame.d_uv_data);
+        auto free_end = std::chrono::high_resolution_clock::now();
+        total_memory_free_time_us_ +=
+            std::chrono::duration_cast<std::chrono::microseconds>(free_end - free_start).count();
+
         av_frame_unref(av_frame_);
     }
 
@@ -318,12 +330,16 @@ void VideoEncoder::print_stats() const {
     if (frames_encoded_ > 0) {
         std::cout << "Avg input queue pop time: "
                   << (total_input_queue_pop_time_us_ / frames_encoded_) << " us\n";
-        std::cout << "Avg GPU upload time per frame: "
+        std::cout << "Avg frame alloc time per frame: "
+                  << (total_frame_alloc_time_us_ / frames_encoded_) << " us\n";
+        std::cout << "Avg GPU transfer time per frame: "
                   << (total_gpu_upload_time_us_ / frames_encoded_) << " us\n";
         std::cout << "Avg encoding time per frame: " << (total_encode_time_us_ / frames_encoded_)
                   << " us\n";
         std::cout << "Avg packet queue push time: "
                   << (total_packet_queue_push_time_us_ / frames_encoded_) << " us\n";
+        std::cout << "Avg memory free time per frame: "
+                  << (total_memory_free_time_us_ / frames_encoded_) << " us\n";
     }
     if (packets_written_ > 0) {
         std::cout << "Avg write time per packet: " << (total_write_time_us_ / packets_written_)

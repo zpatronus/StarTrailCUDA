@@ -211,7 +211,7 @@ void VideoEncoder::encode_loop() {
 
         FrameBuffer* input_buf = &buffer_pool_->buffers_[input_ref.buffer_id];
 
-        auto upload_start = std::chrono::high_resolution_clock::now();
+        auto frame_alloc_start = std::chrono::high_resolution_clock::now();
 
         if (av_hwframe_get_buffer(hw_frames_ctx_, av_frame_, 0) < 0) {
             std::cerr << "Failed to allocate hardware frame" << std::endl;
@@ -219,6 +219,13 @@ void VideoEncoder::encode_loop() {
             buffers_released_++;
             continue;
         }
+
+        auto frame_alloc_end = std::chrono::high_resolution_clock::now();
+        total_frame_alloc_time_us_ += std::chrono::duration_cast<std::chrono::microseconds>(
+                                          frame_alloc_end - frame_alloc_start)
+                                          .count();
+
+        auto upload_start = std::chrono::high_resolution_clock::now();
 
         av_frame_->format = AV_PIX_FMT_CUDA;
         av_frame_->width = width_;
@@ -272,6 +279,7 @@ void VideoEncoder::encode_loop() {
                                                                               packet_queue_start)
                             .count();
 
+                    auto buffer_release_start = std::chrono::high_resolution_clock::now();
                     {
                         std::lock_guard<std::mutex> lock(buffer_release_mutex_);
                         if (!pending_buffer_releases_.empty()) {
@@ -281,6 +289,11 @@ void VideoEncoder::encode_loop() {
                             buffers_released_++;
                         }
                     }
+                    auto buffer_release_end = std::chrono::high_resolution_clock::now();
+                    total_buffer_release_time_us_ +=
+                        std::chrono::duration_cast<std::chrono::microseconds>(buffer_release_end -
+                                                                              buffer_release_start)
+                            .count();
                 } else {
                     av_packet_free(&packet);
                     break;
@@ -350,12 +363,16 @@ void VideoEncoder::print_stats() const {
     if (frames_encoded_ > 0) {
         std::cout << "Avg input queue pop time: "
                   << (total_input_queue_pop_time_us_ / frames_encoded_) << " us\n";
-        std::cout << "Avg GPU upload time per frame: "
+        std::cout << "Avg frame alloc time per frame: "
+                  << (total_frame_alloc_time_us_ / frames_encoded_) << " us\n";
+        std::cout << "Avg GPU transfer time per frame: "
                   << (total_gpu_upload_time_us_ / frames_encoded_) << " us\n";
         std::cout << "Avg encoding time per frame: " << (total_encode_time_us_ / frames_encoded_)
                   << " us\n";
         std::cout << "Avg packet queue push time: "
                   << (total_packet_queue_push_time_us_ / frames_encoded_) << " us\n";
+        std::cout << "Avg buffer release time per frame: "
+                  << (total_buffer_release_time_us_ / frames_encoded_) << " us\n";
     }
     if (packets_written_ > 0) {
         std::cout << "Avg write time per packet: " << (total_write_time_us_ / packets_written_)

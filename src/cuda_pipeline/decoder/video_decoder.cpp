@@ -256,7 +256,7 @@ void VideoDecoder::decode_loop() {
                                   << " (GPU-direct)\n";
                     }
 
-                    auto gpu_copy_start = std::chrono::high_resolution_clock::now();
+                    auto alloc_start = std::chrono::high_resolution_clock::now();
 
                     uint8_t* src_nv12 = (uint8_t*)gpu_frame->data[0];
                     size_t src_pitch = gpu_frame->linesize[0];
@@ -265,6 +265,14 @@ void VideoDecoder::decode_loop() {
                     frame.uv_pitch = width_;
                     CUDA_CHECK(cudaMalloc(&frame.d_y_data, width_ * height_));
                     CUDA_CHECK(cudaMalloc(&frame.d_uv_data, width_ * uv_height));
+
+                    auto alloc_end = std::chrono::high_resolution_clock::now();
+                    total_memory_alloc_time_us_ +=
+                        std::chrono::duration_cast<std::chrono::microseconds>(alloc_end -
+                                                                              alloc_start)
+                            .count();
+
+                    auto gpu_copy_start = std::chrono::high_resolution_clock::now();
 
                     CUDA_CHECK(cudaMemcpy2D(frame.d_y_data, frame.y_pitch, src_nv12, src_pitch,
                                             width_, height_, cudaMemcpyDeviceToDevice));
@@ -322,7 +330,9 @@ void VideoDecoder::print_stats() const {
     if (frames_decoded_ > 0) {
         std::cout << "Avg decode time per frame: " << (total_decode_time_us_ / frames_decoded_)
                   << " us\n";
-        std::cout << "Avg GPU copy time per frame: "
+        std::cout << "Avg memory alloc time per frame: "
+                  << (total_memory_alloc_time_us_ / frames_decoded_) << " us\n";
+        std::cout << "Avg GPU transfer time per frame: "
                   << (total_gpu_transfer_time_us_ / frames_decoded_) << " us\n";
         std::cout << "Avg output queue push time: "
                   << (total_output_queue_push_time_us_ / frames_decoded_) << " us\n";
