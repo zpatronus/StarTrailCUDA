@@ -21,7 +21,11 @@ class VideoRenderer {
     cudaStream_t stream_;
     std::thread render_thread_;
 
+    std::atomic<long long> total_input_queue_pop_time_us_{0};
+    std::atomic<long long> total_memory_alloc_time_us_{0};
     std::atomic<long long> total_render_time_us_{0};
+    std::atomic<long long> total_memory_free_time_us_{0};
+    std::atomic<long long> total_output_queue_push_time_us_{0};
     std::atomic<int> frames_rendered_{0};
 
     void max_renderer();

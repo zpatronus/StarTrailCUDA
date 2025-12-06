@@ -224,8 +224,16 @@ void VideoRenderer::print_stats() const {
     std::cout << "\n=== Renderer Statistics ===\n";
     std::cout << "Frames rendered: " << frames_rendered_ << "\n";
     if (frames_rendered_ > 0) {
+        std::cout << "Avg input queue pop time: "
+                  << (total_input_queue_pop_time_us_ / frames_rendered_) << " us\n";
+        std::cout << "Avg memory alloc time per frame: "
+                  << (total_memory_alloc_time_us_ / frames_rendered_) << " us\n";
         std::cout << "Avg render time per frame: " << (total_render_time_us_ / frames_rendered_)
                   << " us\n";
+        std::cout << "Avg memory free time per frame: "
+                  << (total_memory_free_time_us_ / frames_rendered_) << " us\n";
+        std::cout << "Avg output queue push time: "
+                  << (total_output_queue_push_time_us_ / frames_rendered_) << " us\n";
     }
 }
 
@@ -243,10 +251,17 @@ void VideoRenderer::max_renderer() {
     dim3 grid_uv((width_ / 2 + block.x - 1) / block.x, (height_ / 2 + block.y - 1) / block.y);
 
     while (true) {
+        auto input_pop_start = std::chrono::high_resolution_clock::now();
         Frame input_frame = input_queue_->pop();
+        auto input_pop_end = std::chrono::high_resolution_clock::now();
+        total_input_queue_pop_time_us_ +=
+            std::chrono::duration_cast<std::chrono::microseconds>(input_pop_end - input_pop_start)
+                .count();
+
         if (input_frame.is_last)
             break;
 
+        auto alloc_start = std::chrono::high_resolution_clock::now();
         Frame output_frame;
         output_frame.width = width_;
         output_frame.height = height_;
@@ -255,6 +270,9 @@ void VideoRenderer::max_renderer() {
         output_frame.pts = input_frame.pts;
         CUDA_CHECK(cudaMalloc(&output_frame.d_y_data, width_ * height_));
         CUDA_CHECK(cudaMalloc(&output_frame.d_uv_data, width_ * (height_ / 2)));
+        auto alloc_end = std::chrono::high_resolution_clock::now();
+        total_memory_alloc_time_us_ +=
+            std::chrono::duration_cast<std::chrono::microseconds>(alloc_end - alloc_start).count();
 
         auto render_start = std::chrono::high_resolution_clock::now();
         max_kernel_single<<<grid_y, block, 0, stream_>>>(
@@ -270,9 +288,19 @@ void VideoRenderer::max_renderer() {
                 .count();
         frames_rendered_++;
 
+        auto output_push_start = std::chrono::high_resolution_clock::now();
         output_queue_->push(output_frame);
+        auto output_push_end = std::chrono::high_resolution_clock::now();
+        total_output_queue_push_time_us_ += std::chrono::duration_cast<std::chrono::microseconds>(
+                                                output_push_end - output_push_start)
+                                                .count();
+
+        auto free_start = std::chrono::high_resolution_clock::now();
         cudaFree(input_frame.d_y_data);
         cudaFree(input_frame.d_uv_data);
+        auto free_end = std::chrono::high_resolution_clock::now();
+        total_memory_free_time_us_ +=
+            std::chrono::duration_cast<std::chrono::microseconds>(free_end - free_start).count();
     }
 
     cudaFree(d_max_y);
@@ -292,10 +320,17 @@ void VideoRenderer::average_renderer() {
     dim3 grid_uv((width_ / 2 + block.x - 1) / block.x, (height_ / 2 + block.y - 1) / block.y);
 
     while (true) {
+        auto input_pop_start = std::chrono::high_resolution_clock::now();
         Frame input_frame = input_queue_->pop();
+        auto input_pop_end = std::chrono::high_resolution_clock::now();
+        total_input_queue_pop_time_us_ +=
+            std::chrono::duration_cast<std::chrono::microseconds>(input_pop_end - input_pop_start)
+                .count();
+
         if (input_frame.is_last)
             break;
 
+        auto free_start = std::chrono::high_resolution_clock::now();
         FramePair pair = {input_frame.d_y_data, input_frame.d_uv_data};
         window.push_back(pair);
         if ((int)window.size() > window_size_) {
@@ -303,7 +338,14 @@ void VideoRenderer::average_renderer() {
             cudaFree(window.front().d_uv_data);
             window.pop_front();
         }
+        auto free_end = std::chrono::high_resolution_clock::now();
+        if ((int)window.size() > window_size_) {
+            total_memory_free_time_us_ +=
+                std::chrono::duration_cast<std::chrono::microseconds>(free_end - free_start)
+                    .count();
+        }
 
+        auto alloc_start = std::chrono::high_resolution_clock::now();
         Frame output_frame;
         output_frame.width = width_;
         output_frame.height = height_;
@@ -326,6 +368,9 @@ void VideoRenderer::average_renderer() {
                                    cudaMemcpyHostToDevice, stream_));
         CUDA_CHECK(cudaMemcpyAsync(d_uv_ptrs, uv_ptrs.data(), uv_ptrs.size() * sizeof(uint8_t*),
                                    cudaMemcpyHostToDevice, stream_));
+        auto alloc_end = std::chrono::high_resolution_clock::now();
+        total_memory_alloc_time_us_ +=
+            std::chrono::duration_cast<std::chrono::microseconds>(alloc_end - alloc_start).count();
 
         auto render_start = std::chrono::high_resolution_clock::now();
         average_kernel_single<<<grid_y, block, 0, stream_>>>(
@@ -341,9 +386,19 @@ void VideoRenderer::average_renderer() {
                 .count();
         frames_rendered_++;
 
+        auto free2_start = std::chrono::high_resolution_clock::now();
         cudaFree(d_y_ptrs);
         cudaFree(d_uv_ptrs);
+        auto free2_end = std::chrono::high_resolution_clock::now();
+        total_memory_free_time_us_ +=
+            std::chrono::duration_cast<std::chrono::microseconds>(free2_end - free2_start).count();
+
+        auto output_push_start = std::chrono::high_resolution_clock::now();
         output_queue_->push(output_frame);
+        auto output_push_end = std::chrono::high_resolution_clock::now();
+        total_output_queue_push_time_us_ += std::chrono::duration_cast<std::chrono::microseconds>(
+                                                output_push_end - output_push_start)
+                                                .count();
     }
 
     for (const auto& fp : window) {
@@ -368,7 +423,13 @@ void VideoRenderer::exponential_renderer() {
     dim3 grid_uv((width_ / 2 + block.x - 1) / block.x, (height_ / 2 + block.y - 1) / block.y);
 
     while (true) {
+        auto input_pop_start = std::chrono::high_resolution_clock::now();
         Frame input_frame = input_queue_->pop();
+        auto input_pop_end = std::chrono::high_resolution_clock::now();
+        total_input_queue_pop_time_us_ +=
+            std::chrono::duration_cast<std::chrono::microseconds>(input_pop_end - input_pop_start)
+                .count();
+
         if (input_frame.is_last)
             break;
 
@@ -403,9 +464,19 @@ void VideoRenderer::exponential_renderer() {
                 .count();
         frames_rendered_++;
 
+        auto output_push_start = std::chrono::high_resolution_clock::now();
         output_queue_->push(output_frame);
+        auto output_push_end = std::chrono::high_resolution_clock::now();
+        total_output_queue_push_time_us_ += std::chrono::duration_cast<std::chrono::microseconds>(
+                                                output_push_end - output_push_start)
+                                                .count();
+
+        auto free_start = std::chrono::high_resolution_clock::now();
         cudaFree(input_frame.d_y_data);
         cudaFree(input_frame.d_uv_data);
+        auto free_end = std::chrono::high_resolution_clock::now();
+        total_memory_free_time_us_ +=
+            std::chrono::duration_cast<std::chrono::microseconds>(free_end - free_start).count();
     }
 
     cudaFree(d_acc_y);
@@ -425,10 +496,17 @@ void VideoRenderer::linear_renderer() {
     dim3 grid_uv((width_ / 2 + block.x - 1) / block.x, (height_ / 2 + block.y - 1) / block.y);
 
     while (true) {
+        auto input_pop_start = std::chrono::high_resolution_clock::now();
         Frame input_frame = input_queue_->pop();
+        auto input_pop_end = std::chrono::high_resolution_clock::now();
+        total_input_queue_pop_time_us_ +=
+            std::chrono::duration_cast<std::chrono::microseconds>(input_pop_end - input_pop_start)
+                .count();
+
         if (input_frame.is_last)
             break;
 
+        auto free_start = std::chrono::high_resolution_clock::now();
         FramePair pair = {input_frame.d_y_data, input_frame.d_uv_data};
         window.push_front(pair);
         if ((int)window.size() > window_size_) {
@@ -436,7 +514,14 @@ void VideoRenderer::linear_renderer() {
             cudaFree(window.back().d_uv_data);
             window.pop_back();
         }
+        auto free_end = std::chrono::high_resolution_clock::now();
+        if ((int)window.size() > window_size_) {
+            total_memory_free_time_us_ +=
+                std::chrono::duration_cast<std::chrono::microseconds>(free_end - free_start)
+                    .count();
+        }
 
+        auto alloc_start = std::chrono::high_resolution_clock::now();
         Frame output_frame;
         output_frame.width = width_;
         output_frame.height = height_;
@@ -468,6 +553,9 @@ void VideoRenderer::linear_renderer() {
                                    cudaMemcpyHostToDevice, stream_));
         CUDA_CHECK(cudaMemcpyAsync(d_weights, weights.data(), window.size() * sizeof(float),
                                    cudaMemcpyHostToDevice, stream_));
+        auto alloc_end = std::chrono::high_resolution_clock::now();
+        total_memory_alloc_time_us_ +=
+            std::chrono::duration_cast<std::chrono::microseconds>(alloc_end - alloc_start).count();
 
         auto render_start = std::chrono::high_resolution_clock::now();
         linear_kernel_single<<<grid_y, block, 0, stream_>>>(
@@ -483,10 +571,20 @@ void VideoRenderer::linear_renderer() {
                 .count();
         frames_rendered_++;
 
+        auto free2_start = std::chrono::high_resolution_clock::now();
         cudaFree(d_y_ptrs);
         cudaFree(d_uv_ptrs);
         cudaFree(d_weights);
+        auto free2_end = std::chrono::high_resolution_clock::now();
+        total_memory_free_time_us_ +=
+            std::chrono::duration_cast<std::chrono::microseconds>(free2_end - free2_start).count();
+
+        auto output_push_start = std::chrono::high_resolution_clock::now();
         output_queue_->push(output_frame);
+        auto output_push_end = std::chrono::high_resolution_clock::now();
+        total_output_queue_push_time_us_ += std::chrono::duration_cast<std::chrono::microseconds>(
+                                                output_push_end - output_push_start)
+                                                .count();
     }
 
     for (const auto& fp : window) {
@@ -512,7 +610,13 @@ void VideoRenderer::linear_approx_renderer() {
     dim3 grid_uv((width_ / 2 + block.x - 1) / block.x, (height_ / 2 + block.y - 1) / block.y);
 
     while (true) {
+        auto input_pop_start = std::chrono::high_resolution_clock::now();
         Frame input_frame = input_queue_->pop();
+        auto input_pop_end = std::chrono::high_resolution_clock::now();
+        total_input_queue_pop_time_us_ +=
+            std::chrono::duration_cast<std::chrono::microseconds>(input_pop_end - input_pop_start)
+                .count();
+
         if (input_frame.is_last)
             break;
 
@@ -547,9 +651,19 @@ void VideoRenderer::linear_approx_renderer() {
                 .count();
         frames_rendered_++;
 
+        auto output_push_start = std::chrono::high_resolution_clock::now();
         output_queue_->push(output_frame);
-                cudaFree(input_frame.d_y_data);
+        auto output_push_end = std::chrono::high_resolution_clock::now();
+        total_output_queue_push_time_us_ += std::chrono::duration_cast<std::chrono::microseconds>(
+                                                output_push_end - output_push_start)
+                                                .count();
+
+        auto free_start = std::chrono::high_resolution_clock::now();
+        cudaFree(input_frame.d_y_data);
         cudaFree(input_frame.d_uv_data);
+        auto free_end = std::chrono::high_resolution_clock::now();
+        total_memory_free_time_us_ +=
+            std::chrono::duration_cast<std::chrono::microseconds>(free_end - free_start).count();
     }
 
     cudaFree(d_acc_y);
@@ -559,10 +673,17 @@ void VideoRenderer::linear_approx_renderer() {
 
 void VideoRenderer::dummy_renderer() {
     while (true) {
+        auto input_pop_start = std::chrono::high_resolution_clock::now();
         Frame input_frame = input_queue_->pop();
+        auto input_pop_end = std::chrono::high_resolution_clock::now();
+        total_input_queue_pop_time_us_ +=
+            std::chrono::duration_cast<std::chrono::microseconds>(input_pop_end - input_pop_start)
+                .count();
+
         if (input_frame.is_last)
             break;
 
+        auto alloc_start = std::chrono::high_resolution_clock::now();
         Frame output_frame;
         output_frame.width = width_;
         output_frame.height = height_;
@@ -578,10 +699,23 @@ void VideoRenderer::dummy_renderer() {
         CUDA_CHECK(cudaMemcpyAsync(output_frame.d_uv_data, input_frame.d_uv_data,
                                    output_frame.uv_pitch * (height_ / 2), cudaMemcpyDeviceToDevice,
                                    stream_));
+        auto alloc_end = std::chrono::high_resolution_clock::now();
+        total_memory_alloc_time_us_ +=
+            std::chrono::duration_cast<std::chrono::microseconds>(alloc_end - alloc_start).count();
 
+        auto output_push_start = std::chrono::high_resolution_clock::now();
         output_queue_->push(output_frame);
-                cudaFree(input_frame.d_y_data);
+        auto output_push_end = std::chrono::high_resolution_clock::now();
+        total_output_queue_push_time_us_ += std::chrono::duration_cast<std::chrono::microseconds>(
+                                                output_push_end - output_push_start)
+                                                .count();
+
+        auto free_start = std::chrono::high_resolution_clock::now();
+        cudaFree(input_frame.d_y_data);
         cudaFree(input_frame.d_uv_data);
+        auto free_end = std::chrono::high_resolution_clock::now();
+        total_memory_free_time_us_ +=
+            std::chrono::duration_cast<std::chrono::microseconds>(free_end - free_start).count();
     }
 
     output_queue_->finish();

@@ -203,17 +203,15 @@ void VideoEncoder::encode_loop() {
     int processed_frames = 0;
 
     while (running_) {
-        auto queue_wait_start = std::chrono::high_resolution_clock::now();
+        auto queue_pop_start = std::chrono::high_resolution_clock::now();
         Frame input_frame = input_queue_->pop();
-        auto queue_wait_end = std::chrono::high_resolution_clock::now();
-        total_queue_wait_time_us_ +=
-            std::chrono::duration_cast<std::chrono::microseconds>(queue_wait_end - queue_wait_start)
+        auto queue_pop_end = std::chrono::high_resolution_clock::now();
+        total_input_queue_pop_time_us_ +=
+            std::chrono::duration_cast<std::chrono::microseconds>(queue_pop_end - queue_pop_start)
                 .count();
 
         if (input_frame.is_last)
             break;
-
-        auto iteration_start = std::chrono::high_resolution_clock::now();
 
         auto upload_start = std::chrono::high_resolution_clock::now();
 
@@ -262,7 +260,7 @@ void VideoEncoder::encode_loop() {
                         write_cv_.notify_one();
                     }
                     auto packet_queue_end = std::chrono::high_resolution_clock::now();
-                    total_packet_queue_time_us_ +=
+                    total_packet_queue_push_time_us_ +=
                         std::chrono::duration_cast<std::chrono::microseconds>(packet_queue_end -
                                                                               packet_queue_start)
                             .count();
@@ -281,11 +279,6 @@ void VideoEncoder::encode_loop() {
         cudaFree(input_frame.d_y_data);
         cudaFree(input_frame.d_uv_data);
         av_frame_unref(av_frame_);
-
-        auto iteration_end = std::chrono::high_resolution_clock::now();
-        total_iteration_time_us_ +=
-            std::chrono::duration_cast<std::chrono::microseconds>(iteration_end - iteration_start)
-                .count();
     }
 
     avcodec_send_frame(codec_ctx_, nullptr);
@@ -323,25 +316,14 @@ void VideoEncoder::print_stats() const {
     std::cout << "Frames encoded: " << frames_encoded_ << "\n";
     std::cout << "Packets written: " << packets_written_ << "\n";
     if (frames_encoded_ > 0) {
-        long long avg_queue_wait = total_queue_wait_time_us_ / frames_encoded_;
-        long long avg_upload = total_gpu_upload_time_us_ / frames_encoded_;
-        long long avg_encode = total_encode_time_us_ / frames_encoded_;
-        long long avg_packet_queue = total_packet_queue_time_us_ / frames_encoded_;
-        long long avg_iteration = total_iteration_time_us_ / frames_encoded_;
-
-        std::cout << "Avg queue pop (wait) time: " << avg_queue_wait << " us\n";
-        std::cout << "Avg GPU->GPU upload time per frame: " << avg_upload << " us\n";
-        std::cout << "Avg encoding time per frame: " << avg_encode << " us\n";
-        std::cout << "Avg packet queue push time: " << avg_packet_queue << " us\n";
-        std::cout << "Avg work time per frame (excl. queue wait): " << avg_iteration << " us\n";
-
-        std::cout << "\nTime breakdown:\n";
-        std::cout << "  Queue wait (blocking): " << avg_queue_wait << " us\n";
-        std::cout << "  GPU upload: " << avg_upload << " us\n";
-        std::cout << "  Encoding: " << avg_encode << " us\n";
-        std::cout << "  Packet queue push: " << avg_packet_queue << " us\n";
-        std::cout << "  Other work overhead: "
-                  << (avg_iteration - avg_upload - avg_encode - avg_packet_queue) << " us\n";
+        std::cout << "Avg input queue pop time: "
+                  << (total_input_queue_pop_time_us_ / frames_encoded_) << " us\n";
+        std::cout << "Avg GPU upload time per frame: "
+                  << (total_gpu_upload_time_us_ / frames_encoded_) << " us\n";
+        std::cout << "Avg encoding time per frame: " << (total_encode_time_us_ / frames_encoded_)
+                  << " us\n";
+        std::cout << "Avg packet queue push time: "
+                  << (total_packet_queue_push_time_us_ / frames_encoded_) << " us\n";
     }
     if (packets_written_ > 0) {
         std::cout << "Avg write time per packet: " << (total_write_time_us_ / packets_written_)

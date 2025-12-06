@@ -228,8 +228,6 @@ void VideoDecoder::decode_loop() {
             packet_cv_.notify_one();
         }
 
-        auto iteration_start = std::chrono::high_resolution_clock::now();
-
         auto decode_start = std::chrono::high_resolution_clock::now();
         if (avcodec_send_packet(codec_ctx_, packet) >= 0) {
             while (avcodec_receive_frame(codec_ctx_, decoded_frame) >= 0) {
@@ -280,36 +278,23 @@ void VideoDecoder::decode_loop() {
                                                                               gpu_copy_start)
                             .count();
 
-                    auto iteration_end = std::chrono::high_resolution_clock::now();
-                    total_iteration_time_us_ +=
-                        std::chrono::duration_cast<std::chrono::microseconds>(iteration_end -
-                                                                              iteration_start)
-                            .count();
-
-                    auto queue_wait_start = std::chrono::high_resolution_clock::now();
+                    auto queue_push_start = std::chrono::high_resolution_clock::now();
                     output_queue_->push(frame);
-                    auto queue_wait_end = std::chrono::high_resolution_clock::now();
-                    total_queue_wait_time_us_ +=
-                        std::chrono::duration_cast<std::chrono::microseconds>(queue_wait_end -
-                                                                              queue_wait_start)
+                    auto queue_push_end = std::chrono::high_resolution_clock::now();
+                    total_output_queue_push_time_us_ +=
+                        std::chrono::duration_cast<std::chrono::microseconds>(queue_push_end -
+                                                                              queue_push_start)
                             .count();
 
                     processed_count++;
                     int expected_total = (total_frames_ + frame_step_ - 1) / frame_step_;
                     print_progress(processed_count, expected_total);
-                } else {
-                    auto iteration_end = std::chrono::high_resolution_clock::now();
-                    total_iteration_time_us_ +=
-                        std::chrono::duration_cast<std::chrono::microseconds>(iteration_end -
-                                                                              iteration_start)
-                            .count();
                 }
 
                 frame_count++;
                 av_frame_unref(decoded_frame);
 
                 decode_start = std::chrono::high_resolution_clock::now();
-                iteration_start = std::chrono::high_resolution_clock::now();
             }
         }
 
@@ -335,19 +320,11 @@ void VideoDecoder::print_stats() const {
                   << " us\n";
     }
     if (frames_decoded_ > 0) {
-        long long avg_decode = total_decode_time_us_ / frames_decoded_;
-        long long avg_gpu_copy = total_gpu_transfer_time_us_ / frames_decoded_;
-        long long avg_iteration = total_iteration_time_us_ / frames_decoded_;
-        long long avg_queue_wait = total_queue_wait_time_us_ / frames_decoded_;
-
-        std::cout << "Avg decode time per frame: " << avg_decode << " us\n";
-        std::cout << "Avg GPU->GPU copy time per frame: " << avg_gpu_copy << " us\n";
-        std::cout << "Avg queue push (wait) time: " << avg_queue_wait << " us\n";
-        std::cout << "Avg work time per frame (excl. queue wait): " << avg_iteration << " us\n";
-        std::cout << "\nTime breakdown:\n";
-        std::cout << "  Decode + GPU copy: " << (avg_decode + avg_gpu_copy) << " us\n";
-        std::cout << "  Other work overhead: " << (avg_iteration - avg_decode - avg_gpu_copy)
+        std::cout << "Avg decode time per frame: " << (total_decode_time_us_ / frames_decoded_)
                   << " us\n";
-        std::cout << "  Queue wait (blocking): " << avg_queue_wait << " us\n";
+        std::cout << "Avg GPU copy time per frame: "
+                  << (total_gpu_transfer_time_us_ / frames_decoded_) << " us\n";
+        std::cout << "Avg output queue push time: "
+                  << (total_output_queue_push_time_us_ / frames_decoded_) << " us\n";
     }
 }

@@ -119,6 +119,71 @@ Avg color conversion time per frame: 2362 us
 Avg encoding time per frame: 2974 us
 Avg write time per packet: 170 us
 
+-------
+
+[================================================= ] 444/450  98%
+Processing completed in 4663 ms (4.663 seconds)
+
+=== Decoder Statistics ===
+Packets read: 450
+Frames decoded: 444
+Avg read time per packet: 213 us
+Avg decode time per frame: 548 us
+Avg GPU copy time per frame: 1585 us
+Avg output queue push time: 8557 us
+
+=== Renderer Statistics ===
+Frames rendered: 444
+Avg input queue pop time: 2 us
+Avg render time per frame: 1227 us
+Avg output queue push time: 2 us
+
+=== Encoder Statistics ===
+Frames encoded: 444
+Packets written: 444
+Avg input queue pop time: 368 us
+Avg GPU upload time per frame: 444 us
+Avg encoding time per frame: 90 us
+Avg packet queue push time: 4 us
+Avg write time per packet: 106 us
+
+
+
+
+
+
+after adding timing for memory op:
+
+[================================================= ] 444/450  98%
+Processing completed in 4681 ms (4.681 seconds)
+
+=== Decoder Statistics ===
+Packets read: 450
+Frames decoded: 444
+Avg read time per packet: 53 us
+Avg decode time per frame: 566 us
+Avg GPU copy time per frame: 1564 us
+Avg output queue push time: 8621 us
+
+=== Renderer Statistics ===
+Frames rendered: 444
+Avg input queue pop time: 2 us
+Avg memory alloc time per frame: 0 us
+Avg render time per frame: 1352 us
+Avg memory free time per frame: 8622 us
+Avg output queue push time: 2 us
+
+=== Encoder Statistics ===
+Frames encoded: 444
+Packets written: 444
+Avg input queue pop time: 380 us
+Avg GPU upload time per frame: 352 us
+Avg encoding time per frame: 76 us
+Avg packet queue push time: 3 us
+Avg write time per packet: 108 us
+
+
+
 
 
 ---

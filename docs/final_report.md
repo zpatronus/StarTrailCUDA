@@ -52,11 +52,65 @@ zjc
 
 #### CUDA + PIPELINE
 
-The rendering process is
+In the CUDA approach, the video data flows through three conceptual stages:
 
+- **Decode:** The process begins with compressed video packets. These packets are decoded to produce raw video frames. Each packet contains encoded information for a segment of the video, and decoding transforms this data into a usable frame format.
 
+- **Render:** The raw frames are then processed to generate output frames with the desired star trail effects. Each input frame is transformed into an output frame, where the visual effect is applied.
+
+- **Encode:** Finally, the processed output frames are re-encoded into compressed video packets.
+
+Each stage utilizes a different part of the GPU: decoding uses the video decoding circuit, rendering uses CUDA cores, and encoding uses the video encoding circuit. In the basic CUDA approach, while one stage is active, the other hardware components remain idle.
+
+This underutilization motivates the use of a pipeline, where decoding, rendering, and encoding are performed concurrently. By overlapping these stages, the pipeline keeps all GPU components busy, significantly improving overall throughput and reducing idle time for each hardware unit. In a pipelined approach, while frame N is being decoded, frame N+1 can be rendered, and frame N+2 can be encoded, all at the same time.
 
 ![img](./final_report.assets/cuda_pipeline.png)
+
+Given that the decode stage is the most time consuming stage in the CUDA implementation, costing 19553ms, a naive three stage pipeline would be limited by this duration. However, we decompose the workflow into five distinct concurrency units, which allows further parallelization and avoids being limited by the giant decode stage:
+
+1. **Packet Reader**: Reads compressed video packets (H.264/HEVC/VP9/AV1) from disk to host memory
+2. **Hardware Decoder**: Transforms compressed packets from host memory to NV12 format on GPU
+3. **Renderer**: Applies star trail effects using CUDA kernels on GPU (maintains NV12 format)
+4. **Encoder**: Compresses rendered NV12 frames on GPU to H.264 packets
+5. **File Writer**: Writes compressed H.264 packets from host memory to output video file on disk
+
+Stages are connected by thread-safe queues that enable asynchronous communication between pipeline components, decoupling processing rates and maintaining data flow.
+
+The following pipeline table illustrates how frames progress through different stages over time, showing the overlapping nature of the 5-stage pipeline:
+
+|         | 1   | 2   | 3   | 4   | 5   | 6   | 7   | 8   | 9   |
+| ------- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Frame 1 | PR  | DE  | RE  | EN  | WR  |     |     |     |     |
+| Frame 2 |     | PR  | DE  | RE  | EN  | WR  |     |     |     |
+| Frame 3 |     |     | PR  | DE  | RE  | EN  | WR  |     |     |
+| Frame 4 |     |     |     | PR  | DE  | RE  | EN  | WR  |     |
+| Frame 5 |     |     |     |     | PR  | DE  | RE  | EN  | WR  |
+
+Where: PR=Packet Reader, DE=Hardware Decoder, RE=Renderer, EN=Encoder, WR=File Writer
+
+Additionally, the CUDA implementation uses RGB format for frames, requiring transfers between CPU and GPU for format conversion. This causes NV12→RGB→NV12 conversions (CPU→GPU→CPU→GPU) that waste significant time and bandwidth. To optimize this, we modified the renderer to process NV12 frames directly, keeping frames in GPU memory from decode to encode without unnecessary transfers.
+
+This giv
+
+**Detailed Timing Breakdown:**
+
+| Operation                         | Time (us) |
+| --------------------------------- | --------- |
+| **Decoder**                       |           |
+| Packet read time                  | 213       |
+| Decode time per frame             | 548       |
+| GPU copy time per frame           | 1585      |
+| Decoder output queue push time    | 8557      |
+| **Renderer**                      |           |
+| Renderer input queue pop time     | 2         |
+| Render time per frame             | 1227      |
+| Renderer output queue push time   | 2         |
+| **Encoder**                       |           |
+| Encoder input queue pop time      | 368       |
+| Encoder GPU upload time per frame | 444       |
+| Encoding time per frame           | 90        |
+| Packet queue push time            | 4         |
+| Write time per packet             | 106       |
 
 #### CUDA + PIPELINE + ZERO COPY + BUFFER POOL
 
@@ -82,25 +136,7 @@ yzj
 
 Credit should be distributed 50-50.
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 ---
-
-
 
 ## LIST OF WORK COMPLETED SO FAR
 
@@ -295,8 +331,6 @@ No major concerns. Just a matter of coding and doing the work. The main concern 
 Over the next week we will focus on a three-stage processing pipeline (decode → render → encode) so decoding, rendering and encoding can proceed concurrently. The goal is to overlap work across stages to substantially reduce end-to-end runtime for the current test dataset, with a target near 10 seconds.
 
 We will proceed incrementally: first validate overlap with a small buffered design, then implement a full producer–consumer pipeline and measure improvements. Each step will include timing checks and visual verification to ensure we gain performance without changing output quality. Jiache ang Zijun will do the development and testing together.
-
-
 
 ## EXPECTED DELIVERABLES AT THE END
 
