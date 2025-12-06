@@ -128,46 +128,37 @@ using buffer pool and zero copy
 
 
 
-[h264_cuvid @ 0x5aa203435f00] Invalid pkt_timebase, passing timestamps as-is.
-Video Information:
-  Resolution: 3840x2160
-  FPS: 30
-  Frame Step: 1
-
-Starting renderer...
-Starting encoder...
-Using hardware encoder: h264_nvenc
-[================================================= ] 444/450  98%
-Processing completed in 2531 ms (2.531 seconds)
+Processing completed in 2579 ms (2.579 seconds)
 
 === Decoder Statistics ===
 Packets read: 450
 Frames decoded: 444
 Frames pushed: 444
-Avg read time per packet: 73 us
-Avg decode time per frame: 6091 us
-Avg GPU copy time per frame: 23 us
-Avg output queue push time: 3 us
+Avg read time per packet: 78 us
+Avg decode time per frame: 6104 us
+Avg GPU copy time per frame: 25 us
+Avg output queue push time: 4 us
 
 === Renderer Statistics ===
 Frames rendered: 444
-Avg input queue pop time: 5248 us
-Avg render time per frame: 1256 us
+Avg input queue pop time: 5263 us
+Avg render time per frame: 1266 us
 Avg output queue push time: 0 us
 
 === Encoder Statistics ===
 Frames encoded: 444
 Packets written: 444
 Buffers released: 444
-Avg input queue pop time: 1763 us
-Avg GPU upload time per frame: 422 us
-Avg encoding time per frame: 3490 us
+Avg input queue pop time: 0 us
+Avg GPU upload time per frame: 492 us
+Avg encoding time per frame: 5284 us
 Avg packet queue push time: 3 us
-Avg write time per packet: 108 us
+Avg write time per packet: 115 us
 
 === Buffer Pool Statistics ===
 Total pool size: 60
 Available buffers at end: 60
+
 
 
 

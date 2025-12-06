@@ -128,7 +128,7 @@ void VideoEncoder::start() {
         codec_ctx_->flags |= AV_CODEC_FLAG_GLOBAL_HEADER;
     }
 
-    av_opt_set(codec_ctx_->priv_data, "preset", "p1", 0);
+    av_opt_set(codec_ctx_->priv_data, "preset", "p2", 0);
     av_opt_set(codec_ctx_->priv_data, "tune", "hq", 0);
     av_opt_set(codec_ctx_->priv_data, "rc", "vbr", 0);
 
