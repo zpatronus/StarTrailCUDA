@@ -239,6 +239,8 @@ void VideoDecoder::decode_loop() {
                                                  src_nv12 + src_pitch * height_, src_pitch, width_,
                                                  height_ / 2, cudaMemcpyDeviceToDevice, stream_));
 
+                    CUDA_CHECK(cudaStreamSynchronize(stream_));
+
                     auto gpu_copy_end = std::chrono::high_resolution_clock::now();
                     total_gpu_transfer_time_us_ +=
                         std::chrono::duration_cast<std::chrono::microseconds>(gpu_copy_end -

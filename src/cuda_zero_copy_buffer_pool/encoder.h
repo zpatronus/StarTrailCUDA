@@ -48,6 +48,9 @@ class VideoEncoder {
     std::mutex write_mutex_;
     std::condition_variable write_cv_;
 
+    std::queue<int> pending_buffer_releases_;
+    std::mutex buffer_release_mutex_;
+
     std::atomic<long long> total_input_queue_pop_time_us_{0};
     std::atomic<long long> total_gpu_upload_time_us_{0};
     std::atomic<long long> total_encode_time_us_{0};

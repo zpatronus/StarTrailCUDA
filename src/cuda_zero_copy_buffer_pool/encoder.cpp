@@ -242,8 +242,10 @@ void VideoEncoder::encode_loop() {
             std::chrono::duration_cast<std::chrono::microseconds>(upload_end - upload_start)
                 .count();
 
-        buffer_pool_->release_buffer(input_ref.buffer_id);
-        buffers_released_++;
+        {
+            std::lock_guard<std::mutex> lock(buffer_release_mutex_);
+            pending_buffer_releases_.push(input_ref.buffer_id);
+        }
 
         auto encode_start = std::chrono::high_resolution_clock::now();
         int send_ret = avcodec_send_frame(codec_ctx_, av_frame_);
@@ -269,6 +271,16 @@ void VideoEncoder::encode_loop() {
                         std::chrono::duration_cast<std::chrono::microseconds>(packet_queue_end -
                                                                               packet_queue_start)
                             .count();
+
+                    {
+                        std::lock_guard<std::mutex> lock(buffer_release_mutex_);
+                        if (!pending_buffer_releases_.empty()) {
+                            int buffer_id = pending_buffer_releases_.front();
+                            pending_buffer_releases_.pop();
+                            buffer_pool_->release_buffer(buffer_id);
+                            buffers_released_++;
+                        }
+                    }
                 } else {
                     av_packet_free(&packet);
                     break;
@@ -289,9 +301,29 @@ void VideoEncoder::encode_loop() {
                 write_queue_.push(packet);
                 write_cv_.notify_one();
             }
+
+            {
+                std::lock_guard<std::mutex> lock(buffer_release_mutex_);
+                if (!pending_buffer_releases_.empty()) {
+                    int buffer_id = pending_buffer_releases_.front();
+                    pending_buffer_releases_.pop();
+                    buffer_pool_->release_buffer(buffer_id);
+                    buffers_released_++;
+                }
+            }
         } else {
             av_packet_free(&packet);
             break;
+        }
+    }
+
+    {
+        std::lock_guard<std::mutex> lock(buffer_release_mutex_);
+        while (!pending_buffer_releases_.empty()) {
+            int buffer_id = pending_buffer_releases_.front();
+            pending_buffer_releases_.pop();
+            buffer_pool_->release_buffer(buffer_id);
+            buffers_released_++;
         }
     }
 
