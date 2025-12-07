@@ -44,14 +44,14 @@ Theoretically, using video files versus collections of individual images as sour
 
 Consequently, we decided to store and process source media in video format to minimize local storage requirements. Additionally, MP4-compressed video maintains sufficient quality without affecting final rendering results, eliminating the need for uncompressed video or image inputs.
 
-<video width="100%"   controls muted autoplay loop>
+<video width="100%"   controls muted loop>
   <source src="https://github.com/zpatronus/StarTrailCUDA/raw/refs/heads/main/docs/videos/source.mp4" type="video/mp4">
   Your browser does not support the video tag.
 </video><center>Test video from Drew Cotten: <a href="https://www.youtube.com/watch?v=Bbp1-p2FoXU">https://www.youtube.com/watch?v=Bbp1-p2FoXU</a></center>
 
 #### MAX Algorithm
 
-<video width="100%"   controls muted autoplay loop>
+<video width="100%"   controls muted loop>
   <source src="https://github.com/zpatronus/StarTrailCUDA/raw/refs/heads/main/docs/videos/max.mp4" type="video/mp4">
   Your browser does not support the video tag.
 </video><center>MAX Algorithm</center>
@@ -67,7 +67,7 @@ While this approach is conceptually simple and straightforward to implement, the
 
 #### LINEAR Algorithm
 
-<video width="100%"   controls muted autoplay loop>
+<video width="100%"   controls muted loop>
   <source src="https://github.com/zpatronus/StarTrailCUDA/raw/refs/heads/main/docs/videos/linear.mp4" type="video/mp4">
   Your browser does not support the video tag.
 </video><center>LINEAR Algorithm</center>
@@ -102,7 +102,7 @@ With this heuristic, the new output frame can be approximated using only the las
 
 $$NewOutputFrame=\max\left((L+1)-(L+1-LastOutputFrame)e^{\frac{1}{LN}},NewInputFrame\right)$$
 
-<video width="100%"   controls muted autoplay loop>
+<video width="100%"   controls muted loop>
   <source src="https://github.com/zpatronus/StarTrailCUDA/raw/refs/heads/main/docs/videos/linearapprox.mp4" type="video/mp4">
   Your browser does not support the video tag.
 </video><center>LINEARAPPROX Algorithm</center>
@@ -111,7 +111,7 @@ The LINEARAPPROX algorithm looks very similar to the LINEAR algorithm in control
 
 In the baseline implementation, we compared the performance difference for the LINEAR algorithm and the LINEARAPPROX algorithm under default parameters given the test input ($W=30$). The LINEAR algorithm takes 1125s to complete while the LINEARAPPROX only takes 152s, which is a huge 7.4x speedup gifted by math.
 
-<video width="100%"   controls muted autoplay loop>
+<video width="100%"   controls muted loop>
   <source src="https://github.com/zpatronus/StarTrailCUDA/raw/refs/heads/main/docs/videos/linearapprox_90w.mp4" type="video/mp4">
   Your browser does not support the video tag.
 </video><center>LINEARAPPROX Algorithm with a window size of 90 frames</center>
