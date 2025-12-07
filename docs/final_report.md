@@ -90,7 +90,7 @@ Where: PR=Packet Reader, DE=Hardware Decoder, RE=Renderer, EN=Encoder, WR=File W
 
 Additionally, the CUDA implementation originally used RGB format for frames, requiring transfers between CPU and GPU for format conversion. This caused NV12→RGB→NV12 conversions (CPU→GPU→CPU→GPU) that wasted significant time and bandwidth. To optimize this, we modified the renderer to process NV12 frames directly, keeping frames in GPU memory from decode to encode without unnecessary transfers.
 
-This results in a massive performance improvement with a runtime of 4.6s, which is a ~250x speedup compared to the baseline implementation.
+**This results in a massive performance improvement with a runtime of 4.6s, which is a ~250x speedup compared to the baseline implementation.**
 
 **Detailed Timing Breakdown:**
 
@@ -116,7 +116,7 @@ This results in a massive performance improvement with a runtime of 4.6s, which 
 
 However, we found the result to be confusing:
 
-From the renderer's 2us pop and 2us push on input and output queue, we are sure that the renderer should be the bottleneck. This means that the decoder was waiting for the renderer to take the next frame and the encoder was waiting for the renderer to give the next frame, so there was little time the renderer spent on waiting. However, other stages take way more time than the 1227us the renderer takes per frame and 1227us x 444 frames does not equal 4.6 seconds.
+From the renderer's 2us pop and 2us push on input and output queue, we were sure that the renderer should be the bottleneck. This meant that the decoder was waiting for the renderer to take the next frame and the encoder was waiting for the renderer to give the next frame, so there was little time the renderer spent on waiting. However, other stages took way more time than the 1227us the renderer takes per frame and 1227us x 444 frames does not equal 4.6 seconds.
 
 Examining our code, we found that we only included the computational time in the rendering phase, and not all the other construction and destruction steps which include malloc and free.
 
@@ -147,11 +147,49 @@ We added logs on those items as well and the result was as follows:
 | Memory free       | 9343                |
 | Write             | 130                 |
 
-This indicates that the current bottleneck is indeed the renderer and the key issue was the excessive number of memory operations.
+This clearly indicates that the bottleneck for the CUDA pipeline implementation is indeed the renderer and the key issue was the excessive number of memory operations.
 
 #### CUDA + PIPELINE + ZERO COPY + BUFFER POOL
 
-yzj
+To fix the memory issue in the CUDA pipeline implementation, we use as little copy as possible and also a buffer pool to reuse frame buffers. A chunk of memory is popped from the buffer pool for receiving the result of the decoder, processed by the renderer and sent to the encoder to perform the output and eventually recycled to the buffer pool. This keeps all cudaFree and cudaMalloc in the initialization and shutdown phase, and zero memory allocation operations in the process. It also reduces the number of memory copies significantly.
+
+![](./final_report.assets/buffer_pool.png)
+
+**The performance is stunning: It only takes 2.6s to complete rendering the test video, which is a 433x speedup compared with the baseline.**
+
+**Detailed Timing Breakdown:**
+
+| Operation         | Time per frame (µs) |
+| :---------------- | :------------------ |
+| **Decoder**       |                     |
+| Packet read       | 84                  |
+| Decode            | 5596                |
+| Buffer acquire    | 0                   |
+| GPU copy          | 538                 |
+| Output queue push | 5                   |
+| **Renderer**      |                     |
+| Input queue pop   | 5543                |
+| Buffer acquire    | 0                   |
+| Render            | 1003                |
+| Buffer release    | 0                   |
+| Output queue push | 0                   |
+| **Encoder**       |                     |
+| Input queue pop   | 0                   |
+| Frame alloc       | 0                   |
+| GPU transfer      | 440                 |
+| Encoding          | 5367                |
+| Packet queue push | 4                   |
+| Buffer release    | 0                   |
+| Write             | 120                 |
+
+**Total frames processed:** 444
+
+As you can see from the breakdown table, the renderer runs blazing fast now, and the bottleneck is the decoder.
+If we calculate the decode time 5596µs/frame x 444 frames, we will get around 2.6s, which further confirms it is the bottleneck. This is an atomic operation with the codec library provided by FFmpeg, so 2.6s is the theoretical best performance we can achieve with FFmpeg.
+
+However, it is possible to improve beyond this point by using [NVIDIA Video Codec SDK](https://developer.nvidia.com/video-codec-sdk) which provides more fine-grained control and more parallelism and pipeline opportunity to further break this atomic operation into steps and run them in parallel.
+
+With that said, we don't have much time left, and we're generally pretty happy about the result. If we recall Amdahl's law, there are some much more time-consuming, sequential parts in this star trail pipeline that are at higher priority to be optimized at this point, like downloading input videos, adding music to the trail, or even coming up with a good name for the output file or a good Instagram post caption :)
 
 ## LIST OF WORK BY EACH STUDENT AND DISTRIBUTION OF TOTAL CREDIT
 
@@ -172,6 +210,12 @@ yzj
 | **Brainstorming, testing and documenting** | Zijun Yang, Jiache Zhang |
 
 Credit should be distributed 50-50.
+
+
+
+
+
+
 
 
 

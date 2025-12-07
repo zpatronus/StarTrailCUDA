@@ -4,6 +4,10 @@
 
 **Team Members:** Zijun Yang <zijuny@andrew.cmu.edu> and Jiache Zhang <jiachez@andrew.cmu.edu>
 
+Website: [https://blog.zjyang.dev/StarTrailCUDA/](https://blog.zjyang.dev/StarTrailCUDA/)
+
+Final project report: [https://blog.zjyang.dev/StarTrailCUDA/final_report](https://blog.zjyang.dev/StarTrailCUDA/final_report)
+
 StarTrailCUDA is a GPU-accelerated rendering pipeline that converts a large sequence of fixed-camera night-sky frames into stunning star-trail time-lapse videos using CUDA. 
 
 ## Environment
@@ -62,3 +66,11 @@ pip install --user pre-commit # Install pre-commit
 cd StarTrailCUDA # Switch to project directory
 pre-commit install # Enable pre-commit
 ```
+
+## License
+
+This project is licensed under GPLv3 [./LICENSE](./LICENSE)
+
+This project uses FFmpeg:
+
+- FFmpeg libraries - LGPLv2.1+/GPLv2+. Used for video decoding/encoding. See https://ffmpeg.org/

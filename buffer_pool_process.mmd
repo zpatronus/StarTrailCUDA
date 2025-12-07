@@ -1,0 +1,14 @@
+graph LR
+    A[Input Video] -->|input packets| B[Video Decoder]
+    B -->|decoded frame| C[Video Renderer]
+    C -->|rendered frame| D[Video Encoder]
+    D -->|output packets| E[Output Video]
+    
+    F[Buffer Pool]
+    
+    F -.->|Get decoded frame buffer| B
+    C -.->|Return decoded frame buffer| F
+    F -.->|Get rendered frame buffer| C
+    D -.->|Return rendered frame buffer| F
+    
+

@@ -1,0 +1,1196 @@
+<!doctype html>
+<html>
+<head>
+<meta charset='UTF-8'><meta name='viewport' content='width=device-width initial-scale=1'><style type='text/css'>html {overflow-x: initial !important;}</style>
+<style type='text/css'  id="style-base">:root { --bg-color: #ffffff; --text-color: #333333; --select-text-bg-color: #B5D6FC; --select-text-font-color: auto; --monospace: "Lucida Console",Consolas,"Courier",monospace; --title-bar-height: 20px; }
+.mac-os-11 { --title-bar-height: 28px; }
+html { font-size: 14px; background-color: var(--bg-color); color: var(--text-color); font-family: "Helvetica Neue", Helvetica, Arial, "Segoe UI Emoji", "SF Pro", sans-serif; -webkit-font-smoothing: antialiased; }
+h1, h2, h3, h4, h5 { white-space: pre-wrap; }
+body { margin: 0px; padding: 0px; height: auto; inset: 0px; font-size: 1rem; line-height: 1.42857; overflow-x: hidden; background: inherit; }
+iframe { margin: auto; }
+a.url { word-break: break-all; }
+a:active, a:hover { outline: 0px; }
+.in-text-selection, ::selection { text-shadow: none; background: var(--select-text-bg-color); color: var(--select-text-font-color); }
+#write { margin: 0px auto; height: auto; width: inherit; word-break: normal; overflow-wrap: break-word; position: relative; white-space: normal; overflow-x: visible; padding-top: 36px; }
+#write.first-line-indent p { text-indent: 2em; }
+#write.first-line-indent li p, #write.first-line-indent p *, #write.first-line-indent svg * { text-indent: 0px; }
+#write.first-line-indent li { margin-left: 2em; }
+.for-image #write { padding-left: 8px; padding-right: 8px; }
+body.typora-export { padding-left: 30px; padding-right: 30px; }
+.typora-export .footnote-line, .typora-export li, .typora-export p { white-space: pre-wrap; }
+.typora-export .task-list-item input { pointer-events: none; }
+@media screen and (max-width: 500px) {
+  body.typora-export { padding-left: 0px; padding-right: 0px; }
+  #write { padding-left: 20px; padding-right: 20px; }
+}
+#write li > figure:last-child { margin-bottom: 0.5rem; }
+#write ol, #write ul { position: relative; }
+img { max-width: 100%; vertical-align: middle; image-orientation: from-image; }
+button, input, select, textarea { color: inherit; font: inherit; }
+input[type="checkbox"], input[type="radio"] { line-height: normal; padding: 0px; }
+*, ::after, ::before { box-sizing: border-box; }
+#write h1, #write h2, #write h3, #write h4, #write h5, #write h6, #write p, #write pre { width: inherit; position: relative; }
+#write svg h1, #write svg h2, #write svg h3, #write svg h4, #write svg h5, #write svg h6, #write svg p { position: static; }
+.nodeLabel p { padding-right: 2px; padding-left: 2px; }
+.typora-export .nodeLabel p { padding-right: 0px; padding-left: 0px; }
+foreignobject { overflow: visible; }
+p { line-height: inherit; }
+h1, h2, h3, h4, h5, h6 { break-after: avoid-page; break-inside: avoid; orphans: 4; }
+p { orphans: 4; }
+li p { orphans: 1; }
+h1 { font-size: 2rem; }
+h2 { font-size: 1.8rem; }
+h3 { font-size: 1.6rem; }
+h4 { font-size: 1.4rem; }
+h5 { font-size: 1.2rem; }
+h6 { font-size: 1rem; }
+.md-math-block, .md-rawblock, h1, h2, h3, h4, h5, h6, p { margin-top: 1rem; margin-bottom: 1rem; }
+.hidden { display: none; }
+.md-blockmeta { color: rgb(204, 204, 204); font-weight: 700; font-style: italic; }
+a { cursor: pointer; }
+sup.md-footnote { padding: 2px 4px; background-color: rgba(238, 238, 238, 0.7); color: rgb(85, 85, 85); border-radius: 4px; cursor: pointer; }
+sup.md-footnote a, sup.md-footnote a:hover { color: inherit; text-transform: inherit; text-decoration: inherit; }
+#write input[type="checkbox"] { cursor: pointer; width: inherit; height: inherit; }
+figure { overflow-x: auto; margin: 1.2em 0px; max-width: calc(100% + 16px); padding: 0px; }
+figure > table { margin: 0px; }
+thead, tr { break-inside: avoid; break-after: auto; }
+thead { display: table-header-group; }
+table { border-collapse: collapse; border-spacing: 0px; width: 100%; overflow: auto; break-inside: auto; text-align: left; }
+table.md-table td { min-width: 32px; }
+.CodeMirror-gutters { border-right: 0px; background-color: inherit; }
+.CodeMirror-linenumber { user-select: none; }
+.CodeMirror { text-align: left; }
+.CodeMirror-placeholder { opacity: 0.3; }
+.CodeMirror pre { padding: 0px 4px; }
+.CodeMirror-lines { padding: 0px; }
+div.hr:focus { cursor: none; }
+#write pre { white-space: pre-wrap; }
+#write.fences-no-line-wrapping pre { white-space: pre; }
+#write pre.ty-contain-cm { white-space: normal; }
+.CodeMirror-gutters { margin-right: 4px; }
+.md-fences { font-size: 0.9rem; display: block; break-inside: avoid; text-align: left; overflow: visible; white-space: pre; background: inherit; position: relative !important; }
+.md-fences-adv-panel { width: 100%; margin-top: 10px; text-align: center; padding-top: 0px; padding-bottom: 8px; overflow-x: auto; }
+#write .md-fences.mock-cm { white-space: pre-wrap; }
+.md-fences.md-fences-with-lineno { padding-left: 0px; }
+#write.fences-no-line-wrapping .md-fences.mock-cm { white-space: pre; overflow-x: auto; }
+.md-fences.mock-cm.md-fences-with-lineno { padding-left: 8px; }
+.CodeMirror-line, twitterwidget { break-inside: avoid; }
+svg { break-inside: avoid; }
+.footnotes { opacity: 0.8; font-size: 0.9rem; margin-top: 1em; margin-bottom: 1em; }
+.footnotes + .footnotes { margin-top: 0px; }
+.md-reset { margin: 0px; padding: 0px; border: 0px; outline: 0px; vertical-align: top; background: 0px 0px; text-decoration: none; text-shadow: none; float: none; position: static; width: auto; height: auto; white-space: nowrap; cursor: inherit; -webkit-tap-highlight-color: transparent; line-height: normal; font-weight: 400; text-align: left; box-sizing: content-box; direction: ltr; }
+li div { padding-top: 0px; }
+blockquote { margin: 1rem 0px; }
+li .mathjax-block, li p { margin: 0.5rem 0px; }
+li blockquote { margin: 1rem 0px; }
+li { margin: 0px; position: relative; }
+blockquote > :last-child { margin-bottom: 0px; }
+blockquote > :first-child, li > :first-child { margin-top: 0px; }
+.footnotes-area { color: rgb(136, 136, 136); margin-top: 0.714rem; padding-bottom: 0.143rem; white-space: normal; }
+#write .footnote-line { white-space: pre-wrap; }
+@media print {
+  body, html { border: 1px solid transparent; height: 99%; break-after: avoid; break-before: avoid; font-variant-ligatures: no-common-ligatures; }
+  #write { margin-top: 0px; border-color: transparent !important; padding-top: 0px !important; padding-bottom: 0px !important; }
+  .typora-export * { -webkit-print-color-adjust: exact; }
+  .typora-export #write { break-after: avoid; }
+  .typora-export #write::after { height: 0px; }
+  .is-mac table { break-inside: avoid; }
+  #write > p:nth-child(1) { margin-top: 0px; }
+  .typora-export-show-outline .typora-export-sidebar { display: none; }
+  figure { overflow-x: visible; }
+}
+.footnote-line { margin-top: 0.714em; font-size: 0.7em; }
+a img, img a { cursor: pointer; }
+pre.md-meta-block { font-size: 0.8rem; min-height: 0.8rem; white-space: pre-wrap; background: rgb(204, 204, 204); display: block; overflow-x: hidden; }
+p > .md-image:only-child:not(.md-img-error) img, p > img:only-child { display: block; margin: auto; }
+#write.first-line-indent p > .md-image:only-child:not(.md-img-error) img { left: -2em; position: relative; }
+p > .md-image:only-child { display: inline-block; width: 100%; }
+#write .MathJax_Display { margin: 0.8em 0px 0px; }
+.md-math-block { width: 100%; }
+.md-math-block:not(:empty)::after { display: none; }
+.MathJax_ref { fill: currentcolor; }
+[contenteditable="true"]:active, [contenteditable="true"]:focus, [contenteditable="false"]:active, [contenteditable="false"]:focus { outline: 0px; box-shadow: none; }
+.md-task-list-item { position: relative; list-style-type: none; }
+.task-list-item.md-task-list-item { padding-left: 0px; }
+.md-task-list-item > input { position: absolute; top: 0px; left: 0px; margin-left: -1.2em; margin-top: calc(1em - 10px); border: none; }
+.math { font-size: 1rem; }
+.md-toc { min-height: 3.58rem; position: relative; font-size: 0.9rem; border-radius: 10px; }
+.md-toc-content { position: relative; margin-left: 0px; }
+.md-toc-content::after, .md-toc::after { display: none; }
+.md-toc-item { display: block; color: rgb(65, 131, 196); }
+.md-toc-item a { text-decoration: none; }
+.md-toc-inner:hover { text-decoration: underline; }
+.md-toc-inner { display: inline-block; cursor: pointer; }
+.md-toc-h1 .md-toc-inner { margin-left: 0px; font-weight: 700; }
+.md-toc-h2 .md-toc-inner { margin-left: 2em; }
+.md-toc-h3 .md-toc-inner { margin-left: 4em; }
+.md-toc-h4 .md-toc-inner { margin-left: 6em; }
+.md-toc-h5 .md-toc-inner { margin-left: 8em; }
+.md-toc-h6 .md-toc-inner { margin-left: 10em; }
+@media screen and (max-width: 48em) {
+  .md-toc-h3 .md-toc-inner { margin-left: 3.5em; }
+  .md-toc-h4 .md-toc-inner { margin-left: 5em; }
+  .md-toc-h5 .md-toc-inner { margin-left: 6.5em; }
+  .md-toc-h6 .md-toc-inner { margin-left: 8em; }
+}
+a.md-toc-inner { font-size: inherit; font-style: inherit; font-weight: inherit; line-height: inherit; }
+.footnote-line a:not(.reversefootnote) { color: inherit; }
+.reversefootnote { font-family: ui-monospace, sans-serif; }
+.md-attr { display: none; }
+.md-fn-count::after { content: "."; }
+code, pre, samp, tt { font-family: var(--monospace); }
+kbd { margin: 0px 0.1em; padding: 0.1em 0.6em; font-size: 0.8em; color: rgb(36, 39, 41); background: rgb(255, 255, 255); border: 1px solid rgb(173, 179, 185); border-radius: 3px; box-shadow: rgba(12, 13, 14, 0.2) 0px 1px 0px, rgb(255, 255, 255) 0px 0px 0px 2px inset; white-space: nowrap; vertical-align: middle; }
+.md-comment { color: rgb(162, 127, 3); opacity: 0.6; font-family: var(--monospace); }
+code { text-align: left; vertical-align: initial; }
+a.md-print-anchor { white-space: pre !important; border-width: initial !important; border-style: none !important; border-color: initial !important; display: inline-block !important; position: absolute !important; width: 1px !important; right: 0px !important; outline: 0px !important; background: 0px 0px !important; text-decoration: initial !important; text-shadow: initial !important; }
+.os-windows.monocolor-emoji .md-emoji { font-family: "Segoe UI Symbol", sans-serif; }
+.md-diagram-panel > svg { max-width: 100%; }
+[lang="flow"] svg, [lang="mermaid"] svg { max-width: 100%; height: auto; }
+[lang="mermaid"] .node text { font-size: 1rem; }
+table tr th { border-bottom: 0px; }
+video { max-width: 100%; display: block; margin: 0px auto; }
+iframe { max-width: 100%; width: 100%; border: none; }
+.highlight td, .highlight tr { border: 0px; }
+mark { background: rgb(255, 255, 0); color: rgb(0, 0, 0); }
+.md-html-inline .md-plain, .md-html-inline strong, mark .md-inline-math, mark strong { color: inherit; }
+.md-expand mark .md-meta { opacity: 0.3 !important; }
+mark .md-meta { color: rgb(0, 0, 0); }
+@media print {
+  .typora-export h1, .typora-export h2, .typora-export h3, .typora-export h4, .typora-export h5, .typora-export h6 { break-inside: avoid; }
+}
+.md-diagram-panel .messageText { stroke: none !important; }
+.md-diagram-panel .start-state { fill: var(--node-fill); }
+.md-diagram-panel .edgeLabel rect { opacity: 1 !important; }
+.md-fences.md-fences-math { font-size: 1em; }
+.md-fences-advanced:not(.md-focus) { padding: 0px; white-space: nowrap; border: 0px; }
+.md-fences-advanced:not(.md-focus) { background: inherit; }
+.mermaid-svg { margin: auto; }
+.typora-export-show-outline .typora-export-content { max-width: 1440px; margin: auto; display: flex; flex-direction: row; }
+.typora-export-sidebar { width: 300px; font-size: 0.8rem; margin-top: 80px; margin-right: 18px; }
+.typora-export-show-outline #write { --webkit-flex: 2; flex: 2 1 0%; }
+.typora-export-sidebar .outline-content { position: fixed; top: 0px; max-height: 100%; overflow: hidden auto; padding-bottom: 30px; padding-top: 60px; width: 300px; }
+@media screen and (max-width: 1024px) {
+  .typora-export-sidebar, .typora-export-sidebar .outline-content { width: 240px; }
+}
+@media screen and (max-width: 800px) {
+  .typora-export-sidebar { display: none; }
+}
+.outline-content li, .outline-content ul { margin-left: 0px; margin-right: 0px; padding-left: 0px; padding-right: 0px; list-style: none; overflow-wrap: anywhere; }
+.outline-content ul { margin-top: 0px; margin-bottom: 0px; }
+.outline-content strong { font-weight: 400; }
+.outline-expander { width: 1rem; height: 1.42857rem; position: relative; display: table-cell; vertical-align: middle; cursor: pointer; padding-left: 4px; }
+.outline-expander::before { content: ""; position: relative; font-family: Ionicons; display: inline-block; font-size: 8px; vertical-align: middle; }
+.outline-item { padding-top: 3px; padding-bottom: 3px; cursor: pointer; }
+.outline-expander:hover::before { content: ""; }
+.outline-h1 > .outline-item { padding-left: 0px; }
+.outline-h2 > .outline-item { padding-left: 1em; }
+.outline-h3 > .outline-item { padding-left: 2em; }
+.outline-h4 > .outline-item { padding-left: 3em; }
+.outline-h5 > .outline-item { padding-left: 4em; }
+.outline-h6 > .outline-item { padding-left: 5em; }
+.outline-label { cursor: pointer; display: table-cell; vertical-align: middle; text-decoration: none; color: inherit; }
+.outline-label:hover { text-decoration: underline; }
+.outline-item:hover { border-color: rgb(245, 245, 245); background-color: var(--item-hover-bg-color); }
+.outline-item:hover { margin-left: -28px; margin-right: -28px; border-left: 28px solid transparent; border-right: 28px solid transparent; }
+.outline-item-single .outline-expander::before, .outline-item-single .outline-expander:hover::before { display: none; }
+.outline-item-open > .outline-item > .outline-expander::before { content: ""; }
+.outline-children { display: none; }
+.info-panel-tab-wrapper { display: none; }
+.outline-item-open > .outline-children { display: block; }
+.typora-export .outline-item { padding-top: 1px; padding-bottom: 1px; }
+.typora-export .outline-item:hover { margin-right: -8px; border-right: 8px solid transparent; }
+.typora-export .outline-expander::before { content: "+"; font-family: inherit; top: -1px; }
+.typora-export .outline-expander:hover::before, .typora-export .outline-item-open > .outline-item > .outline-expander::before { content: "−"; }
+.typora-export-collapse-outline .outline-children { display: none; }
+.typora-export-collapse-outline .outline-item-open > .outline-children, .typora-export-no-collapse-outline .outline-children { display: block; }
+.typora-export-no-collapse-outline .outline-expander::before { content: "" !important; }
+.typora-export-show-outline .outline-item-active > .outline-item .outline-label { font-weight: 700; }
+.md-inline-math-container mjx-container { zoom: 0.95; }
+mjx-container { break-inside: avoid; }
+.md-alert.md-alert-note { border-left-color: rgb(9, 105, 218); }
+.md-alert.md-alert-important { border-left-color: rgb(130, 80, 223); }
+.md-alert.md-alert-warning { border-left-color: rgb(154, 103, 0); }
+.md-alert.md-alert-tip { border-left-color: rgb(31, 136, 61); }
+.md-alert.md-alert-caution { border-left-color: rgb(207, 34, 46); }
+.md-alert { padding: 0px 1em; margin-bottom: 16px; color: inherit; border-left: 0.25em solid rgb(0, 0, 0); }
+.md-alert-text-note { color: rgb(9, 105, 218); }
+.md-alert-text-important { color: rgb(130, 80, 223); }
+.md-alert-text-warning { color: rgb(154, 103, 0); }
+.md-alert-text-tip { color: rgb(31, 136, 61); }
+.md-alert-text-caution { color: rgb(207, 34, 46); }
+.md-alert-text { font-size: 0.9rem; font-weight: 700; }
+.md-alert-text svg { fill: currentcolor; position: relative; top: 0.125em; margin-right: 1ch; overflow: visible; }
+.md-alert-text-container::after { content: attr(data-text); text-transform: capitalize; pointer-events: none; margin-right: 1ch; }
+
+</style>
+<style type='text/css'  id="style-theme_css">:root {
+  --side-bar-bg-color: #212121;
+  --control-text-color: #aaa;
+  --active-file-bg-color: #383838;
+  --control-text-hover-color: #ddd;
+  --item-hover-bg-color: #404040;
+  --text-color: #c0c0c0;
+  --blur-text-color: #80808080;
+  --bg-color: #191919;
+  --select-text-bg-color: #663f3f !important;
+  --monospace: "IBM Plex Mono", "Fira Code", "SF Mono", "Monaco", "Menlo", ui-monospace, monospace !important;
+  --window-border: 1px solid #404040;
+  --rawblock-edit-panel-bd: #212121;
+  --mermaid-theme: dark;
+  --mermaid-font-family: "IBM Plex Mono", "Fira Code", "微软雅黑", monospace !important;
+  --mermaid-sequence-numbers: off;
+  /* or "on", see https://mermaid-js.github.io/mermaid/#/sequenceDiagram?id=sequencenumbers*/
+  --mermaid-flowchart-curve: basis
+    /* or "basis", see https://github.com/typora/typora-issues/issues/1632*/
+  ;
+  --mermaid--gantt-left-padding: 100;
+  /* see https://github.com/typora/typora-issues/issues/1665*/
+  --heading-char-color: #aaa;
+  --meta-content-color: #6794bc;
+  --primary-color: #d86666;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #42424280 !important;
+}
+
+.menu-item-container a.menu-style-btn {
+  background: #424242;
+}
+
+html {
+  font-size: 16px;
+}
+
+body {
+  font-family: "Source Han Sans SC VF", "Open Sans", "IBM Plex Sans", "Microsoft YaHei", "Clear Sans", "Helvetica Neue", Helvetica, Arial, -apple-system, BlinkMacSystemFont, "SF Pro SC", "SF Pro Text", "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif !important;
+    font-variant-numeric: tabular-nums !important;
+  color: #d0d0d0;
+  background-color: var(--bg-color);
+  line-height: 1.75;
+  scroll-behavior: smooth;
+}
+
+#typora-quick-open {
+  border: none !important;
+  background-color: #212121 !important;
+}
+
+#write {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 30px;
+  padding-bottom: 100px;
+}
+
+#write>ul:first-child,
+#write>ol:first-child {
+  margin-top: 30px;
+}
+
+#recent-file-panel tbody tr:nth-child(2n-1) {
+  background-color: #242424;
+}
+
+/*table,
+input {
+  border: 1px solid #aaa !important;
+}*/
+
+#write a {
+  color: #d86666;
+  text-decoration: none !important;
+  border-bottom: 1px solid #d8666680;
+}
+
+.md-comment {
+  color: var(--text-color);
+  opacity: 0.5;
+  font-family: var(--monospace);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  position: relative;
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+  font-weight: bold;
+  line-height: 1.4;
+  cursor: text;
+}
+
+h1:hover a.anchor,
+h2:hover a.anchor,
+h3:hover a.anchor,
+h4:hover a.anchor,
+h5:hover a.anchor,
+h6:hover a.anchor {
+  text-decoration: none;
+}
+
+h1 tt,
+h1 code {
+  font-size: inherit;
+}
+
+h2 tt,
+h2 code {
+  font-size: inherit;
+}
+
+h3 tt,
+h3 code {
+  font-size: inherit;
+}
+
+h4 tt,
+h4 code {
+  font-size: inherit;
+}
+
+h5 tt,
+h5 code {
+  font-size: inherit;
+}
+
+h6 tt,
+h6 code {
+  font-size: inherit;
+}
+
+h1 {
+  padding-bottom: 0.3em;
+  font-size: 2.25em;
+  line-height: 1.2;
+  border-bottom: 1px solid #202020;
+}
+
+h2 {
+  padding-bottom: 0.3em;
+  font-size: 1.75em;
+  line-height: 1.225;
+  border-bottom: 1px solid #202020;
+}
+
+h3 {
+  font-size: 1.5em;
+  line-height: 1.43;
+}
+
+h4 {
+  font-size: 1.25em;
+}
+
+h5 {
+  font-size: 1em;
+}
+
+h6 {
+  font-size: 1em;
+  color: #777;
+}
+
+p,
+blockquote,
+ul,
+ol,
+dl,
+table {
+  margin: 0.8em 0;
+  text-align: left;
+}
+
+li>ol,
+li>ul {
+  margin: 0 0;
+}
+
+hr {
+  height: 2px;
+  padding: 0;
+  margin: 32px 0;
+  background-color: #212121;
+  border: 0 none;
+  overflow: hidden;
+  box-sizing: content-box;
+}
+
+li p.first {
+  display: inline-block;
+}
+
+ul,
+ol {
+  padding-left: 30px;
+}
+
+ul:first-child,
+ol:first-child {
+  margin-top: 0;
+}
+
+ul:last-child,
+ol:last-child {
+  margin-bottom: 0;
+}
+
+blockquote {
+  border-left: 4px solid #aaaaaa80;
+  margin-left: 2px;
+  padding: 0 15px;
+  color: #aaa;
+}
+
+blockquote blockquote {
+  padding-right: 0;
+}
+
+table {
+  padding: 0;
+  word-break: initial;
+  background-color: var(--bg-color);
+}
+
+table tr {
+  border-top: 1px solid #212121;
+  margin: 0;
+  padding: 0;
+}
+
+table tr:nth-child(2n),
+thead {
+  background-color: #212121;
+}
+
+table tr th {
+  font-weight: bold;
+  border: 1px solid #383838;
+  border-bottom: 0;
+  text-align: left;
+  margin: 0;
+  padding: 6px 13px;
+}
+
+table tr td {
+  border: 1px solid #383838;
+  text-align: left;
+  margin: 0;
+  padding: 6px 13px;
+}
+
+table tr th:first-child,
+table tr td:first-child {
+  margin-top: 0;
+}
+
+table tr th:last-child,
+table tr td:last-child {
+  margin-bottom: 0;
+}
+
+strong,
+b {
+  color: #f0f0f0;
+}
+
+.CodeMirror-lines {
+  padding-left: 4px;
+}
+
+.code-tooltip {
+  box-shadow: 0 1px 1px 0 rgba(26, 26, 26, 0.3);
+  border-top: 1px solid #202020;
+}
+
+.md-fences,
+code,
+tt {
+  border: 1px solid #424242;
+  background-color: #42424280;
+  border-radius: 3px;
+  padding: 2px 4px 1px 4px;
+  font-size: 0.85em;
+}
+
+.md-fences {
+  margin-bottom: 15px;
+  margin-top: 15px;
+  padding: 0.2em 1em;
+  padding-top: 8px;
+  padding-bottom: 6px;
+}
+
+.md-task-list-item>input {
+  margin-left: -1.3em;
+}
+
+@media print {
+  html {
+    font-size: 13px;
+  }
+
+  table,
+  pre {
+    page-break-inside: avoid;
+  }
+
+  pre {
+    word-wrap: break-word;
+  }
+}
+
+.md-fences {
+  background-color: #212121;
+}
+
+#write pre.md-meta-block {
+  padding: 1rem;
+  font-size: 85%;
+  line-height: 1.45;
+  background-color: #212121;
+  border: 0;
+  border-radius: 3px;
+  color: #aaa;
+  margin-top: 0 !important;
+}
+
+.mathjax-block>.code-tooltip {
+  bottom: 0.375rem;
+}
+
+.md-mathjax-midline {
+  background: #fafafa;
+}
+
+#write>h3.md-focus:before {
+  left: -1.5625rem;
+  top: 0.375rem;
+}
+
+#write>h4.md-focus:before {
+  left: -1.5625rem;
+  top: 0.285714286rem;
+}
+
+#write>h5.md-focus:before {
+  left: -1.5625rem;
+  top: 0.285714286rem;
+}
+
+#write>h6.md-focus:before {
+  left: -1.5625rem;
+  top: 0.285714286rem;
+}
+
+.md-image>.md-meta {
+  border-radius: 3px;
+  padding: 2px 0px 0px 4px;
+  font-size: 0.9em;
+  color: inherit;
+}
+
+.md-tag {
+  color: #a7a7a7;
+  opacity: .5;
+}
+
+.md-toc {
+  margin-top: 20px;
+  padding-bottom: 20px;
+}
+
+.sidebar-tabs {
+  border-bottom: none;
+}
+
+#typora-quick-open {
+  border: 1px solid #dddddd;
+  background-color: #f8f8f8;
+}
+
+#typora-quick-open-item {
+  background-color: #fafafa;
+  border-color: #fefefe #e5e5e5 #e5e5e5 #eee;
+  border-style: solid;
+  border-width: 1px;
+}
+
+footer.ty-footer {
+  height: 25px !important;
+  border-top: 1px solid #292a2d;
+  background: #292a2d !important;
+}
+
+.footer-item {
+  line-height: 25px !important;
+}
+
+#outline-btn {
+  margin-top: -2px !important;
+}
+
+.typora-sourceview-on #toggle-sourceview-btn {
+  background: #484848 !important;
+}
+
+.sidebar-content-content {
+  font-family: "IBM Plex Sans", "Microsoft YaHei", "微软雅黑", "Open Sans", "Clear Sans", "Helvetica Neue",
+    Helvetica, Arial, sans-serif !important;
+}
+
+.outline-content {
+  padding: 3px 10px !important;
+  text-align: left !important;
+}
+
+.outline-item.outline-item-active {
+  margin-left: -28px;
+  margin-right: -28px;
+  border-left: 28px solid transparent;
+  border-right: 28px solid transparent;
+  background-color: #424242;
+  background-color: #424242;
+  border-color: #424242;
+  background-color: #424242;
+}
+
+.sidebar-footer {
+  height: 25px;
+  border-top: 1px solid #292a2d;
+  background: #292a2d;
+}
+
+.sidebar-footer-item {
+  line-height: 25px;
+  padding-top: 0px !important;
+}
+
+.file-node-icon {
+  margin-right: 6px;
+}
+
+.file-node-open-state {
+  margin-right: 6px;
+}
+
+.dropdown-menu {
+  background-color: #2a2a2a !important;
+}
+
+.dropdown-menu .divider {
+  border-color: #424242 !important;
+}
+
+/* focus mode */
+.on-focus-mode blockquote {
+  border-left-color: rgba(85, 85, 85, 0.12);
+}
+
+.on-focus-mode .md-end-block:not(.md-focus):not(.md-focus-container) img {
+  opacity: 20%;
+}
+
+.on-focus-mode .task-list-item:not(.md-focus-container)>input {
+  opacity: 20%;
+}
+
+.on-focus-mode .md-fences.md-focus .CodeMirror-code>*:not(.CodeMirror-activeline) *,
+.on-focus-mode .CodeMirror.cm-s-inner:not(.CodeMirror-focused) * {
+  color: #80808080 !important;
+}
+
+.on-focus-mode li[cid]:not(.md-focus-container) {
+  color: #80808080 !important;
+}
+
+/*.on-focus-mode #typora-source .CodeMirror-code>*:not(.CodeMirror-activeline) * {
+  color: #80808080!important;
+}*/
+.on-focus-mode .md-focus,
+.on-focus-mode .md-focus-container {
+  color: #d0d0d0;
+}
+
+.on-focus-mode .md-end-block:not(.md-focus):not(.md-focus-container) code,
+.on-focus-mode .md-end-block:not(.md-focus):not(.md-focus-container) tt {
+  border: 1px solid #212121;
+  background-color: #212121;
+}
+
+/* focus mode end */
+
+header,
+.context-menu,
+.megamenu-content,
+footer {
+  font-family: "IBM Plex Sans", "Microsoft YaHei", "微软雅黑", "Open Sans", "Clear Sans", "Helvetica Neue",
+    Helvetica, Arial, sans-serif;
+}
+
+.megamenu-content {
+  background: #242424 !important;
+}
+
+.megamenu-opened header {
+  background-color: #242424;
+  background-image: none;
+}
+
+.file-node-content:hover .file-node-icon,
+.file-node-content:hover .file-node-open-state {
+  visibility: visible;
+}
+
+span.file-list-item-file-name-part {
+  color: #f0f0f0;
+}
+
+.file-list-item-summary {
+  height: 3rem;
+  overflow: hidden;
+  font-size: 13px;
+  line-height: 16px;
+  opacity: .7 !important;
+}
+
+.mac-seamless-mode #typora-sidebar {
+  background-color: #fafafa;
+  background-color: var(--side-bar-bg-color);
+}
+
+.md-lang {
+  color: #b4654d;
+}
+
+.html-for-mac .context-menu {
+  --item-hover-bg-color: #e6f0fe;
+}
+
+#md-notification .btn {
+  border: 0;
+}
+
+.dropdown-menu .divider {
+  border-color: #e5e5e5;
+}
+
+/* code mirror */
+
+.CodeMirror-gutter-filler,
+.CodeMirror-scrollbar-filler {
+  background-color: #212121;
+}
+
+.CodeMirror-gutters {
+  border-right: 1px solid #484848;
+}
+
+.CodeMirror-linenumber {
+  color: #808080;
+}
+
+.cm-s-inner .cm-keyword {
+  color: rgb(189, 97, 201);
+}
+
+.cm-s-inner .cm-atom,
+.cm-s-inner.cm-atom {
+  color: rgb(131, 115, 236);
+}
+
+.cm-s-inner .cm-number {
+  color: rgb(73, 190, 143);
+}
+
+.cm-s-inner .cm-def {
+  color: rgb(123, 123, 255);
+}
+
+.cm-s-inner .cm-variable {
+  color: rgb(199, 199, 199);
+}
+
+.cm-s-inner .cm-variable-2 {
+  color: rgb(131, 166, 201);
+}
+
+.cm-s-inner .cm-variable-3 {
+  color: rgb(153, 197, 181);
+}
+
+.cm-s-inner .cm-string {
+  color: rgb(194, 104, 104);
+}
+
+.cm-s-inner .cm-property {
+  color: rgb(199, 199, 199);
+}
+
+.cm-s-inner .cm-operator {
+  color: #b67e7e;
+}
+
+.cm-s-inner .cm-comment,
+.cm-s-inner.cm-comment {
+  color: rgb(216, 158, 99);
+}
+
+.cm-s-inner .cm-string-2 {
+  color: rgb(223, 152, 116);
+}
+
+.cm-s-inner .cm-meta {
+  color: rgb(158, 158, 158);
+}
+
+.cm-s-inner .cm-qualifier {
+  color: rgb(145, 145, 145);
+}
+
+.cm-s-inner .cm-builtin {
+  color: rgb(169, 145, 226);
+}
+
+.cm-s-inner .cm-bracket {
+  color: rgb(214, 214, 166);
+}
+
+.cm-s-inner .cm-tag {
+  color: rgb(162, 207, 154);
+}
+
+.cm-s-inner .cm-attribute {
+  color: rgb(169, 169, 216);
+}
+
+.cm-s-inner .cm-header,
+.cm-s-inner.cm-header {
+  color: rgb(161, 161, 255);
+}
+
+.cm-s-inner .cm-quote,
+.cm-s-inner.cm-quote {
+  color: rgb(90, 158, 90);
+}
+
+.cm-s-inner .cm-hr,
+.cm-s-inner.cm-hr {
+  color: rgb(184, 184, 184);
+}
+
+.cm-s-inner .cm-link,
+.cm-s-inner.cm-link {
+  color: rgb(134, 134, 197);
+}
+
+.cm-negative {
+  color: rgb(218, 126, 126);
+}
+
+.cm-positive {
+  color: rgb(118, 189, 118);
+}
+
+.cm-header,
+.cm-strong {
+  font-weight: 700;
+}
+
+.cm-del {
+  text-decoration: line-through;
+}
+
+.cm-em {
+  font-style: italic;
+}
+
+.cm-link {
+  text-decoration: underline;
+}
+
+.cm-error {
+  color: rgb(255, 75, 75);
+}
+
+.cm-invalidchar {
+  color: rgb(255, 75, 75);
+}
+
+.cm-constant {
+  color: #50a5e2;
+}
+
+.cm-defined {
+  color: #eccb66;
+}
+
+div.CodeMirror span.CodeMirror-matchingbracket {
+  color: rgb(139, 230, 139);
+}
+
+div.CodeMirror span.CodeMirror-nonmatchingbracket {
+  color: rgb(241, 99, 99);
+}
+
+.cm-searching {
+  background: #ffa;
+  background: rgba(255, 255, 0, 0.4);
+}
+
+.cm-tw-syntaxerror {
+  color: rgb(199, 199, 199);
+  background-color: #900;
+}
+
+.CodeMirror div.CodeMirror-cursor {
+  border-left: 3px solid #e4629a;
+}
+
+#typora-source .CodeMirror-gutter-wrapper {
+  font-family: var(--monospace) !important;
+}
+
+.cm-s-typora-default .CodeMirror-activeline-background {
+  left: -99999px;
+  right: -99999px;
+  background: #80808020;
+}
+
+.cm-s-typora-default .cm-code,
+.cm-s-typora-default .cm-comment {
+  color: #8997d4;
+  font-family: monospace;
+  font-family: var(--monospace);
+}
+
+.cm-s-typora-default .cm-string {
+  color: #84a97e;
+}
+
+.cm-s-typora-default .cm-tag {
+  color: #c36260;
+}
+
+/* unibody */
+
+.megamenu-opened header {
+  background-color: var(--bg-color) !important;
+}
+
+.megamenu-menu {
+  background-color: var(--side-bar-bg-color) !important;
+}
+
+#megamenu-back-btn {
+  border-color: transparent;
+  color: #a94442;
+}
+
+.megamenu-content {
+  background: var(--bg-color) !important;
+}
+
+.long-btn {
+  border: 1px solid #9292928f;
+}
+
+table
+
+/*,
+input */
+  {
+  border: 1px solid #9292928f !important;
+}
+
+#recent-file-panel-action-btn {
+  background-color: var(--bg-color) !important;
+  border: 1px solid #9292928f !important;
+}
+
+#top-titlebar .toolbar-icon.btn.hover,
+#top-titlebar .toolbar-icon.btn:hover {
+  background-color: #212121;
+}
+
+#top-titlebar {
+  font-family: var(--monospace);
+}
+</style>
+<style type='text/css'  id="style-mathjax">
+mjx-container[jax="SVG"] {
+  direction: ltr;
+}
+
+mjx-container[jax="SVG"] > svg {
+  overflow: visible;
+  min-height: 1px;
+  min-width: 1px;
+}
+
+mjx-container[jax="SVG"] > svg a {
+  fill: blue;
+  stroke: blue;
+}
+
+mjx-assistive-mml {
+  position: absolute !important;
+  top: 0px;
+  left: 0px;
+  clip: rect(1px, 1px, 1px, 1px);
+  padding: 1px 0px 0px 0px !important;
+  border: 0px !important;
+  display: block !important;
+  width: auto !important;
+  overflow: hidden !important;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+mjx-assistive-mml[display="block"] {
+  width: 100% !important;
+}
+
+mjx-container[jax="SVG"][display="true"] {
+  display: block;
+  text-align: center;
+  margin: 1em 0;
+}
+
+mjx-container[jax="SVG"][display="true"][width="full"] {
+  display: flex;
+}
+
+mjx-container[jax="SVG"][justify="left"] {
+  text-align: left;
+}
+
+mjx-container[jax="SVG"][justify="right"] {
+  text-align: right;
+}
+
+g[data-mml-node="merror"] > g {
+  fill: red;
+  stroke: red;
+}
+
+g[data-mml-node="merror"] > rect[data-background] {
+  fill: yellow;
+  stroke: none;
+}
+
+g[data-mml-node="mtable"] > line[data-line], svg[data-table] > g > line[data-line] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > rect[data-frame], svg[data-table] > g > rect[data-frame] {
+  stroke-width: 70px;
+  fill: none;
+}
+
+g[data-mml-node="mtable"] > .mjx-dashed, svg[data-table] > g > .mjx-dashed {
+  stroke-dasharray: 140;
+}
+
+g[data-mml-node="mtable"] > .mjx-dotted, svg[data-table] > g > .mjx-dotted {
+  stroke-linecap: round;
+  stroke-dasharray: 0,140;
+}
+
+g[data-mml-node="mtable"] > g > svg {
+  overflow: visible;
+}
+
+[jax="SVG"] mjx-tool {
+  display: inline-block;
+  position: relative;
+  width: 0;
+  height: 0;
+}
+
+[jax="SVG"] mjx-tool > mjx-tip {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+mjx-tool > mjx-tip {
+  display: inline-block;
+  padding: .2em;
+  border: 1px solid #888;
+  font-size: 70%;
+  background-color: #F8F8F8;
+  color: black;
+  box-shadow: 2px 2px 5px #AAAAAA;
+}
+
+g[data-mml-node="maction"][data-toggle] {
+  cursor: pointer;
+}
+
+mjx-status {
+  display: block;
+  position: fixed;
+  left: 1em;
+  bottom: 1em;
+  min-width: 25%;
+  padding: .2em .4em;
+  border: 1px solid #888;
+  font-size: 90%;
+  background-color: #F8F8F8;
+  color: black;
+}
+
+foreignObject[data-mjx-xml] {
+  font-family: initial;
+  line-height: normal;
+  overflow: visible;
+}
+
+mjx-container[jax="SVG2"] path[data-c], mjx-container[jax="SVG2"] use[data-c] {
+  stroke-width: 3;
+}
+
+g[data-mml-node="xypic"] path {
+  stroke-width: inherit;
+}
+
+.MathJax g[data-mml-node="xypic"] path {
+  stroke-width: inherit;
+}
+</style>
+<style type='text/css'  id="style-mathjax-ni">mjx-container[jax="SVG"] path[data-c], mjx-container[jax="SVG"] use[data-c] {
+							stroke-width: 0;
+						}</style>
+<style type='text/css'  id="style-lp">ol, ul {padding-left: 40px}</style>
+
+<title>final_report</title>
+</head>
+<body class='typora-export'><div class='typora-export-content'>
+<div id='write'  class=''><h1 id='startrailcuda-gpu-accelerated-rendering-of-night-sky-star-trails-video---milestone-report'><strong><span>StarTrailCUDA: GPU-Accelerated Rendering of Night-Sky Star Trails Video</span></strong><span> - Milestone Report</span></h1><p><strong><span>Team Members:</span></strong><span> Zijun Yang &lt;zijuny@andrew.cmu.edu&gt; and Jiache Zhang &lt;jiachez@andrew.cmu.edu&gt;</span></p><p><strong><span>Project Home Page:</span></strong><span> </span><a href='https://blog.zjyang.dev/StarTrailCUDA/'><span>https://blog.zjyang.dev/StarTrailCUDA/</span></a></p><p><img src="./project_proposal.assets/image-20251117192727072.png" alt="image-20251117192727072"></p><center><a href="https://www.bilibili.com/video/BV1Q64y1a7FE/?share_source=copy_web&vd_source=248bf19a901960bb7bbfb1705c664b9c&t=79">https://www.bilibili.com/video/BV1Q64y1a7FE/?share_source=copy_web&vd_source=248bf19a901960bb7bbfb1705c664b9c&t=79</a></center><h2 id='summary'><span>SUMMARY</span></h2><p><span>zjc</span></p><h2 id='background'><span>BACKGROUND</span></h2><p><span>zjc</span></p><h2 id='approaches-and-results'><span>APPROACHES AND RESULTS</span></h2><h3 id='experiment-setup'><span>EXPERIMENT SETUP</span></h3><p><span>zjc</span></p><h3 id='rendering-algorithms'><span>RENDERING ALGORITHMS</span></h3><h4 id='max'><span>MAX</span></h4><p><span>zjc</span></p><h4 id='linear'><span>LINEAR</span></h4><p><span>zjc</span></p><h4 id='linearapprox'><span>LINEARAPPROX</span></h4><p><span>zjc</span></p><h3 id='implementations'><span>IMPLEMENTATIONS</span></h3><h4 id='baseline'><span>BASELINE</span></h4><p><span>zjc</span></p><h4 id='baseline-with-hardware-codec'><span>BASELINE WITH HARDWARE CODEC</span></h4><p><span>zjc</span></p><h4 id='cuda'><span>CUDA</span></h4><p><span>zjc</span></p><h4 id='cuda--pipeline'><span>CUDA + PIPELINE</span></h4><p><span>In the CUDA approach, the video data flows through three conceptual stages:</span></p><ul><li><p><strong><span>Decode:</span></strong><span> The process begins with compressed video packets. These packets are decoded to produce raw video frames. Each packet contains encoded information for a segment of the video, and decoding transforms this data into a usable frame format.</span></p></li><li><p><strong><span>Render:</span></strong><span> The raw frames are then processed to generate output frames with the desired star trail effects. Each input frame is transformed into an output frame, where the visual effect is applied.</span></p></li><li><p><strong><span>Encode:</span></strong><span> Finally, the processed output frames are re-encoded into compressed video packets.</span></p></li></ul><p><span>Each stage utilizes a different part of the GPU: decoding uses the video decoding circuit, rendering uses CUDA cores, and encoding uses the video encoding circuit. In the basic CUDA approach, while one stage is active, the other hardware components remain idle.</span></p><p><span>This underutilization motivates the use of a pipeline, where decoding, rendering, and encoding are performed concurrently. By overlapping these stages, the pipeline keeps all GPU components busy, significantly improving overall throughput and reducing idle time for each hardware unit. In a pipelined approach, while frame N is being decoded, frame N+1 can be rendered, and frame N+2 can be encoded, all at the same time.</span></p><p><img src="./final_report.assets/cuda_pipeline.png" alt="img"></p><p><span>Given that the decode stage is the most time-consuming stage in the CUDA implementation, costing 19553ms, a naive three-stage pipeline would be limited by this duration. However, we decompose the workflow into five distinct concurrency units, which allows further parallelization and avoids being limited by the giant decode stage:</span></p><ol start='' ><li><p><strong><span>Packet Reader</span></strong><span>: Reads compressed video packets (H.264/HEVC/VP9/AV1) from disk to host memory</span></p></li><li><p><strong><span>Hardware Decoder</span></strong><span>: Transforms compressed packets from host memory to NV12 format on GPU</span></p></li><li><p><strong><span>Renderer</span></strong><span>: Applies star trail effects using CUDA kernels on GPU (maintains NV12 format)</span></p></li><li><p><strong><span>Encoder</span></strong><span>: Compresses rendered NV12 frames on GPU to H.264 packets</span></p></li><li><p><strong><span>File Writer</span></strong><span>: Writes compressed H.264 packets from host memory to output video file on disk</span></p></li></ol><p><span>Stages are connected by thread-safe queues that enable asynchronous communication between pipeline components, decoupling processing rates and maintaining data flow.</span></p><p><span>The following pipeline table illustrates how frames progress through different stages over time, showing the overlapping nature of the 5-stage pipeline:</span></p><figure class='table-figure'><table><thead><tr><th>&nbsp;</th><th><span>1</span></th><th><span>2</span></th><th><span>3</span></th><th><span>4</span></th><th><span>5</span></th><th><span>6</span></th><th><span>7</span></th><th><span>8</span></th><th><span>9</span></th></tr></thead><tbody><tr><td><span>Frame 1</span></td><td><span>PR</span></td><td><span>DE</span></td><td><span>RE</span></td><td><span>EN</span></td><td><span>WR</span></td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr><tr><td><span>Frame 2</span></td><td>&nbsp;</td><td><span>PR</span></td><td><span>DE</span></td><td><span>RE</span></td><td><span>EN</span></td><td><span>WR</span></td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr><tr><td><span>Frame 3</span></td><td>&nbsp;</td><td>&nbsp;</td><td><span>PR</span></td><td><span>DE</span></td><td><span>RE</span></td><td><span>EN</span></td><td><span>WR</span></td><td>&nbsp;</td><td>&nbsp;</td></tr><tr><td><span>Frame 4</span></td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td><span>PR</span></td><td><span>DE</span></td><td><span>RE</span></td><td><span>EN</span></td><td><span>WR</span></td><td>&nbsp;</td></tr><tr><td><span>Frame 5</span></td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td><span>PR</span></td><td><span>DE</span></td><td><span>RE</span></td><td><span>EN</span></td><td><span>WR</span></td></tr></tbody></table></figure><p><span>Where: PR=Packet Reader, DE=Hardware Decoder, RE=Renderer, EN=Encoder, WR=File Writer</span></p><p><span>Additionally, the CUDA implementation originally used RGB format for frames, requiring transfers between CPU and GPU for format conversion. This caused NV12→RGB→NV12 conversions (CPU→GPU→CPU→GPU) that wasted significant time and bandwidth. To optimize this, we modified the renderer to process NV12 frames directly, keeping frames in GPU memory from decode to encode without unnecessary transfers.</span></p><p><strong><span>This results in a massive performance improvement with a runtime of 4.6s, which is a ~250x speedup compared to the baseline implementation.</span></strong></p><p><strong><span>Detailed Timing Breakdown:</span></strong></p><figure class='table-figure'><table><thead><tr><th><span>Operation</span></th><th><span>Time per frame (us)</span></th></tr></thead><tbody><tr><td><strong><span>Decoder</span></strong></td><td>&nbsp;</td></tr><tr><td><span>Packet read</span></td><td><span>213</span></td></tr><tr><td><span>Decode</span></td><td><span>548</span></td></tr><tr><td><span>GPU transfer</span></td><td><span>1585</span></td></tr><tr><td><span>Output queue push</span></td><td><span>8557</span></td></tr><tr><td><strong><span>Renderer</span></strong></td><td>&nbsp;</td></tr><tr><td><span>Input queue pop</span></td><td><span>2</span></td></tr><tr><td><span>Render</span></td><td><span>1227</span></td></tr><tr><td><span>Output queue push</span></td><td><span>2</span></td></tr><tr><td><strong><span>Encoder</span></strong></td><td>&nbsp;</td></tr><tr><td><span>Input queue pop</span></td><td><span>368</span></td></tr><tr><td><span>GPU transfer</span></td><td><span>444</span></td></tr><tr><td><span>Encoding</span></td><td><span>90</span></td></tr><tr><td><span>Packet queue push</span></td><td><span>4</span></td></tr><tr><td><span>Write</span></td><td><span>106</span></td></tr></tbody></table></figure><p><strong><span>Total frames</span></strong><span>: 444</span></p><p><span>However, we found the result to be confusing:</span></p><p><span>From the renderer&#39;s 2us pop and 2us push on input and output queue, we were sure that the renderer should be the bottleneck. This meant that the decoder was waiting for the renderer to take the next frame and the encoder was waiting for the renderer to give the next frame, so there was little time the renderer spent on waiting. However, other stages took way more time than the 1227us the renderer takes per frame and 1227us x 444 frames does not equal 4.6 seconds.</span></p><p><span>Examining our code, we found that we only included the computational time in the rendering phase, and not all the other construction and destruction steps which include malloc and free.</span></p><p><span>We added logs on those items as well and the result was as follows:</span></p><p><strong><span>Detailed Timing Breakdown with Memory Operations:</span></strong></p><figure class='table-figure'><table><thead><tr><th><span>Operation</span></th><th><span>Time per frame (us)</span></th></tr></thead><tbody><tr><td><strong><span>Decoder</span></strong></td><td>&nbsp;</td></tr><tr><td><span>Read</span></td><td><span>98</span></td></tr><tr><td><span>Decode</span></td><td><span>637</span></td></tr><tr><td><span>Memory alloc</span></td><td><span>1363</span></td></tr><tr><td><span>GPU transfer</span></td><td><span>544</span></td></tr><tr><td><span>Output queue push</span></td><td><span>8090</span></td></tr><tr><td><strong><span>Renderer</span></strong></td><td>&nbsp;</td></tr><tr><td><span>Input queue pop</span></td><td><span>3</span></td></tr><tr><td><span>Memory alloc</span></td><td><span>0</span></td></tr><tr><td><span>Render</span></td><td><span>1291</span></td></tr><tr><td><span>Memory free</span></td><td><span>8547</span></td></tr><tr><td><span>Output queue push</span></td><td><span>3</span></td></tr><tr><td><strong><span>Encoder</span></strong></td><td>&nbsp;</td></tr><tr><td><span>Input queue pop</span></td><td><span>451</span></td></tr><tr><td><span>Frame alloc</span></td><td><span>2</span></td></tr><tr><td><span>GPU transfer</span></td><td><span>406</span></td></tr><tr><td><span>Encoding</span></td><td><span>128</span></td></tr><tr><td><span>Packet queue push</span></td><td><span>4</span></td></tr><tr><td><span>Memory free</span></td><td><span>9343</span></td></tr><tr><td><span>Write</span></td><td><span>130</span></td></tr></tbody></table></figure><p><span>This clearly indicates that the bottleneck for the CUDA pipeline implementation is indeed the renderer and the key issue was the excessive number of memory operations.</span></p><h4 id='cuda--pipeline--zero-copy--buffer-pool'><span>CUDA + PIPELINE + ZERO COPY + BUFFER POOL</span></h4><p><span>To fix the memory issue in the CUDA pipeline implementation, we use as little copy as possible and also a buffer pool to reuse frame buffers. A chunk of memory is popped from the buffer pool for receiving the result of the decoder, processed by the renderer and sent to the encoder to perform the output and eventually recycled to the buffer pool. This keeps all cudaFree and cudaMalloc in the initialization and shutdown phase, and zero memory allocation operations in the process. It also reduces the number of memory copies significantly.</span></p><p><img src="./final_report.assets/buffer_pool.png"></p><p><strong><span>The performance is stunning: It only takes 2.6s to complete rendering the test video, which is a 433x speedup compared with the baseline.</span></strong></p><p><strong><span>Detailed Timing Breakdown:</span></strong></p><figure class='table-figure'><table><thead><tr><th style='text-align:left;' ><span>Operation</span></th><th style='text-align:left;' ><span>Time per frame (µs)</span></th></tr></thead><tbody><tr><td style='text-align:left;' ><strong><span>Decoder</span></strong></td><td style='text-align:left;' >&nbsp;</td></tr><tr><td style='text-align:left;' ><span>Packet read</span></td><td style='text-align:left;' ><span>84</span></td></tr><tr><td style='text-align:left;' ><span>Decode</span></td><td style='text-align:left;' ><span>5596</span></td></tr><tr><td style='text-align:left;' ><span>Buffer acquire</span></td><td style='text-align:left;' ><span>0</span></td></tr><tr><td style='text-align:left;' ><span>GPU copy</span></td><td style='text-align:left;' ><span>538</span></td></tr><tr><td style='text-align:left;' ><span>Output queue push</span></td><td style='text-align:left;' ><span>5</span></td></tr><tr><td style='text-align:left;' ><strong><span>Renderer</span></strong></td><td style='text-align:left;' >&nbsp;</td></tr><tr><td style='text-align:left;' ><span>Input queue pop</span></td><td style='text-align:left;' ><span>5543</span></td></tr><tr><td style='text-align:left;' ><span>Buffer acquire</span></td><td style='text-align:left;' ><span>0</span></td></tr><tr><td style='text-align:left;' ><span>Render</span></td><td style='text-align:left;' ><span>1003</span></td></tr><tr><td style='text-align:left;' ><span>Buffer release</span></td><td style='text-align:left;' ><span>0</span></td></tr><tr><td style='text-align:left;' ><span>Output queue push</span></td><td style='text-align:left;' ><span>0</span></td></tr><tr><td style='text-align:left;' ><strong><span>Encoder</span></strong></td><td style='text-align:left;' >&nbsp;</td></tr><tr><td style='text-align:left;' ><span>Input queue pop</span></td><td style='text-align:left;' ><span>0</span></td></tr><tr><td style='text-align:left;' ><span>Frame alloc</span></td><td style='text-align:left;' ><span>0</span></td></tr><tr><td style='text-align:left;' ><span>GPU transfer</span></td><td style='text-align:left;' ><span>440</span></td></tr><tr><td style='text-align:left;' ><span>Encoding</span></td><td style='text-align:left;' ><span>5367</span></td></tr><tr><td style='text-align:left;' ><span>Packet queue push</span></td><td style='text-align:left;' ><span>4</span></td></tr><tr><td style='text-align:left;' ><span>Buffer release</span></td><td style='text-align:left;' ><span>0</span></td></tr><tr><td style='text-align:left;' ><span>Write</span></td><td style='text-align:left;' ><span>120</span></td></tr></tbody></table></figure><p><strong><span>Total frames processed:</span></strong><span> 444</span></p><p><span>As you can see from the breakdown table, the renderer runs blazing fast now, and the bottleneck is the decoder.</span>
+<span>If we calculate the decode time 5596µs/frame x 444 frames, we will get around 2.6s, which further confirms it is the bottleneck. This is an atomic operation with the codec library provided by FFmpeg, so 2.6s is the theoretical best performance we can achieve with FFmpeg.</span></p><p><span>However, it is possible to improve beyond this point by using </span><a href='https://developer.nvidia.com/video-codec-sdk'><span>NVIDIA Video Codec SDK</span></a><span> which provides more fine-grained control and more parallelism and pipeline opportunity to further break this atomic operation into steps and run them in parallel.</span></p><p><span>With that said, we don&#39;t have much time left, and we&#39;re generally pretty happy about the result. If we recall Amdahl&#39;s law, there are some much more time-consuming, sequential parts in this star trail pipeline that are at higher priority to be optimized at this point, like downloading input videos, adding music to the trail, or even coming up with a good name for the output file or a good Instagram post caption :)</span></p><h2 id='list-of-work-by-each-student-and-distribution-of-total-credit'><span>LIST OF WORK BY EACH STUDENT AND DISTRIBUTION OF TOTAL CREDIT</span></h2><figure class='table-figure'><table><thead><tr><th><span>Task</span></th><th><span>Assigned To</span></th></tr></thead><tbody><tr><td><strong><span>Exploring rendering algorithms</span></strong></td><td>&nbsp;</td></tr><tr><td><span>MAX</span></td><td><span>Jiache Zhang</span></td></tr><tr><td><span>AVERAGE</span></td><td><span>Jiache Zhang</span></td></tr><tr><td><span>EXPONENTIAL</span></td><td><span>Jiache Zhang</span></td></tr><tr><td><span>LINEAR</span></td><td><span>Jiache Zhang</span></td></tr><tr><td><span>LINEARAPPROX</span></td><td><span>Zijun Yang</span></td></tr><tr><td><strong><span>Implementations</span></strong></td><td>&nbsp;</td></tr><tr><td><span>Baseline</span></td><td><span>Jiache Zhang</span></td></tr><tr><td><span>Baseline with hardware codec</span></td><td><span>Jiache Zhang, Zijun Yang</span></td></tr><tr><td><span>CUDA</span></td><td><span>Zijun Yang</span></td></tr><tr><td><span>CUDA + pipeline</span></td><td><span>Zijun Yang</span></td></tr><tr><td><span>CUDA + pipeline + zero copy + buffer pool</span></td><td><span>Zijun Yang, Jiache Zhang</span></td></tr><tr><td><strong><span>Brainstorming, testing and documenting</span></strong></td><td><span>Zijun Yang, Jiache Zhang</span></td></tr></tbody></table></figure><p><span>Credit should be distributed 50-50.</span></p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p>&nbsp;</p><p><span>milestone:</span></p><p>&nbsp;</p><hr /><h2 id='list-of-work-completed-so-far'><span>LIST OF WORK COMPLETED SO FAR</span></h2><p><span>We explored different star trail algorithms:</span></p><ul><li><p><span>MAX: The MAX algorithm maintains an accumulated per-pixel maximum with a small decay so that bright pixels persist as trails. (Jiache Zhang)</span></p></li><li><p><span>AVERAGE: The AVERAGE algorithm sums frames within a sliding window and outputs the per-pixel average, equally combining recent frames. (Jiache Zhang)</span></p></li><li><p><span>EXPONENTIAL: The EXPONENTIAL algorithm maintains an exponential moving average of frames (</span><mjx-container class="MathJax" jax="SVG" style="position: relative;"><svg xmlns="http://www.w3.org/2000/svg" width="30.489ex" height="2.262ex" role="img" focusable="false" viewBox="0 -750 13476.3 1000" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" style="vertical-align: -0.566ex;"><defs><path id="MJX-15-TEX-N-61" d="M137 305T115 305T78 320T63 359Q63 394 97 421T218 448Q291 448 336 416T396 340Q401 326 401 309T402 194V124Q402 76 407 58T428 40Q443 40 448 56T453 109V145H493V106Q492 66 490 59Q481 29 455 12T400 -6T353 12T329 54V58L327 55Q325 52 322 49T314 40T302 29T287 17T269 6T247 -2T221 -8T190 -11Q130 -11 82 20T34 107Q34 128 41 147T68 188T116 225T194 253T304 268H318V290Q318 324 312 340Q290 411 215 411Q197 411 181 410T156 406T148 403Q170 388 170 359Q170 334 154 320ZM126 106Q126 75 150 51T209 26Q247 26 276 49T315 109Q317 116 318 175Q318 233 317 233Q309 233 296 232T251 223T193 203T147 166T126 106Z"></path><path id="MJX-15-TEX-N-63" d="M370 305T349 305T313 320T297 358Q297 381 312 396Q317 401 317 402T307 404Q281 408 258 408Q209 408 178 376Q131 329 131 219Q131 137 162 90Q203 29 272 29Q313 29 338 55T374 117Q376 125 379 127T395 129H409Q415 123 415 120Q415 116 411 104T395 71T366 33T318 2T249 -11Q163 -11 99 53T34 214Q34 318 99 383T250 448T370 421T404 357Q404 334 387 320Z"></path><path id="MJX-15-TEX-N-3D" d="M56 347Q56 360 70 367H707Q722 359 722 347Q722 336 708 328L390 327H72Q56 332 56 347ZM56 153Q56 168 72 173H708Q722 163 722 153Q722 140 707 133H70Q56 140 56 153Z"></path><path id="MJX-15-TEX-N-28" d="M94 250Q94 319 104 381T127 488T164 576T202 643T244 695T277 729T302 750H315H319Q333 750 333 741Q333 738 316 720T275 667T226 581T184 443T167 250T184 58T225 -81T274 -167T316 -220T333 -241Q333 -250 318 -250H315H302L274 -226Q180 -141 137 -14T94 250Z"></path><path id="MJX-15-TEX-N-31" d="M213 578L200 573Q186 568 160 563T102 556H83V602H102Q149 604 189 617T245 641T273 663Q275 666 285 666Q294 666 302 660V361L303 61Q310 54 315 52T339 48T401 46H427V0H416Q395 3 257 3Q121 3 100 0H88V46H114Q136 46 152 46T177 47T193 50T201 52T207 57T213 61V578Z"></path><path id="MJX-15-TEX-N-2212" d="M84 237T84 250T98 270H679Q694 262 694 250T679 230H98Q84 237 84 250Z"></path><path id="MJX-15-TEX-I-1D6FC" d="M34 156Q34 270 120 356T309 442Q379 442 421 402T478 304Q484 275 485 237V208Q534 282 560 374Q564 388 566 390T582 393Q603 393 603 385Q603 376 594 346T558 261T497 161L486 147L487 123Q489 67 495 47T514 26Q528 28 540 37T557 60Q559 67 562 68T577 70Q597 70 597 62Q597 56 591 43Q579 19 556 5T512 -10H505Q438 -10 414 62L411 69L400 61Q390 53 370 41T325 18T267 -2T203 -11Q124 -11 79 39T34 156ZM208 26Q257 26 306 47T379 90L403 112Q401 255 396 290Q382 405 304 405Q235 405 183 332Q156 292 139 224T121 120Q121 71 146 49T208 26Z"></path><path id="MJX-15-TEX-N-29" d="M60 749L64 750Q69 750 74 750H86L114 726Q208 641 251 514T294 250Q294 182 284 119T261 12T224 -76T186 -143T145 -194T113 -227T90 -246Q87 -249 86 -250H74Q66 -250 63 -250T58 -247T55 -238Q56 -237 66 -225Q221 -64 221 250T66 725Q56 737 55 738Q55 746 60 749Z"></path><path id="MJX-15-TEX-N-2217" d="M229 286Q216 420 216 436Q216 454 240 464Q241 464 245 464T251 465Q263 464 273 456T283 436Q283 419 277 356T270 286L328 328Q384 369 389 372T399 375Q412 375 423 365T435 338Q435 325 425 315Q420 312 357 282T289 250L355 219L425 184Q434 175 434 161Q434 146 425 136T401 125Q393 125 383 131T328 171L270 213Q283 79 283 63Q283 53 276 44T250 35Q231 35 224 44T216 63Q216 80 222 143T229 213L171 171Q115 130 110 127Q106 124 100 124Q87 124 76 134T64 161Q64 166 64 169T67 175T72 181T81 188T94 195T113 204T138 215T170 230T210 250L74 315Q65 324 65 338Q65 353 74 363T98 374Q106 374 116 368T171 328L229 286Z"></path><path id="MJX-15-TEX-N-2B" d="M56 237T56 250T70 270H369V420L370 570Q380 583 389 583Q402 583 409 568V270H707Q722 262 722 250T707 230H409V-68Q401 -82 391 -82H389H387Q375 -82 369 -68V230H70Q56 237 56 250Z"></path><path id="MJX-15-TEX-N-66" d="M273 0Q255 3 146 3Q43 3 34 0H26V46H42Q70 46 91 49Q99 52 103 60Q104 62 104 224V385H33V431H104V497L105 564L107 574Q126 639 171 668T266 704Q267 704 275 704T289 705Q330 702 351 679T372 627Q372 604 358 590T321 576T284 590T270 627Q270 647 288 667H284Q280 668 273 668Q245 668 223 647T189 592Q183 572 182 497V431H293V385H185V225Q185 63 186 61T189 57T194 54T199 51T206 49T213 48T222 47T231 47T241 46T251 46H282V0H273Z"></path><path id="MJX-15-TEX-N-72" d="M36 46H50Q89 46 97 60V68Q97 77 97 91T98 122T98 161T98 203Q98 234 98 269T98 328L97 351Q94 370 83 376T38 385H20V408Q20 431 22 431L32 432Q42 433 60 434T96 436Q112 437 131 438T160 441T171 442H174V373Q213 441 271 441H277Q322 441 343 419T364 373Q364 352 351 337T313 322Q288 322 276 338T263 372Q263 381 265 388T270 400T273 405Q271 407 250 401Q234 393 226 386Q179 341 179 207V154Q179 141 179 127T179 101T180 81T180 66V61Q181 59 183 57T188 54T193 51T200 49T207 48T216 47T225 47T235 46T245 46H276V0H267Q249 3 140 3Q37 3 28 0H20V46H36Z"></path><path id="MJX-15-TEX-N-6D" d="M41 46H55Q94 46 102 60V68Q102 77 102 91T102 122T103 161T103 203Q103 234 103 269T102 328V351Q99 370 88 376T43 385H25V408Q25 431 27 431L37 432Q47 433 65 434T102 436Q119 437 138 438T167 441T178 442H181V402Q181 364 182 364T187 369T199 384T218 402T247 421T285 437Q305 442 336 442Q351 442 364 440T387 434T406 426T421 417T432 406T441 395T448 384T452 374T455 366L457 361L460 365Q463 369 466 373T475 384T488 397T503 410T523 422T546 432T572 439T603 442Q729 442 740 329Q741 322 741 190V104Q741 66 743 59T754 49Q775 46 803 46H819V0H811L788 1Q764 2 737 2T699 3Q596 3 587 0H579V46H595Q656 46 656 62Q657 64 657 200Q656 335 655 343Q649 371 635 385T611 402T585 404Q540 404 506 370Q479 343 472 315T464 232V168V108Q464 78 465 68T468 55T477 49Q498 46 526 46H542V0H534L510 1Q487 2 460 2T422 3Q319 3 310 0H302V46H318Q379 46 379 62Q380 64 380 200Q379 335 378 343Q372 371 358 385T334 402T308 404Q263 404 229 370Q202 343 195 315T187 232V168V108Q187 78 188 68T191 55T200 49Q221 46 249 46H265V0H257L234 1Q210 2 183 2T145 3Q42 3 33 0H25V46H41Z"></path><path id="MJX-15-TEX-N-65" d="M28 218Q28 273 48 318T98 391T163 433T229 448Q282 448 320 430T378 380T406 316T415 245Q415 238 408 231H126V216Q126 68 226 36Q246 30 270 30Q312 30 342 62Q359 79 369 104L379 128Q382 131 395 131H398Q415 131 415 121Q415 117 412 108Q393 53 349 21T250 -11Q155 -11 92 58T28 218ZM333 275Q322 403 238 411H236Q228 411 220 410T195 402T166 381T143 340T127 274V267H333V275Z"></path></defs><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="mtext"><use data-c="61" xlink:href="#MJX-15-TEX-N-61"></use><use data-c="63" xlink:href="#MJX-15-TEX-N-63" transform="translate(500,0)"></use><use data-c="63" xlink:href="#MJX-15-TEX-N-63" transform="translate(944,0)"></use></g><g data-mml-node="mo" transform="translate(1665.8,0)"><use data-c="3D" xlink:href="#MJX-15-TEX-N-3D"></use></g><g data-mml-node="mo" transform="translate(2721.6,0)"><use data-c="28" xlink:href="#MJX-15-TEX-N-28"></use></g><g data-mml-node="mn" transform="translate(3110.6,0)"><use data-c="31" xlink:href="#MJX-15-TEX-N-31"></use></g><g data-mml-node="mo" transform="translate(3832.8,0)"><use data-c="2212" xlink:href="#MJX-15-TEX-N-2212"></use></g><g data-mml-node="mi" transform="translate(4833,0)"><use data-c="1D6FC" xlink:href="#MJX-15-TEX-I-1D6FC"></use></g><g data-mml-node="mo" transform="translate(5473,0)"><use data-c="29" xlink:href="#MJX-15-TEX-N-29"></use></g><g data-mml-node="mo" transform="translate(6084.2,0)"><use data-c="2217" xlink:href="#MJX-15-TEX-N-2217"></use></g><g data-mml-node="mtext" transform="translate(6806.4,0)"><use data-c="61" xlink:href="#MJX-15-TEX-N-61"></use><use data-c="63" xlink:href="#MJX-15-TEX-N-63" transform="translate(500,0)"></use><use data-c="63" xlink:href="#MJX-15-TEX-N-63" transform="translate(944,0)"></use></g><g data-mml-node="mo" transform="translate(8416.7,0)"><use data-c="2B" xlink:href="#MJX-15-TEX-N-2B"></use></g><g data-mml-node="mi" transform="translate(9416.9,0)"><use data-c="1D6FC" xlink:href="#MJX-15-TEX-I-1D6FC"></use></g><g data-mml-node="mo" transform="translate(10279.1,0)"><use data-c="2217" xlink:href="#MJX-15-TEX-N-2217"></use></g><g data-mml-node="mtext" transform="translate(11001.3,0)"><use data-c="66" xlink:href="#MJX-15-TEX-N-66"></use><use data-c="72" xlink:href="#MJX-15-TEX-N-72" transform="translate(306,0)"></use><use data-c="61" xlink:href="#MJX-15-TEX-N-61" transform="translate(698,0)"></use><use data-c="6D" xlink:href="#MJX-15-TEX-N-6D" transform="translate(1198,0)"></use><use data-c="65" xlink:href="#MJX-15-TEX-N-65" transform="translate(2031,0)"></use></g></g></g></svg><mjx-assistive-mml unselectable="on" display="inline"><math xmlns="http://www.w3.org/1998/Math/MathML"><mtext>acc</mtext><mo>=</mo><mo stretchy="false">(</mo><mn>1</mn><mo>−</mo><mi>α</mi><mo stretchy="false">)</mo><mo>∗</mo><mtext>acc</mtext><mo>+</mo><mi>α</mi><mo>∗</mo><mtext>frame</mtext></math></mjx-assistive-mml></mjx-container><script type="math/tex">\text{acc} = (1-\alpha) * \text{acc} + \alpha * \text{frame}</script><span>); however, it is hard to control the tail length. (Jiache Zhang)</span></p></li><li><p><span>LINEAR: The LINEAR algorithm keeps a fixed-size deque of recent frames and applies linearly decreasing weights with element-wise maxima across weighted frames. The cost of LINEAR algorithm is </span><mjx-container class="MathJax" jax="SVG" style="position: relative;"><svg xmlns="http://www.w3.org/2000/svg" width="15.086ex" height="2.262ex" role="img" focusable="false" viewBox="0 -750 6668 1000" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" style="vertical-align: -0.566ex;"><defs><path id="MJX-18-TEX-I-1D442" d="M740 435Q740 320 676 213T511 42T304 -22Q207 -22 138 35T51 201Q50 209 50 244Q50 346 98 438T227 601Q351 704 476 704Q514 704 524 703Q621 689 680 617T740 435ZM637 476Q637 565 591 615T476 665Q396 665 322 605Q242 542 200 428T157 216Q157 126 200 73T314 19Q404 19 485 98T608 313Q637 408 637 476Z"></path><path id="MJX-18-TEX-N-28" d="M94 250Q94 319 104 381T127 488T164 576T202 643T244 695T277 729T302 750H315H319Q333 750 333 741Q333 738 316 720T275 667T226 581T184 443T167 250T184 58T225 -81T274 -167T316 -220T333 -241Q333 -250 318 -250H315H302L274 -226Q180 -141 137 -14T94 250Z"></path><path id="MJX-18-TEX-I-1D464" d="M580 385Q580 406 599 424T641 443Q659 443 674 425T690 368Q690 339 671 253Q656 197 644 161T609 80T554 12T482 -11Q438 -11 404 5T355 48Q354 47 352 44Q311 -11 252 -11Q226 -11 202 -5T155 14T118 53T104 116Q104 170 138 262T173 379Q173 380 173 381Q173 390 173 393T169 400T158 404H154Q131 404 112 385T82 344T65 302T57 280Q55 278 41 278H27Q21 284 21 287Q21 293 29 315T52 366T96 418T161 441Q204 441 227 416T250 358Q250 340 217 250T184 111Q184 65 205 46T258 26Q301 26 334 87L339 96V119Q339 122 339 128T340 136T341 143T342 152T345 165T348 182T354 206T362 238T373 281Q402 395 406 404Q419 431 449 431Q468 431 475 421T483 402Q483 389 454 274T422 142Q420 131 420 107V100Q420 85 423 71T442 42T487 26Q558 26 600 148Q609 171 620 213T632 273Q632 306 619 325T593 357T580 385Z"></path><path id="MJX-18-TEX-I-1D456" d="M184 600Q184 624 203 642T247 661Q265 661 277 649T290 619Q290 596 270 577T226 557Q211 557 198 567T184 600ZM21 287Q21 295 30 318T54 369T98 420T158 442Q197 442 223 419T250 357Q250 340 236 301T196 196T154 83Q149 61 149 51Q149 26 166 26Q175 26 185 29T208 43T235 78T260 137Q263 149 265 151T282 153Q302 153 302 143Q302 135 293 112T268 61T223 11T161 -11Q129 -11 102 10T74 74Q74 91 79 106T122 220Q160 321 166 341T173 380Q173 404 156 404H154Q124 404 99 371T61 287Q60 286 59 284T58 281T56 279T53 278T49 278T41 278H27Q21 284 21 287Z"></path><path id="MJX-18-TEX-I-1D45B" d="M21 287Q22 293 24 303T36 341T56 388T89 425T135 442Q171 442 195 424T225 390T231 369Q231 367 232 367L243 378Q304 442 382 442Q436 442 469 415T503 336T465 179T427 52Q427 26 444 26Q450 26 453 27Q482 32 505 65T540 145Q542 153 560 153Q580 153 580 145Q580 144 576 130Q568 101 554 73T508 17T439 -10Q392 -10 371 17T350 73Q350 92 386 193T423 345Q423 404 379 404H374Q288 404 229 303L222 291L189 157Q156 26 151 16Q138 -11 108 -11Q95 -11 87 -5T76 7T74 17Q74 30 112 180T152 343Q153 348 153 366Q153 405 129 405Q91 405 66 305Q60 285 60 284Q58 278 41 278H27Q21 284 21 287Z"></path><path id="MJX-18-TEX-I-1D451" d="M366 683Q367 683 438 688T511 694Q523 694 523 686Q523 679 450 384T375 83T374 68Q374 26 402 26Q411 27 422 35Q443 55 463 131Q469 151 473 152Q475 153 483 153H487H491Q506 153 506 145Q506 140 503 129Q490 79 473 48T445 8T417 -8Q409 -10 393 -10Q359 -10 336 5T306 36L300 51Q299 52 296 50Q294 48 292 46Q233 -10 172 -10Q117 -10 75 30T33 157Q33 205 53 255T101 341Q148 398 195 420T280 442Q336 442 364 400Q369 394 369 396Q370 400 396 505T424 616Q424 629 417 632T378 637H357Q351 643 351 645T353 664Q358 683 366 683ZM352 326Q329 405 277 405Q242 405 210 374T160 293Q131 214 119 129Q119 126 119 118T118 106Q118 61 136 44T179 26Q233 26 290 98L298 109L352 326Z"></path><path id="MJX-18-TEX-I-1D45C" d="M201 -11Q126 -11 80 38T34 156Q34 221 64 279T146 380Q222 441 301 441Q333 441 341 440Q354 437 367 433T402 417T438 387T464 338T476 268Q476 161 390 75T201 -11ZM121 120Q121 70 147 48T206 26Q250 26 289 58T351 142Q360 163 374 216T388 308Q388 352 370 375Q346 405 306 405Q243 405 195 347Q158 303 140 230T121 120Z"></path><path id="MJX-18-TEX-I-1D460" d="M131 289Q131 321 147 354T203 415T300 442Q362 442 390 415T419 355Q419 323 402 308T364 292Q351 292 340 300T328 326Q328 342 337 354T354 372T367 378Q368 378 368 379Q368 382 361 388T336 399T297 405Q249 405 227 379T204 326Q204 301 223 291T278 274T330 259Q396 230 396 163Q396 135 385 107T352 51T289 7T195 -10Q118 -10 86 19T53 87Q53 126 74 143T118 160Q133 160 146 151T160 120Q160 94 142 76T111 58Q109 57 108 57T107 55Q108 52 115 47T146 34T201 27Q237 27 263 38T301 66T318 97T323 122Q323 150 302 164T254 181T195 196T148 231Q131 256 131 289Z"></path><path id="MJX-18-TEX-I-1D467" d="M347 338Q337 338 294 349T231 360Q211 360 197 356T174 346T162 335T155 324L153 320Q150 317 138 317Q117 317 117 325Q117 330 120 339Q133 378 163 406T229 440Q241 442 246 442Q271 442 291 425T329 392T367 375Q389 375 411 408T434 441Q435 442 449 442H462Q468 436 468 434Q468 430 463 420T449 399T432 377T418 358L411 349Q368 298 275 214T160 106L148 94L163 93Q185 93 227 82T290 71Q328 71 360 90T402 140Q406 149 409 151T424 153Q443 153 443 143Q443 138 442 134Q425 72 376 31T278 -11Q252 -11 232 6T193 40T155 57Q111 57 76 -3Q70 -11 59 -11H54H41Q35 -5 35 -2Q35 13 93 84Q132 129 225 214T340 322Q352 338 347 338Z"></path><path id="MJX-18-TEX-I-1D452" d="M39 168Q39 225 58 272T107 350T174 402T244 433T307 442H310Q355 442 388 420T421 355Q421 265 310 237Q261 224 176 223Q139 223 138 221Q138 219 132 186T125 128Q125 81 146 54T209 26T302 45T394 111Q403 121 406 121Q410 121 419 112T429 98T420 82T390 55T344 24T281 -1T205 -11Q126 -11 83 42T39 168ZM373 353Q367 405 305 405Q272 405 244 391T199 357T170 316T154 280T149 261Q149 260 169 260Q282 260 327 284T373 353Z"></path><path id="MJX-18-TEX-N-29" d="M60 749L64 750Q69 750 74 750H86L114 726Q208 641 251 514T294 250Q294 182 284 119T261 12T224 -76T186 -143T145 -194T113 -227T90 -246Q87 -249 86 -250H74Q66 -250 63 -250T58 -247T55 -238Q56 -237 66 -225Q221 -64 221 250T66 725Q56 737 55 738Q55 746 60 749Z"></path></defs><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="mi"><use data-c="1D442" xlink:href="#MJX-18-TEX-I-1D442"></use></g><g data-mml-node="mo" transform="translate(763,0)"><use data-c="28" xlink:href="#MJX-18-TEX-N-28"></use></g><g data-mml-node="mi" transform="translate(1152,0)"><use data-c="1D464" xlink:href="#MJX-18-TEX-I-1D464"></use></g><g data-mml-node="mi" transform="translate(1868,0)"><use data-c="1D456" xlink:href="#MJX-18-TEX-I-1D456"></use></g><g data-mml-node="mi" transform="translate(2213,0)"><use data-c="1D45B" xlink:href="#MJX-18-TEX-I-1D45B"></use></g><g data-mml-node="mi" transform="translate(2813,0)"><use data-c="1D451" xlink:href="#MJX-18-TEX-I-1D451"></use></g><g data-mml-node="mi" transform="translate(3333,0)"><use data-c="1D45C" xlink:href="#MJX-18-TEX-I-1D45C"></use></g><g data-mml-node="mi" transform="translate(3818,0)"><use data-c="1D464" xlink:href="#MJX-18-TEX-I-1D464"></use></g><g data-mml-node="mi" transform="translate(4534,0)"><use data-c="1D460" xlink:href="#MJX-18-TEX-I-1D460"></use></g><g data-mml-node="mi" transform="translate(5003,0)"><use data-c="1D456" xlink:href="#MJX-18-TEX-I-1D456"></use></g><g data-mml-node="mi" transform="translate(5348,0)"><use data-c="1D467" xlink:href="#MJX-18-TEX-I-1D467"></use></g><g data-mml-node="mi" transform="translate(5813,0)"><use data-c="1D452" xlink:href="#MJX-18-TEX-I-1D452"></use></g><g data-mml-node="mo" transform="translate(6279,0)"><use data-c="29" xlink:href="#MJX-18-TEX-N-29"></use></g></g></g></svg><mjx-assistive-mml unselectable="on" display="inline"><math xmlns="http://www.w3.org/1998/Math/MathML"><mi>O</mi><mo stretchy="false">(</mo><mi>w</mi><mi>i</mi><mi>n</mi><mi>d</mi><mi>o</mi><mi>w</mi><mi>s</mi><mi>i</mi><mi>z</mi><mi>e</mi><mo stretchy="false">)</mo></math></mjx-assistive-mml></mjx-container><script type="math/tex">O(window size)</script><span>. (Jiache Zhang)</span></p></li><li><p><span>LINEARAPPROX: Uses mathematical heuristics to approximate the LINEAR algorithm with </span><mjx-container class="MathJax" jax="SVG" style="position: relative;"><svg xmlns="http://www.w3.org/2000/svg" width="4.618ex" height="2.262ex" role="img" focusable="false" viewBox="0 -750 2041 1000" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" style="vertical-align: -0.566ex;"><defs><path id="MJX-26-TEX-I-1D442" d="M740 435Q740 320 676 213T511 42T304 -22Q207 -22 138 35T51 201Q50 209 50 244Q50 346 98 438T227 601Q351 704 476 704Q514 704 524 703Q621 689 680 617T740 435ZM637 476Q637 565 591 615T476 665Q396 665 322 605Q242 542 200 428T157 216Q157 126 200 73T314 19Q404 19 485 98T608 313Q637 408 637 476Z"></path><path id="MJX-26-TEX-N-28" d="M94 250Q94 319 104 381T127 488T164 576T202 643T244 695T277 729T302 750H315H319Q333 750 333 741Q333 738 316 720T275 667T226 581T184 443T167 250T184 58T225 -81T274 -167T316 -220T333 -241Q333 -250 318 -250H315H302L274 -226Q180 -141 137 -14T94 250Z"></path><path id="MJX-26-TEX-N-31" d="M213 578L200 573Q186 568 160 563T102 556H83V602H102Q149 604 189 617T245 641T273 663Q275 666 285 666Q294 666 302 660V361L303 61Q310 54 315 52T339 48T401 46H427V0H416Q395 3 257 3Q121 3 100 0H88V46H114Q136 46 152 46T177 47T193 50T201 52T207 57T213 61V578Z"></path><path id="MJX-26-TEX-N-29" d="M60 749L64 750Q69 750 74 750H86L114 726Q208 641 251 514T294 250Q294 182 284 119T261 12T224 -76T186 -143T145 -194T113 -227T90 -246Q87 -249 86 -250H74Q66 -250 63 -250T58 -247T55 -238Q56 -237 66 -225Q221 -64 221 250T66 725Q56 737 55 738Q55 746 60 749Z"></path></defs><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="mi"><use data-c="1D442" xlink:href="#MJX-26-TEX-I-1D442"></use></g><g data-mml-node="mo" transform="translate(763,0)"><use data-c="28" xlink:href="#MJX-26-TEX-N-28"></use></g><g data-mml-node="mn" transform="translate(1152,0)"><use data-c="31" xlink:href="#MJX-26-TEX-N-31"></use></g><g data-mml-node="mo" transform="translate(1652,0)"><use data-c="29" xlink:href="#MJX-26-TEX-N-29"></use></g></g></g></svg><mjx-assistive-mml unselectable="on" display="inline"><math xmlns="http://www.w3.org/1998/Math/MathML"><mi>O</mi><mo stretchy="false">(</mo><mn>1</mn><mo stretchy="false">)</mo></math></mjx-assistive-mml></mjx-container><script type="math/tex">O(1)</script><span> cost instead of </span><mjx-container class="MathJax" jax="SVG" style="position: relative;"><svg xmlns="http://www.w3.org/2000/svg" width="15.086ex" height="2.262ex" role="img" focusable="false" viewBox="0 -750 6668 1000" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" style="vertical-align: -0.566ex;"><defs><path id="MJX-18-TEX-I-1D442" d="M740 435Q740 320 676 213T511 42T304 -22Q207 -22 138 35T51 201Q50 209 50 244Q50 346 98 438T227 601Q351 704 476 704Q514 704 524 703Q621 689 680 617T740 435ZM637 476Q637 565 591 615T476 665Q396 665 322 605Q242 542 200 428T157 216Q157 126 200 73T314 19Q404 19 485 98T608 313Q637 408 637 476Z"></path><path id="MJX-18-TEX-N-28" d="M94 250Q94 319 104 381T127 488T164 576T202 643T244 695T277 729T302 750H315H319Q333 750 333 741Q333 738 316 720T275 667T226 581T184 443T167 250T184 58T225 -81T274 -167T316 -220T333 -241Q333 -250 318 -250H315H302L274 -226Q180 -141 137 -14T94 250Z"></path><path id="MJX-18-TEX-I-1D464" d="M580 385Q580 406 599 424T641 443Q659 443 674 425T690 368Q690 339 671 253Q656 197 644 161T609 80T554 12T482 -11Q438 -11 404 5T355 48Q354 47 352 44Q311 -11 252 -11Q226 -11 202 -5T155 14T118 53T104 116Q104 170 138 262T173 379Q173 380 173 381Q173 390 173 393T169 400T158 404H154Q131 404 112 385T82 344T65 302T57 280Q55 278 41 278H27Q21 284 21 287Q21 293 29 315T52 366T96 418T161 441Q204 441 227 416T250 358Q250 340 217 250T184 111Q184 65 205 46T258 26Q301 26 334 87L339 96V119Q339 122 339 128T340 136T341 143T342 152T345 165T348 182T354 206T362 238T373 281Q402 395 406 404Q419 431 449 431Q468 431 475 421T483 402Q483 389 454 274T422 142Q420 131 420 107V100Q420 85 423 71T442 42T487 26Q558 26 600 148Q609 171 620 213T632 273Q632 306 619 325T593 357T580 385Z"></path><path id="MJX-18-TEX-I-1D456" d="M184 600Q184 624 203 642T247 661Q265 661 277 649T290 619Q290 596 270 577T226 557Q211 557 198 567T184 600ZM21 287Q21 295 30 318T54 369T98 420T158 442Q197 442 223 419T250 357Q250 340 236 301T196 196T154 83Q149 61 149 51Q149 26 166 26Q175 26 185 29T208 43T235 78T260 137Q263 149 265 151T282 153Q302 153 302 143Q302 135 293 112T268 61T223 11T161 -11Q129 -11 102 10T74 74Q74 91 79 106T122 220Q160 321 166 341T173 380Q173 404 156 404H154Q124 404 99 371T61 287Q60 286 59 284T58 281T56 279T53 278T49 278T41 278H27Q21 284 21 287Z"></path><path id="MJX-18-TEX-I-1D45B" d="M21 287Q22 293 24 303T36 341T56 388T89 425T135 442Q171 442 195 424T225 390T231 369Q231 367 232 367L243 378Q304 442 382 442Q436 442 469 415T503 336T465 179T427 52Q427 26 444 26Q450 26 453 27Q482 32 505 65T540 145Q542 153 560 153Q580 153 580 145Q580 144 576 130Q568 101 554 73T508 17T439 -10Q392 -10 371 17T350 73Q350 92 386 193T423 345Q423 404 379 404H374Q288 404 229 303L222 291L189 157Q156 26 151 16Q138 -11 108 -11Q95 -11 87 -5T76 7T74 17Q74 30 112 180T152 343Q153 348 153 366Q153 405 129 405Q91 405 66 305Q60 285 60 284Q58 278 41 278H27Q21 284 21 287Z"></path><path id="MJX-18-TEX-I-1D451" d="M366 683Q367 683 438 688T511 694Q523 694 523 686Q523 679 450 384T375 83T374 68Q374 26 402 26Q411 27 422 35Q443 55 463 131Q469 151 473 152Q475 153 483 153H487H491Q506 153 506 145Q506 140 503 129Q490 79 473 48T445 8T417 -8Q409 -10 393 -10Q359 -10 336 5T306 36L300 51Q299 52 296 50Q294 48 292 46Q233 -10 172 -10Q117 -10 75 30T33 157Q33 205 53 255T101 341Q148 398 195 420T280 442Q336 442 364 400Q369 394 369 396Q370 400 396 505T424 616Q424 629 417 632T378 637H357Q351 643 351 645T353 664Q358 683 366 683ZM352 326Q329 405 277 405Q242 405 210 374T160 293Q131 214 119 129Q119 126 119 118T118 106Q118 61 136 44T179 26Q233 26 290 98L298 109L352 326Z"></path><path id="MJX-18-TEX-I-1D45C" d="M201 -11Q126 -11 80 38T34 156Q34 221 64 279T146 380Q222 441 301 441Q333 441 341 440Q354 437 367 433T402 417T438 387T464 338T476 268Q476 161 390 75T201 -11ZM121 120Q121 70 147 48T206 26Q250 26 289 58T351 142Q360 163 374 216T388 308Q388 352 370 375Q346 405 306 405Q243 405 195 347Q158 303 140 230T121 120Z"></path><path id="MJX-18-TEX-I-1D460" d="M131 289Q131 321 147 354T203 415T300 442Q362 442 390 415T419 355Q419 323 402 308T364 292Q351 292 340 300T328 326Q328 342 337 354T354 372T367 378Q368 378 368 379Q368 382 361 388T336 399T297 405Q249 405 227 379T204 326Q204 301 223 291T278 274T330 259Q396 230 396 163Q396 135 385 107T352 51T289 7T195 -10Q118 -10 86 19T53 87Q53 126 74 143T118 160Q133 160 146 151T160 120Q160 94 142 76T111 58Q109 57 108 57T107 55Q108 52 115 47T146 34T201 27Q237 27 263 38T301 66T318 97T323 122Q323 150 302 164T254 181T195 196T148 231Q131 256 131 289Z"></path><path id="MJX-18-TEX-I-1D467" d="M347 338Q337 338 294 349T231 360Q211 360 197 356T174 346T162 335T155 324L153 320Q150 317 138 317Q117 317 117 325Q117 330 120 339Q133 378 163 406T229 440Q241 442 246 442Q271 442 291 425T329 392T367 375Q389 375 411 408T434 441Q435 442 449 442H462Q468 436 468 434Q468 430 463 420T449 399T432 377T418 358L411 349Q368 298 275 214T160 106L148 94L163 93Q185 93 227 82T290 71Q328 71 360 90T402 140Q406 149 409 151T424 153Q443 153 443 143Q443 138 442 134Q425 72 376 31T278 -11Q252 -11 232 6T193 40T155 57Q111 57 76 -3Q70 -11 59 -11H54H41Q35 -5 35 -2Q35 13 93 84Q132 129 225 214T340 322Q352 338 347 338Z"></path><path id="MJX-18-TEX-I-1D452" d="M39 168Q39 225 58 272T107 350T174 402T244 433T307 442H310Q355 442 388 420T421 355Q421 265 310 237Q261 224 176 223Q139 223 138 221Q138 219 132 186T125 128Q125 81 146 54T209 26T302 45T394 111Q403 121 406 121Q410 121 419 112T429 98T420 82T390 55T344 24T281 -1T205 -11Q126 -11 83 42T39 168ZM373 353Q367 405 305 405Q272 405 244 391T199 357T170 316T154 280T149 261Q149 260 169 260Q282 260 327 284T373 353Z"></path><path id="MJX-18-TEX-N-29" d="M60 749L64 750Q69 750 74 750H86L114 726Q208 641 251 514T294 250Q294 182 284 119T261 12T224 -76T186 -143T145 -194T113 -227T90 -246Q87 -249 86 -250H74Q66 -250 63 -250T58 -247T55 -238Q56 -237 66 -225Q221 -64 221 250T66 725Q56 737 55 738Q55 746 60 749Z"></path></defs><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="mi"><use data-c="1D442" xlink:href="#MJX-18-TEX-I-1D442"></use></g><g data-mml-node="mo" transform="translate(763,0)"><use data-c="28" xlink:href="#MJX-18-TEX-N-28"></use></g><g data-mml-node="mi" transform="translate(1152,0)"><use data-c="1D464" xlink:href="#MJX-18-TEX-I-1D464"></use></g><g data-mml-node="mi" transform="translate(1868,0)"><use data-c="1D456" xlink:href="#MJX-18-TEX-I-1D456"></use></g><g data-mml-node="mi" transform="translate(2213,0)"><use data-c="1D45B" xlink:href="#MJX-18-TEX-I-1D45B"></use></g><g data-mml-node="mi" transform="translate(2813,0)"><use data-c="1D451" xlink:href="#MJX-18-TEX-I-1D451"></use></g><g data-mml-node="mi" transform="translate(3333,0)"><use data-c="1D45C" xlink:href="#MJX-18-TEX-I-1D45C"></use></g><g data-mml-node="mi" transform="translate(3818,0)"><use data-c="1D464" xlink:href="#MJX-18-TEX-I-1D464"></use></g><g data-mml-node="mi" transform="translate(4534,0)"><use data-c="1D460" xlink:href="#MJX-18-TEX-I-1D460"></use></g><g data-mml-node="mi" transform="translate(5003,0)"><use data-c="1D456" xlink:href="#MJX-18-TEX-I-1D456"></use></g><g data-mml-node="mi" transform="translate(5348,0)"><use data-c="1D467" xlink:href="#MJX-18-TEX-I-1D467"></use></g><g data-mml-node="mi" transform="translate(5813,0)"><use data-c="1D452" xlink:href="#MJX-18-TEX-I-1D452"></use></g><g data-mml-node="mo" transform="translate(6279,0)"><use data-c="29" xlink:href="#MJX-18-TEX-N-29"></use></g></g></g></svg><mjx-assistive-mml unselectable="on" display="inline"><math xmlns="http://www.w3.org/1998/Math/MathML"><mi>O</mi><mo stretchy="false">(</mo><mi>w</mi><mi>i</mi><mi>n</mi><mi>d</mi><mi>o</mi><mi>w</mi><mi>s</mi><mi>i</mi><mi>z</mi><mi>e</mi><mo stretchy="false">)</mo></math></mjx-assistive-mml></mjx-container><script type="math/tex">O(window size)</script><span> to render each frame. (Zijun Yang)</span></p></li></ul><p><span>We explored different implementations:</span></p><ul><li><p><span>Baseline: The baseline implementation is a CPU-based, serial decode–render–encode pipeline built with OpenCV that serves as our correctness reference and performance benchmark; it exposes decoding/encoding and per-frame rendering as the primary bottlenecks on high-resolution inputs. (Jiache Zhang)</span></p></li><li><p><span>Baseline with hardware codec: Similar to baseline, but with both video decoding and encoding replaced with hardware-accelerated implementations (using NVENC for encoding and CUVID for decoding) for improved performance. (Jiache Zhang and Zijun Yang)</span></p></li><li><p><span>CUDA: Similar to baseline with hardware codec, but with the rendering phase replaced with pixel-wise parallelism using CUDA kernels for high-performance computation of star trail effects. (Zijun Yang)</span></p></li></ul><h2 id='preliminary-results'><span>PRELIMINARY RESULTS</span></h2><blockquote><p><strong><span>NOTICE: Most videos on this page are in 4K. If you notice any aliasing, viewing it in full screen usually helps.</span></strong></p></blockquote><blockquote><p><span>Unless otherwise stated, the results are from an AWS EC2 g4dn.xlarge instance (4 vCPUs, 16GB RAM, NVIDIA T4, gp2 storage with 100 IOPS) running LINEARAPPROX algorithm with default parameters.</span></p></blockquote><h3 id='rendering-algorithms-2'><span>RENDERING ALGORITHMS</span></h3><h4 id='source-material-selection'><span>Source Material Selection</span></h4><p><span>Our source material is a high-quality all-night sky recording (non-time-lapse) from YouTube (video source: &lt;https://www.youtube.com/watch?v=Bbp1-p2FoXU&gt;). This video provides excellent clarity and resolution (3840×2160), making it ideal for rendering star trail videos.</span></p><p><span>We considered alternative sources, particularly examining the database at &lt;https://data.phys.ucalgary.ca/&gt;, which contains comprehensive continuous nighttime recordings from observatories worldwide over recent years. While this database offers extensive and complete data, it presents a significant limitation: the cameras are primarily scientific instruments designed for research purposes rather than high-quality cinematography, resulting in insufficient clarity for star trail rendering. Therefore, we opted for clear videos recorded by amateur astronomy enthusiasts.</span></p><h4 id='video-vs-image-format-consideration'><span>Video vs. Image Format Consideration</span></h4><p><span>Theoretically, using video files versus collections of individual images as source media would yield equivalent results. However, storing media in image format requires prohibitively large storage space. Our test video, when stored as an MP4 file, occupies 101.77MB. When each frame of this video is saved in PNG format, the total storage requirement reaches 18GB; even with JPEG compression, it still requires 3.6GB. This storage demand is unacceptable for development and testing environments with limited storage capacity (for example, GHC servers impose a 2GB storage limit per user, insufficient for image-format media storage). Mounting remote storage would introduce additional I/O overhead.</span></p><p><span>Consequently, we decided to store and process source media in video format to minimize local storage requirements. Additionally, MP4-compressed video maintains sufficient quality without affecting final rendering results, eliminating the need for uncompressed video or image inputs.</span></p><video width="100%"   controls muted autoplay loop>
+  <source src="https://github.com/zpatronus/StarTrailCUDA/raw/refs/heads/main/docs/videos/source.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video><center>Test video from Drew Cotten: <a href="https://www.youtube.com/watch?v=Bbp1-p2FoXU">https://www.youtube.com/watch?v=Bbp1-p2FoXU</a></center><h4 id='max-algorithm'><span>MAX Algorithm</span></h4><video width="100%"   controls muted autoplay loop>
+  <source src="https://github.com/zpatronus/StarTrailCUDA/raw/refs/heads/main/docs/videos/max.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video><center>MAX Algorithm</center><p><span>The MAX algorithm creates star trails by maintaining a cumulative maximum frame that preserves the brightest pixel values encountered over time. At each frame, the algorithm performs an element-wise maximum operation between the current input frame and the accumulated maximum frame, ensuring that bright stars leave persistent trails while darker background regions remain unaffected.</span></p><p><span>Key implementation details:</span></p><ul><li><p><strong><span>Decay Factor</span></strong><span>: A decay factor of 0.999 is applied to the accumulated frame before comparison, causing older trails to gradually fade and preventing infinite accumulation of brightness values</span></p></li><li><p><strong><span>Pixel-wise Maximum</span></strong><span>: For each pixel position, the algorithm selects the maximum value between the decayed accumulated frame and the current frame: </span><code>maxFrame = max(maxFrame × 0.999, currentFrame)</code></p></li></ul><p><span>While this approach is conceptually simple and straightforward to implement, the practical results are suboptimal. The decay factor of 0.999 is insufficient to prevent excessive accumulation of brightness values over time. As the video progresses, bright points fade too slowly, causing an increasing number of luminous artifacts to persist in the frame. This leads to severe overexposure and blurring effects, where the accumulated trails become overly bright and lose definition. The resulting star trail video appears washed out with poor contrast and indistinct trail boundaries, making it difficult to discern individual star trajectories. Although the MAX algorithm successfully demonstrates the basic concept of trail preservation, its aggressive retention of bright pixels without adequate decay control produces unsatisfactory visual quality.</span></p><h4 id='linear-algorithm'><span>LINEAR Algorithm</span></h4><video width="100%"   controls muted autoplay loop>
+  <source src="https://github.com/zpatronus/StarTrailCUDA/raw/refs/heads/main/docs/videos/linear.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video><center>LINEAR Algorithm</center><p><span>The LINEAR algorithm produces the highest quality star trail effects among all tested approaches by implementing a sophisticated sliding window technique with linear weight decay. This method maintains a fixed-size window of recent frames and applies linearly decreasing weights to create natural-looking trail fade effects.</span></p><p><span>Key implementation details:</span></p><ul><li><p><strong><span>Sliding Window</span></strong><span>: Maintains a deque of the most recent W frames (where W is the window size), automatically removing the oldest frame when the window is full</span></p></li><li><p><strong><span>Linear Weight Decay</span></strong><span>: Applies weights ranging from 1.0 (most recent frame) to 1/W (oldest frame in window), creating a smooth linear fade: </span><code>weight = (W - i) / W</code></p></li><li><p><strong><span>Pixel-wise Maximum</span></strong><span>: For each frame position, performs element-wise maximum operation between the weighted frame and the accumulated result: </span><code>accFrame = max(accFrame, weightedFrame)</code></p></li></ul><p><span>This approach produces visually superior results with well-defined star trajectories, appropriate trail lengths, and natural fade characteristics. The linear weighting ensures that recent star positions are prominent while older positions gradually diminish, creating realistic motion blur effects that closely resemble long-exposure photography techniques.</span></p><p><span>However, the algorithm&#39;s computational complexity is significantly higher due to the need to maintain and process the entire sliding window for each output frame. In our serial implementation, the LINEAR algorithm requires approximately 1125 seconds to complete rendering, making it impractical for real-time or near-real-time applications. The performance bottleneck stems from the intensive memory operations and repeated maximum computations across the sliding window, highlighting the critical need for parallel optimization techniques.</span></p><h4 id='linearapprox-algorithm'><span>LINEARAPPROX Algorithm</span></h4><p><span>In the LINEAR algorithm, it is very expensive both in memory and computation to trace back </span><mjx-container class="MathJax" jax="SVG" style="position: relative;"><svg xmlns="http://www.w3.org/2000/svg" width="2.371ex" height="1.595ex" role="img" focusable="false" viewBox="0 -683 1048 705" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" style="vertical-align: -0.05ex;"><defs><path id="MJX-19-TEX-I-1D44A" d="M436 683Q450 683 486 682T553 680Q604 680 638 681T677 682Q695 682 695 674Q695 670 692 659Q687 641 683 639T661 637Q636 636 621 632T600 624T597 615Q597 603 613 377T629 138L631 141Q633 144 637 151T649 170T666 200T690 241T720 295T759 362Q863 546 877 572T892 604Q892 619 873 628T831 637Q817 637 817 647Q817 650 819 660Q823 676 825 679T839 682Q842 682 856 682T895 682T949 681Q1015 681 1034 683Q1048 683 1048 672Q1048 666 1045 655T1038 640T1028 637Q1006 637 988 631T958 617T939 600T927 584L923 578L754 282Q586 -14 585 -15Q579 -22 561 -22Q546 -22 542 -17Q539 -14 523 229T506 480L494 462Q472 425 366 239Q222 -13 220 -15T215 -19Q210 -22 197 -22Q178 -22 176 -15Q176 -12 154 304T131 622Q129 631 121 633T82 637H58Q51 644 51 648Q52 671 64 683H76Q118 680 176 680Q301 680 313 683H323Q329 677 329 674T327 656Q322 641 318 637H297Q236 634 232 620Q262 160 266 136L501 550L499 587Q496 629 489 632Q483 636 447 637Q428 637 422 639T416 648Q416 650 418 660Q419 664 420 669T421 676T424 680T428 682T436 683Z"></path></defs><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="mi"><use data-c="1D44A" xlink:href="#MJX-19-TEX-I-1D44A"></use></g></g></g></svg><mjx-assistive-mml unselectable="on" display="inline"><math xmlns="http://www.w3.org/1998/Math/MathML"><mi>W</mi></math></mjx-assistive-mml></mjx-container><script type="math/tex">W</script><span> input frames to calculate a single output frame, given that an ideal effect requires a window size of 30 to 120. To improve this, our first idea was to use exponential decay since it only needs the last output frame and the new input frame to generate the new output frame. However, it is very hard to control the tail length using exponential decay and the visual effect tends to be that the head is too bright while the tail is too dark.</span></p><p><span>To solve this issue, we leverage the fact that the exponential function has a derivative of 1 near </span><mjx-container class="MathJax" jax="SVG" style="position: relative;"><svg xmlns="http://www.w3.org/2000/svg" width="5.442ex" height="1.692ex" role="img" focusable="false" viewBox="0 -666 2405.6 748" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" style="vertical-align: -0.186ex;"><defs><path id="MJX-20-TEX-I-1D465" d="M52 289Q59 331 106 386T222 442Q257 442 286 424T329 379Q371 442 430 442Q467 442 494 420T522 361Q522 332 508 314T481 292T458 288Q439 288 427 299T415 328Q415 374 465 391Q454 404 425 404Q412 404 406 402Q368 386 350 336Q290 115 290 78Q290 50 306 38T341 26Q378 26 414 59T463 140Q466 150 469 151T485 153H489Q504 153 504 145Q504 144 502 134Q486 77 440 33T333 -11Q263 -11 227 52Q186 -10 133 -10H127Q78 -10 57 16T35 71Q35 103 54 123T99 143Q142 143 142 101Q142 81 130 66T107 46T94 41L91 40Q91 39 97 36T113 29T132 26Q168 26 194 71Q203 87 217 139T245 247T261 313Q266 340 266 352Q266 380 251 392T217 404Q177 404 142 372T93 290Q91 281 88 280T72 278H58Q52 284 52 289Z"></path><path id="MJX-20-TEX-N-3D" d="M56 347Q56 360 70 367H707Q722 359 722 347Q722 336 708 328L390 327H72Q56 332 56 347ZM56 153Q56 168 72 173H708Q722 163 722 153Q722 140 707 133H70Q56 140 56 153Z"></path><path id="MJX-20-TEX-N-30" d="M96 585Q152 666 249 666Q297 666 345 640T423 548Q460 465 460 320Q460 165 417 83Q397 41 362 16T301 -15T250 -22Q224 -22 198 -16T137 16T82 83Q39 165 39 320Q39 494 96 585ZM321 597Q291 629 250 629Q208 629 178 597Q153 571 145 525T137 333Q137 175 145 125T181 46Q209 16 250 16Q290 16 318 46Q347 76 354 130T362 333Q362 478 354 524T321 597Z"></path></defs><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="mi"><use data-c="1D465" xlink:href="#MJX-20-TEX-I-1D465"></use></g><g data-mml-node="mo" transform="translate(849.8,0)"><use data-c="3D" xlink:href="#MJX-20-TEX-N-3D"></use></g><g data-mml-node="mn" transform="translate(1905.6,0)"><use data-c="30" xlink:href="#MJX-20-TEX-N-30"></use></g></g></g></svg><mjx-assistive-mml unselectable="on" display="inline"><math xmlns="http://www.w3.org/1998/Math/MathML"><mi>x</mi><mo>=</mo><mn>0</mn></math></mjx-assistive-mml></mjx-container><script type="math/tex">x=0</script><span> and we can approximate a LINEAR decay with the following formula:</span></p><p><mjx-container class="MathJax" jax="SVG" style="position: relative;"><svg xmlns="http://www.w3.org/2000/svg" width="17.772ex" height="2.421ex" role="img" focusable="false" viewBox="0 -865.1 7855.1 1070.1" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" style="vertical-align: -0.464ex;"><defs><path id="MJX-21-TEX-I-1D466" d="M21 287Q21 301 36 335T84 406T158 442Q199 442 224 419T250 355Q248 336 247 334Q247 331 231 288T198 191T182 105Q182 62 196 45T238 27Q261 27 281 38T312 61T339 94Q339 95 344 114T358 173T377 247Q415 397 419 404Q432 431 462 431Q475 431 483 424T494 412T496 403Q496 390 447 193T391 -23Q363 -106 294 -155T156 -205Q111 -205 77 -183T43 -117Q43 -95 50 -80T69 -58T89 -48T106 -45Q150 -45 150 -87Q150 -107 138 -122T115 -142T102 -147L99 -148Q101 -153 118 -160T152 -167H160Q177 -167 186 -165Q219 -156 247 -127T290 -65T313 -9T321 21L315 17Q309 13 296 6T270 -6Q250 -11 231 -11Q185 -11 150 11T104 82Q103 89 103 113Q103 170 138 262T173 379Q173 380 173 381Q173 390 173 393T169 400T158 404H154Q131 404 112 385T82 344T65 302T57 280Q55 278 41 278H27Q21 284 21 287Z"></path><path id="MJX-21-TEX-N-3D" d="M56 347Q56 360 70 367H707Q722 359 722 347Q722 336 708 328L390 327H72Q56 332 56 347ZM56 153Q56 168 72 173H708Q722 163 722 153Q722 140 707 133H70Q56 140 56 153Z"></path><path id="MJX-21-TEX-N-31" d="M213 578L200 573Q186 568 160 563T102 556H83V602H102Q149 604 189 617T245 641T273 663Q275 666 285 666Q294 666 302 660V361L303 61Q310 54 315 52T339 48T401 46H427V0H416Q395 3 257 3Q121 3 100 0H88V46H114Q136 46 152 46T177 47T193 50T201 52T207 57T213 61V578Z"></path><path id="MJX-21-TEX-N-2B" d="M56 237T56 250T70 270H369V420L370 570Q380 583 389 583Q402 583 409 568V270H707Q722 262 722 250T707 230H409V-68Q401 -82 391 -82H389H387Q375 -82 369 -68V230H70Q56 237 56 250Z"></path><path id="MJX-21-TEX-I-1D43F" d="M228 637Q194 637 192 641Q191 643 191 649Q191 673 202 682Q204 683 217 683Q271 680 344 680Q485 680 506 683H518Q524 677 524 674T522 656Q517 641 513 637H475Q406 636 394 628Q387 624 380 600T313 336Q297 271 279 198T252 88L243 52Q243 48 252 48T311 46H328Q360 46 379 47T428 54T478 72T522 106T564 161Q580 191 594 228T611 270Q616 273 628 273H641Q647 264 647 262T627 203T583 83T557 9Q555 4 553 3T537 0T494 -1Q483 -1 418 -1T294 0H116Q32 0 32 10Q32 17 34 24Q39 43 44 45Q48 46 59 46H65Q92 46 125 49Q139 52 144 61Q147 65 216 339T285 628Q285 635 228 637Z"></path><path id="MJX-21-TEX-N-2212" d="M84 237T84 250T98 270H679Q694 262 694 250T679 230H98Q84 237 84 250Z"></path><path id="MJX-21-TEX-I-1D452" d="M39 168Q39 225 58 272T107 350T174 402T244 433T307 442H310Q355 442 388 420T421 355Q421 265 310 237Q261 224 176 223Q139 223 138 221Q138 219 132 186T125 128Q125 81 146 54T209 26T302 45T394 111Q403 121 406 121Q410 121 419 112T429 98T420 82T390 55T344 24T281 -1T205 -11Q126 -11 83 42T39 168ZM373 353Q367 405 305 405Q272 405 244 391T199 357T170 316T154 280T149 261Q149 260 169 260Q282 260 327 284T373 353Z"></path><path id="MJX-21-TEX-I-1D465" d="M52 289Q59 331 106 386T222 442Q257 442 286 424T329 379Q371 442 430 442Q467 442 494 420T522 361Q522 332 508 314T481 292T458 288Q439 288 427 299T415 328Q415 374 465 391Q454 404 425 404Q412 404 406 402Q368 386 350 336Q290 115 290 78Q290 50 306 38T341 26Q378 26 414 59T463 140Q466 150 469 151T485 153H489Q504 153 504 145Q504 144 502 134Q486 77 440 33T333 -11Q263 -11 227 52Q186 -10 133 -10H127Q78 -10 57 16T35 71Q35 103 54 123T99 143Q142 143 142 101Q142 81 130 66T107 46T94 41L91 40Q91 39 97 36T113 29T132 26Q168 26 194 71Q203 87 217 139T245 247T261 313Q266 340 266 352Q266 380 251 392T217 404Q177 404 142 372T93 290Q91 281 88 280T72 278H58Q52 284 52 289Z"></path><path id="MJX-21-TEX-I-1D44A" d="M436 683Q450 683 486 682T553 680Q604 680 638 681T677 682Q695 682 695 674Q695 670 692 659Q687 641 683 639T661 637Q636 636 621 632T600 624T597 615Q597 603 613 377T629 138L631 141Q633 144 637 151T649 170T666 200T690 241T720 295T759 362Q863 546 877 572T892 604Q892 619 873 628T831 637Q817 637 817 647Q817 650 819 660Q823 676 825 679T839 682Q842 682 856 682T895 682T949 681Q1015 681 1034 683Q1048 683 1048 672Q1048 666 1045 655T1038 640T1028 637Q1006 637 988 631T958 617T939 600T927 584L923 578L754 282Q586 -14 585 -15Q579 -22 561 -22Q546 -22 542 -17Q539 -14 523 229T506 480L494 462Q472 425 366 239Q222 -13 220 -15T215 -19Q210 -22 197 -22Q178 -22 176 -15Q176 -12 154 304T131 622Q129 631 121 633T82 637H58Q51 644 51 648Q52 671 64 683H76Q118 680 176 680Q301 680 313 683H323Q329 677 329 674T327 656Q322 641 318 637H297Q236 634 232 620Q262 160 266 136L501 550L499 587Q496 629 489 632Q483 636 447 637Q428 637 422 639T416 648Q416 650 418 660Q419 664 420 669T421 676T424 680T428 682T436 683Z"></path></defs><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="mi"><use data-c="1D466" xlink:href="#MJX-21-TEX-I-1D466"></use></g><g data-mml-node="mo" transform="translate(767.8,0)"><use data-c="3D" xlink:href="#MJX-21-TEX-N-3D"></use></g><g data-mml-node="mn" transform="translate(1823.6,0)"><use data-c="31" xlink:href="#MJX-21-TEX-N-31"></use></g><g data-mml-node="mo" transform="translate(2545.8,0)"><use data-c="2B" xlink:href="#MJX-21-TEX-N-2B"></use></g><g data-mml-node="mi" transform="translate(3546,0)"><use data-c="1D43F" xlink:href="#MJX-21-TEX-I-1D43F"></use></g><g data-mml-node="mo" transform="translate(4449.2,0)"><use data-c="2212" xlink:href="#MJX-21-TEX-N-2212"></use></g><g data-mml-node="mi" transform="translate(5449.4,0)"><use data-c="1D43F" xlink:href="#MJX-21-TEX-I-1D43F"></use></g><g data-mml-node="msup" transform="translate(6130.4,0)"><g data-mml-node="mi"><use data-c="1D452" xlink:href="#MJX-21-TEX-I-1D452"></use></g><g data-mml-node="TeXAtom" transform="translate(499,365.5) scale(0.707)" data-mjx-texclass="ORD"><g data-mml-node="mfrac"><g data-mml-node="mi" transform="translate(629.1,394) scale(0.707)"><use data-c="1D465" xlink:href="#MJX-21-TEX-I-1D465"></use></g><g data-mml-node="mrow" transform="translate(220,-345) scale(0.707)"><g data-mml-node="mi"><use data-c="1D44A" xlink:href="#MJX-21-TEX-I-1D44A"></use></g><g data-mml-node="mi" transform="translate(1048,0)"><use data-c="1D43F" xlink:href="#MJX-21-TEX-I-1D43F"></use></g></g><rect width="1422.6" height="60" x="120" y="220"></rect></g></g></g></g></g></svg><mjx-assistive-mml unselectable="on" display="inline"><math xmlns="http://www.w3.org/1998/Math/MathML"><mi>y</mi><mo>=</mo><mn>1</mn><mo>+</mo><mi>L</mi><mo>−</mo><mi>L</mi><msup><mi>e</mi><mrow data-mjx-texclass="ORD"><mfrac><mi>x</mi><mrow><mi>W</mi><mi>L</mi></mrow></mfrac></mrow></msup></math></mjx-assistive-mml></mjx-container><script type="math/tex">y=1+L-L e^{\frac{x}{WL}}</script></p><p><span>, where </span><mjx-container class="MathJax" jax="SVG" style="position: relative;"><svg xmlns="http://www.w3.org/2000/svg" width="1.541ex" height="1.545ex" role="img" focusable="false" viewBox="0 -683 681 683" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" style="vertical-align: 0px;"><defs><path id="MJX-23-TEX-I-1D43F" d="M228 637Q194 637 192 641Q191 643 191 649Q191 673 202 682Q204 683 217 683Q271 680 344 680Q485 680 506 683H518Q524 677 524 674T522 656Q517 641 513 637H475Q406 636 394 628Q387 624 380 600T313 336Q297 271 279 198T252 88L243 52Q243 48 252 48T311 46H328Q360 46 379 47T428 54T478 72T522 106T564 161Q580 191 594 228T611 270Q616 273 628 273H641Q647 264 647 262T627 203T583 83T557 9Q555 4 553 3T537 0T494 -1Q483 -1 418 -1T294 0H116Q32 0 32 10Q32 17 34 24Q39 43 44 45Q48 46 59 46H65Q92 46 125 49Q139 52 144 61Q147 65 216 339T285 628Q285 635 228 637Z"></path></defs><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="mi"><use data-c="1D43F" xlink:href="#MJX-23-TEX-I-1D43F"></use></g></g></g></svg><mjx-assistive-mml unselectable="on" display="inline"><math xmlns="http://www.w3.org/1998/Math/MathML"><mi>L</mi></math></mjx-assistive-mml></mjx-container><script type="math/tex">L</script><span> is some number larger than 5 and a greater </span><mjx-container class="MathJax" jax="SVG" style="position: relative;"><svg xmlns="http://www.w3.org/2000/svg" width="1.541ex" height="1.545ex" role="img" focusable="false" viewBox="0 -683 681 683" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" style="vertical-align: 0px;"><defs><path id="MJX-23-TEX-I-1D43F" d="M228 637Q194 637 192 641Q191 643 191 649Q191 673 202 682Q204 683 217 683Q271 680 344 680Q485 680 506 683H518Q524 677 524 674T522 656Q517 641 513 637H475Q406 636 394 628Q387 624 380 600T313 336Q297 271 279 198T252 88L243 52Q243 48 252 48T311 46H328Q360 46 379 47T428 54T478 72T522 106T564 161Q580 191 594 228T611 270Q616 273 628 273H641Q647 264 647 262T627 203T583 83T557 9Q555 4 553 3T537 0T494 -1Q483 -1 418 -1T294 0H116Q32 0 32 10Q32 17 34 24Q39 43 44 45Q48 46 59 46H65Q92 46 125 49Q139 52 144 61Q147 65 216 339T285 628Q285 635 228 637Z"></path></defs><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="mi"><use data-c="1D43F" xlink:href="#MJX-23-TEX-I-1D43F"></use></g></g></g></svg><mjx-assistive-mml unselectable="on" display="inline"><math xmlns="http://www.w3.org/1998/Math/MathML"><mi>L</mi></math></mjx-assistive-mml></mjx-container><script type="math/tex">L</script><span> gives a better approximation.</span></p><p><span>Here&#39;s a comparison between the ground truth (the blue line) and our heuristic (the green line) under </span><mjx-container class="MathJax" jax="SVG" style="position: relative;"><svg xmlns="http://www.w3.org/2000/svg" width="6.519ex" height="1.731ex" role="img" focusable="false" viewBox="0 -683 2881.6 765" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" style="vertical-align: -0.186ex;"><defs><path id="MJX-24-TEX-I-1D44A" d="M436 683Q450 683 486 682T553 680Q604 680 638 681T677 682Q695 682 695 674Q695 670 692 659Q687 641 683 639T661 637Q636 636 621 632T600 624T597 615Q597 603 613 377T629 138L631 141Q633 144 637 151T649 170T666 200T690 241T720 295T759 362Q863 546 877 572T892 604Q892 619 873 628T831 637Q817 637 817 647Q817 650 819 660Q823 676 825 679T839 682Q842 682 856 682T895 682T949 681Q1015 681 1034 683Q1048 683 1048 672Q1048 666 1045 655T1038 640T1028 637Q1006 637 988 631T958 617T939 600T927 584L923 578L754 282Q586 -14 585 -15Q579 -22 561 -22Q546 -22 542 -17Q539 -14 523 229T506 480L494 462Q472 425 366 239Q222 -13 220 -15T215 -19Q210 -22 197 -22Q178 -22 176 -15Q176 -12 154 304T131 622Q129 631 121 633T82 637H58Q51 644 51 648Q52 671 64 683H76Q118 680 176 680Q301 680 313 683H323Q329 677 329 674T327 656Q322 641 318 637H297Q236 634 232 620Q262 160 266 136L501 550L499 587Q496 629 489 632Q483 636 447 637Q428 637 422 639T416 648Q416 650 418 660Q419 664 420 669T421 676T424 680T428 682T436 683Z"></path><path id="MJX-24-TEX-N-3D" d="M56 347Q56 360 70 367H707Q722 359 722 347Q722 336 708 328L390 327H72Q56 332 56 347ZM56 153Q56 168 72 173H708Q722 163 722 153Q722 140 707 133H70Q56 140 56 153Z"></path><path id="MJX-24-TEX-N-34" d="M462 0Q444 3 333 3Q217 3 199 0H190V46H221Q241 46 248 46T265 48T279 53T286 61Q287 63 287 115V165H28V211L179 442Q332 674 334 675Q336 677 355 677H373L379 671V211H471V165H379V114Q379 73 379 66T385 54Q393 47 442 46H471V0H462ZM293 211V545L74 212L183 211H293Z"></path></defs><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="mi"><use data-c="1D44A" xlink:href="#MJX-24-TEX-I-1D44A"></use></g><g data-mml-node="mo" transform="translate(1325.8,0)"><use data-c="3D" xlink:href="#MJX-24-TEX-N-3D"></use></g><g data-mml-node="mn" transform="translate(2381.6,0)"><use data-c="34" xlink:href="#MJX-24-TEX-N-34"></use></g></g></g></svg><mjx-assistive-mml unselectable="on" display="inline"><math xmlns="http://www.w3.org/1998/Math/MathML"><mi>W</mi><mo>=</mo><mn>4</mn></math></mjx-assistive-mml></mjx-container><script type="math/tex">W=4</script><span> and </span><mjx-container class="MathJax" jax="SVG" style="position: relative;"><svg xmlns="http://www.w3.org/2000/svg" width="6.82ex" height="1.731ex" role="img" focusable="false" viewBox="0 -683 3014.6 765" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" style="vertical-align: -0.186ex;"><defs><path id="MJX-25-TEX-I-1D43F" d="M228 637Q194 637 192 641Q191 643 191 649Q191 673 202 682Q204 683 217 683Q271 680 344 680Q485 680 506 683H518Q524 677 524 674T522 656Q517 641 513 637H475Q406 636 394 628Q387 624 380 600T313 336Q297 271 279 198T252 88L243 52Q243 48 252 48T311 46H328Q360 46 379 47T428 54T478 72T522 106T564 161Q580 191 594 228T611 270Q616 273 628 273H641Q647 264 647 262T627 203T583 83T557 9Q555 4 553 3T537 0T494 -1Q483 -1 418 -1T294 0H116Q32 0 32 10Q32 17 34 24Q39 43 44 45Q48 46 59 46H65Q92 46 125 49Q139 52 144 61Q147 65 216 339T285 628Q285 635 228 637Z"></path><path id="MJX-25-TEX-N-3D" d="M56 347Q56 360 70 367H707Q722 359 722 347Q722 336 708 328L390 327H72Q56 332 56 347ZM56 153Q56 168 72 173H708Q722 163 722 153Q722 140 707 133H70Q56 140 56 153Z"></path><path id="MJX-25-TEX-N-31" d="M213 578L200 573Q186 568 160 563T102 556H83V602H102Q149 604 189 617T245 641T273 663Q275 666 285 666Q294 666 302 660V361L303 61Q310 54 315 52T339 48T401 46H427V0H416Q395 3 257 3Q121 3 100 0H88V46H114Q136 46 152 46T177 47T193 50T201 52T207 57T213 61V578Z"></path><path id="MJX-25-TEX-N-30" d="M96 585Q152 666 249 666Q297 666 345 640T423 548Q460 465 460 320Q460 165 417 83Q397 41 362 16T301 -15T250 -22Q224 -22 198 -16T137 16T82 83Q39 165 39 320Q39 494 96 585ZM321 597Q291 629 250 629Q208 629 178 597Q153 571 145 525T137 333Q137 175 145 125T181 46Q209 16 250 16Q290 16 318 46Q347 76 354 130T362 333Q362 478 354 524T321 597Z"></path></defs><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="mi"><use data-c="1D43F" xlink:href="#MJX-25-TEX-I-1D43F"></use></g><g data-mml-node="mo" transform="translate(958.8,0)"><use data-c="3D" xlink:href="#MJX-25-TEX-N-3D"></use></g><g data-mml-node="mn" transform="translate(2014.6,0)"><use data-c="31" xlink:href="#MJX-25-TEX-N-31"></use><use data-c="30" xlink:href="#MJX-25-TEX-N-30" transform="translate(500,0)"></use></g></g></g></svg><mjx-assistive-mml unselectable="on" display="inline"><math xmlns="http://www.w3.org/1998/Math/MathML"><mi>L</mi><mo>=</mo><mn>10</mn></math></mjx-assistive-mml></mjx-container><script type="math/tex">L=10</script><span>.</span></p><p><img src="./milestone.assets/image-20251201110544491.png" alt="image-20251201110544491"></p><p><span>With this heuristic, the new output frame can be approximated using only the last output frame and the new input frame using this formula in </span><mjx-container class="MathJax" jax="SVG" style="position: relative;"><svg xmlns="http://www.w3.org/2000/svg" width="4.618ex" height="2.262ex" role="img" focusable="false" viewBox="0 -750 2041 1000" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" style="vertical-align: -0.566ex;"><defs><path id="MJX-26-TEX-I-1D442" d="M740 435Q740 320 676 213T511 42T304 -22Q207 -22 138 35T51 201Q50 209 50 244Q50 346 98 438T227 601Q351 704 476 704Q514 704 524 703Q621 689 680 617T740 435ZM637 476Q637 565 591 615T476 665Q396 665 322 605Q242 542 200 428T157 216Q157 126 200 73T314 19Q404 19 485 98T608 313Q637 408 637 476Z"></path><path id="MJX-26-TEX-N-28" d="M94 250Q94 319 104 381T127 488T164 576T202 643T244 695T277 729T302 750H315H319Q333 750 333 741Q333 738 316 720T275 667T226 581T184 443T167 250T184 58T225 -81T274 -167T316 -220T333 -241Q333 -250 318 -250H315H302L274 -226Q180 -141 137 -14T94 250Z"></path><path id="MJX-26-TEX-N-31" d="M213 578L200 573Q186 568 160 563T102 556H83V602H102Q149 604 189 617T245 641T273 663Q275 666 285 666Q294 666 302 660V361L303 61Q310 54 315 52T339 48T401 46H427V0H416Q395 3 257 3Q121 3 100 0H88V46H114Q136 46 152 46T177 47T193 50T201 52T207 57T213 61V578Z"></path><path id="MJX-26-TEX-N-29" d="M60 749L64 750Q69 750 74 750H86L114 726Q208 641 251 514T294 250Q294 182 284 119T261 12T224 -76T186 -143T145 -194T113 -227T90 -246Q87 -249 86 -250H74Q66 -250 63 -250T58 -247T55 -238Q56 -237 66 -225Q221 -64 221 250T66 725Q56 737 55 738Q55 746 60 749Z"></path></defs><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="mi"><use data-c="1D442" xlink:href="#MJX-26-TEX-I-1D442"></use></g><g data-mml-node="mo" transform="translate(763,0)"><use data-c="28" xlink:href="#MJX-26-TEX-N-28"></use></g><g data-mml-node="mn" transform="translate(1152,0)"><use data-c="31" xlink:href="#MJX-26-TEX-N-31"></use></g><g data-mml-node="mo" transform="translate(1652,0)"><use data-c="29" xlink:href="#MJX-26-TEX-N-29"></use></g></g></g></svg><mjx-assistive-mml unselectable="on" display="inline"><math xmlns="http://www.w3.org/1998/Math/MathML"><mi>O</mi><mo stretchy="false">(</mo><mn>1</mn><mo stretchy="false">)</mo></math></mjx-assistive-mml></mjx-container><script type="math/tex">O(1)</script><span>:</span></p><p><mjx-container class="MathJax" jax="SVG" style="position: relative;"><svg xmlns="http://www.w3.org/2000/svg" width="89.718ex" height="4.07ex" role="img" focusable="false" viewBox="0 -1149.5 39655.3 1799" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" style="vertical-align: -1.469ex;"><defs><path id="MJX-27-TEX-I-1D441" d="M234 637Q231 637 226 637Q201 637 196 638T191 649Q191 676 202 682Q204 683 299 683Q376 683 387 683T401 677Q612 181 616 168L670 381Q723 592 723 606Q723 633 659 637Q635 637 635 648Q635 650 637 660Q641 676 643 679T653 683Q656 683 684 682T767 680Q817 680 843 681T873 682Q888 682 888 672Q888 650 880 642Q878 637 858 637Q787 633 769 597L620 7Q618 0 599 0Q585 0 582 2Q579 5 453 305L326 604L261 344Q196 88 196 79Q201 46 268 46H278Q284 41 284 38T282 19Q278 6 272 0H259Q228 2 151 2Q123 2 100 2T63 2T46 1Q31 1 31 10Q31 14 34 26T39 40Q41 46 62 46Q130 49 150 85Q154 91 221 362L289 634Q287 635 234 637Z"></path><path id="MJX-27-TEX-I-1D452" d="M39 168Q39 225 58 272T107 350T174 402T244 433T307 442H310Q355 442 388 420T421 355Q421 265 310 237Q261 224 176 223Q139 223 138 221Q138 219 132 186T125 128Q125 81 146 54T209 26T302 45T394 111Q403 121 406 121Q410 121 419 112T429 98T420 82T390 55T344 24T281 -1T205 -11Q126 -11 83 42T39 168ZM373 353Q367 405 305 405Q272 405 244 391T199 357T170 316T154 280T149 261Q149 260 169 260Q282 260 327 284T373 353Z"></path><path id="MJX-27-TEX-I-1D464" d="M580 385Q580 406 599 424T641 443Q659 443 674 425T690 368Q690 339 671 253Q656 197 644 161T609 80T554 12T482 -11Q438 -11 404 5T355 48Q354 47 352 44Q311 -11 252 -11Q226 -11 202 -5T155 14T118 53T104 116Q104 170 138 262T173 379Q173 380 173 381Q173 390 173 393T169 400T158 404H154Q131 404 112 385T82 344T65 302T57 280Q55 278 41 278H27Q21 284 21 287Q21 293 29 315T52 366T96 418T161 441Q204 441 227 416T250 358Q250 340 217 250T184 111Q184 65 205 46T258 26Q301 26 334 87L339 96V119Q339 122 339 128T340 136T341 143T342 152T345 165T348 182T354 206T362 238T373 281Q402 395 406 404Q419 431 449 431Q468 431 475 421T483 402Q483 389 454 274T422 142Q420 131 420 107V100Q420 85 423 71T442 42T487 26Q558 26 600 148Q609 171 620 213T632 273Q632 306 619 325T593 357T580 385Z"></path><path id="MJX-27-TEX-I-1D442" d="M740 435Q740 320 676 213T511 42T304 -22Q207 -22 138 35T51 201Q50 209 50 244Q50 346 98 438T227 601Q351 704 476 704Q514 704 524 703Q621 689 680 617T740 435ZM637 476Q637 565 591 615T476 665Q396 665 322 605Q242 542 200 428T157 216Q157 126 200 73T314 19Q404 19 485 98T608 313Q637 408 637 476Z"></path><path id="MJX-27-TEX-I-1D462" d="M21 287Q21 295 30 318T55 370T99 420T158 442Q204 442 227 417T250 358Q250 340 216 246T182 105Q182 62 196 45T238 27T291 44T328 78L339 95Q341 99 377 247Q407 367 413 387T427 416Q444 431 463 431Q480 431 488 421T496 402L420 84Q419 79 419 68Q419 43 426 35T447 26Q469 29 482 57T512 145Q514 153 532 153Q551 153 551 144Q550 139 549 130T540 98T523 55T498 17T462 -8Q454 -10 438 -10Q372 -10 347 46Q345 45 336 36T318 21T296 6T267 -6T233 -11Q189 -11 155 7Q103 38 103 113Q103 170 138 262T173 379Q173 380 173 381Q173 390 173 393T169 400T158 404H154Q131 404 112 385T82 344T65 302T57 280Q55 278 41 278H27Q21 284 21 287Z"></path><path id="MJX-27-TEX-I-1D461" d="M26 385Q19 392 19 395Q19 399 22 411T27 425Q29 430 36 430T87 431H140L159 511Q162 522 166 540T173 566T179 586T187 603T197 615T211 624T229 626Q247 625 254 615T261 596Q261 589 252 549T232 470L222 433Q222 431 272 431H323Q330 424 330 420Q330 398 317 385H210L174 240Q135 80 135 68Q135 26 162 26Q197 26 230 60T283 144Q285 150 288 151T303 153H307Q322 153 322 145Q322 142 319 133Q314 117 301 95T267 48T216 6T155 -11Q125 -11 98 4T59 56Q57 64 57 83V101L92 241Q127 382 128 383Q128 385 77 385H26Z"></path><path id="MJX-27-TEX-I-1D45D" d="M23 287Q24 290 25 295T30 317T40 348T55 381T75 411T101 433T134 442Q209 442 230 378L240 387Q302 442 358 442Q423 442 460 395T497 281Q497 173 421 82T249 -10Q227 -10 210 -4Q199 1 187 11T168 28L161 36Q160 35 139 -51T118 -138Q118 -144 126 -145T163 -148H188Q194 -155 194 -157T191 -175Q188 -187 185 -190T172 -194Q170 -194 161 -194T127 -193T65 -192Q-5 -192 -24 -194H-32Q-39 -187 -39 -183Q-37 -156 -26 -148H-6Q28 -147 33 -136Q36 -130 94 103T155 350Q156 355 156 364Q156 405 131 405Q109 405 94 377T71 316T59 280Q57 278 43 278H29Q23 284 23 287ZM178 102Q200 26 252 26Q282 26 310 49T356 107Q374 141 392 215T411 325V331Q411 405 350 405Q339 405 328 402T306 393T286 380T269 365T254 350T243 336T235 326L232 322Q232 321 229 308T218 264T204 212Q178 106 178 102Z"></path><path id="MJX-27-TEX-I-1D439" d="M48 1Q31 1 31 11Q31 13 34 25Q38 41 42 43T65 46Q92 46 125 49Q139 52 144 61Q146 66 215 342T285 622Q285 629 281 629Q273 632 228 634H197Q191 640 191 642T193 659Q197 676 203 680H742Q749 676 749 669Q749 664 736 557T722 447Q720 440 702 440H690Q683 445 683 453Q683 454 686 477T689 530Q689 560 682 579T663 610T626 626T575 633T503 634H480Q398 633 393 631Q388 629 386 623Q385 622 352 492L320 363H375Q378 363 398 363T426 364T448 367T472 374T489 386Q502 398 511 419T524 457T529 475Q532 480 548 480H560Q567 475 567 470Q567 467 536 339T502 207Q500 200 482 200H470Q463 206 463 212Q463 215 468 234T473 274Q473 303 453 310T364 317H309L277 190Q245 66 245 60Q245 46 334 46H359Q365 40 365 39T363 19Q359 6 353 0H336Q295 2 185 2Q120 2 86 2T48 1Z"></path><path id="MJX-27-TEX-I-1D45F" d="M21 287Q22 290 23 295T28 317T38 348T53 381T73 411T99 433T132 442Q161 442 183 430T214 408T225 388Q227 382 228 382T236 389Q284 441 347 441H350Q398 441 422 400Q430 381 430 363Q430 333 417 315T391 292T366 288Q346 288 334 299T322 328Q322 376 378 392Q356 405 342 405Q286 405 239 331Q229 315 224 298T190 165Q156 25 151 16Q138 -11 108 -11Q95 -11 87 -5T76 7T74 17Q74 30 114 189T154 366Q154 405 128 405Q107 405 92 377T68 316T57 280Q55 278 41 278H27Q21 284 21 287Z"></path><path id="MJX-27-TEX-I-1D44E" d="M33 157Q33 258 109 349T280 441Q331 441 370 392Q386 422 416 422Q429 422 439 414T449 394Q449 381 412 234T374 68Q374 43 381 35T402 26Q411 27 422 35Q443 55 463 131Q469 151 473 152Q475 153 483 153H487Q506 153 506 144Q506 138 501 117T481 63T449 13Q436 0 417 -8Q409 -10 393 -10Q359 -10 336 5T306 36L300 51Q299 52 296 50Q294 48 292 46Q233 -10 172 -10Q117 -10 75 30T33 157ZM351 328Q351 334 346 350T323 385T277 405Q242 405 210 374T160 293Q131 214 119 129Q119 126 119 118T118 106Q118 61 136 44T179 26Q217 26 254 59T298 110Q300 114 325 217T351 328Z"></path><path id="MJX-27-TEX-I-1D45A" d="M21 287Q22 293 24 303T36 341T56 388T88 425T132 442T175 435T205 417T221 395T229 376L231 369Q231 367 232 367L243 378Q303 442 384 442Q401 442 415 440T441 433T460 423T475 411T485 398T493 385T497 373T500 364T502 357L510 367Q573 442 659 442Q713 442 746 415T780 336Q780 285 742 178T704 50Q705 36 709 31T724 26Q752 26 776 56T815 138Q818 149 821 151T837 153Q857 153 857 145Q857 144 853 130Q845 101 831 73T785 17T716 -10Q669 -10 648 17T627 73Q627 92 663 193T700 345Q700 404 656 404H651Q565 404 506 303L499 291L466 157Q433 26 428 16Q415 -11 385 -11Q372 -11 364 -4T353 8T350 18Q350 29 384 161L420 307Q423 322 423 345Q423 404 379 404H374Q288 404 229 303L222 291L189 157Q156 26 151 16Q138 -11 108 -11Q95 -11 87 -5T76 7T74 17Q74 30 112 181Q151 335 151 342Q154 357 154 369Q154 405 129 405Q107 405 92 377T69 316T57 280Q55 278 41 278H27Q21 284 21 287Z"></path><path id="MJX-27-TEX-N-3D" d="M56 347Q56 360 70 367H707Q722 359 722 347Q722 336 708 328L390 327H72Q56 332 56 347ZM56 153Q56 168 72 173H708Q722 163 722 153Q722 140 707 133H70Q56 140 56 153Z"></path><path id="MJX-27-TEX-N-6D" d="M41 46H55Q94 46 102 60V68Q102 77 102 91T102 122T103 161T103 203Q103 234 103 269T102 328V351Q99 370 88 376T43 385H25V408Q25 431 27 431L37 432Q47 433 65 434T102 436Q119 437 138 438T167 441T178 442H181V402Q181 364 182 364T187 369T199 384T218 402T247 421T285 437Q305 442 336 442Q351 442 364 440T387 434T406 426T421 417T432 406T441 395T448 384T452 374T455 366L457 361L460 365Q463 369 466 373T475 384T488 397T503 410T523 422T546 432T572 439T603 442Q729 442 740 329Q741 322 741 190V104Q741 66 743 59T754 49Q775 46 803 46H819V0H811L788 1Q764 2 737 2T699 3Q596 3 587 0H579V46H595Q656 46 656 62Q657 64 657 200Q656 335 655 343Q649 371 635 385T611 402T585 404Q540 404 506 370Q479 343 472 315T464 232V168V108Q464 78 465 68T468 55T477 49Q498 46 526 46H542V0H534L510 1Q487 2 460 2T422 3Q319 3 310 0H302V46H318Q379 46 379 62Q380 64 380 200Q379 335 378 343Q372 371 358 385T334 402T308 404Q263 404 229 370Q202 343 195 315T187 232V168V108Q187 78 188 68T191 55T200 49Q221 46 249 46H265V0H257L234 1Q210 2 183 2T145 3Q42 3 33 0H25V46H41Z"></path><path id="MJX-27-TEX-N-61" d="M137 305T115 305T78 320T63 359Q63 394 97 421T218 448Q291 448 336 416T396 340Q401 326 401 309T402 194V124Q402 76 407 58T428 40Q443 40 448 56T453 109V145H493V106Q492 66 490 59Q481 29 455 12T400 -6T353 12T329 54V58L327 55Q325 52 322 49T314 40T302 29T287 17T269 6T247 -2T221 -8T190 -11Q130 -11 82 20T34 107Q34 128 41 147T68 188T116 225T194 253T304 268H318V290Q318 324 312 340Q290 411 215 411Q197 411 181 410T156 406T148 403Q170 388 170 359Q170 334 154 320ZM126 106Q126 75 150 51T209 26Q247 26 276 49T315 109Q317 116 318 175Q318 233 317 233Q309 233 296 232T251 223T193 203T147 166T126 106Z"></path><path id="MJX-27-TEX-N-78" d="M201 0Q189 3 102 3Q26 3 17 0H11V46H25Q48 47 67 52T96 61T121 78T139 96T160 122T180 150L226 210L168 288Q159 301 149 315T133 336T122 351T113 363T107 370T100 376T94 379T88 381T80 383Q74 383 44 385H16V431H23Q59 429 126 429Q219 429 229 431H237V385Q201 381 201 369Q201 367 211 353T239 315T268 274L272 270L297 304Q329 345 329 358Q329 364 327 369T322 376T317 380T310 384L307 385H302V431H309Q324 428 408 428Q487 428 493 431H499V385H492Q443 385 411 368Q394 360 377 341T312 257L296 236L358 151Q424 61 429 57T446 50Q464 46 499 46H516V0H510H502Q494 1 482 1T457 2T432 2T414 3Q403 3 377 3T327 1L304 0H295V46H298Q309 46 320 51T331 63Q331 65 291 120L250 175Q249 174 219 133T185 88Q181 83 181 74Q181 63 188 55T206 46Q208 46 208 23V0H201Z"></path><path id="MJX-27-TEX-LO-28" d="M180 96T180 250T205 541T266 770T353 944T444 1069T527 1150H555Q561 1144 561 1141Q561 1137 545 1120T504 1072T447 995T386 878T330 721T288 513T272 251Q272 133 280 56Q293 -87 326 -209T399 -405T475 -531T536 -609T561 -640Q561 -643 555 -649H527Q483 -612 443 -568T353 -443T266 -270T205 -41Z"></path><path id="MJX-27-TEX-N-28" d="M94 250Q94 319 104 381T127 488T164 576T202 643T244 695T277 729T302 750H315H319Q333 750 333 741Q333 738 316 720T275 667T226 581T184 443T167 250T184 58T225 -81T274 -167T316 -220T333 -241Q333 -250 318 -250H315H302L274 -226Q180 -141 137 -14T94 250Z"></path><path id="MJX-27-TEX-I-1D43F" d="M228 637Q194 637 192 641Q191 643 191 649Q191 673 202 682Q204 683 217 683Q271 680 344 680Q485 680 506 683H518Q524 677 524 674T522 656Q517 641 513 637H475Q406 636 394 628Q387 624 380 600T313 336Q297 271 279 198T252 88L243 52Q243 48 252 48T311 46H328Q360 46 379 47T428 54T478 72T522 106T564 161Q580 191 594 228T611 270Q616 273 628 273H641Q647 264 647 262T627 203T583 83T557 9Q555 4 553 3T537 0T494 -1Q483 -1 418 -1T294 0H116Q32 0 32 10Q32 17 34 24Q39 43 44 45Q48 46 59 46H65Q92 46 125 49Q139 52 144 61Q147 65 216 339T285 628Q285 635 228 637Z"></path><path id="MJX-27-TEX-N-2B" d="M56 237T56 250T70 270H369V420L370 570Q380 583 389 583Q402 583 409 568V270H707Q722 262 722 250T707 230H409V-68Q401 -82 391 -82H389H387Q375 -82 369 -68V230H70Q56 237 56 250Z"></path><path id="MJX-27-TEX-N-31" d="M213 578L200 573Q186 568 160 563T102 556H83V602H102Q149 604 189 617T245 641T273 663Q275 666 285 666Q294 666 302 660V361L303 61Q310 54 315 52T339 48T401 46H427V0H416Q395 3 257 3Q121 3 100 0H88V46H114Q136 46 152 46T177 47T193 50T201 52T207 57T213 61V578Z"></path><path id="MJX-27-TEX-N-29" d="M60 749L64 750Q69 750 74 750H86L114 726Q208 641 251 514T294 250Q294 182 284 119T261 12T224 -76T186 -143T145 -194T113 -227T90 -246Q87 -249 86 -250H74Q66 -250 63 -250T58 -247T55 -238Q56 -237 66 -225Q221 -64 221 250T66 725Q56 737 55 738Q55 746 60 749Z"></path><path id="MJX-27-TEX-N-2212" d="M84 237T84 250T98 270H679Q694 262 694 250T679 230H98Q84 237 84 250Z"></path><path id="MJX-27-TEX-I-1D460" d="M131 289Q131 321 147 354T203 415T300 442Q362 442 390 415T419 355Q419 323 402 308T364 292Q351 292 340 300T328 326Q328 342 337 354T354 372T367 378Q368 378 368 379Q368 382 361 388T336 399T297 405Q249 405 227 379T204 326Q204 301 223 291T278 274T330 259Q396 230 396 163Q396 135 385 107T352 51T289 7T195 -10Q118 -10 86 19T53 87Q53 126 74 143T118 160Q133 160 146 151T160 120Q160 94 142 76T111 58Q109 57 108 57T107 55Q108 52 115 47T146 34T201 27Q237 27 263 38T301 66T318 97T323 122Q323 150 302 164T254 181T195 196T148 231Q131 256 131 289Z"></path><path id="MJX-27-TEX-N-2C" d="M78 35T78 60T94 103T137 121Q165 121 187 96T210 8Q210 -27 201 -60T180 -117T154 -158T130 -185T117 -194Q113 -194 104 -185T95 -172Q95 -168 106 -156T131 -126T157 -76T173 -3V9L172 8Q170 7 167 6T161 3T152 1T140 0Q113 0 96 17Z"></path><path id="MJX-27-TEX-I-1D43C" d="M43 1Q26 1 26 10Q26 12 29 24Q34 43 39 45Q42 46 54 46H60Q120 46 136 53Q137 53 138 54Q143 56 149 77T198 273Q210 318 216 344Q286 624 286 626Q284 630 284 631Q274 637 213 637H193Q184 643 189 662Q193 677 195 680T209 683H213Q285 681 359 681Q481 681 487 683H497Q504 676 504 672T501 655T494 639Q491 637 471 637Q440 637 407 634Q393 631 388 623Q381 609 337 432Q326 385 315 341Q245 65 245 59Q245 52 255 50T307 46H339Q345 38 345 37T342 19Q338 6 332 0H316Q279 2 179 2Q143 2 113 2T65 2T43 1Z"></path><path id="MJX-27-TEX-I-1D45B" d="M21 287Q22 293 24 303T36 341T56 388T89 425T135 442Q171 442 195 424T225 390T231 369Q231 367 232 367L243 378Q304 442 382 442Q436 442 469 415T503 336T465 179T427 52Q427 26 444 26Q450 26 453 27Q482 32 505 65T540 145Q542 153 560 153Q580 153 580 145Q580 144 576 130Q568 101 554 73T508 17T439 -10Q392 -10 371 17T350 73Q350 92 386 193T423 345Q423 404 379 404H374Q288 404 229 303L222 291L189 157Q156 26 151 16Q138 -11 108 -11Q95 -11 87 -5T76 7T74 17Q74 30 112 180T152 343Q153 348 153 366Q153 405 129 405Q91 405 66 305Q60 285 60 284Q58 278 41 278H27Q21 284 21 287Z"></path><path id="MJX-27-TEX-LO-29" d="M35 1138Q35 1150 51 1150H56H69Q113 1113 153 1069T243 944T330 771T391 541T416 250T391 -40T330 -270T243 -443T152 -568T69 -649H56Q43 -649 39 -647T35 -637Q65 -607 110 -548Q283 -316 316 56Q324 133 324 251Q324 368 316 445Q278 877 48 1123Q36 1137 35 1138Z"></path></defs><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="mi"><use data-c="1D441" xlink:href="#MJX-27-TEX-I-1D441"></use></g><g data-mml-node="mi" transform="translate(888,0)"><use data-c="1D452" xlink:href="#MJX-27-TEX-I-1D452"></use></g><g data-mml-node="mi" transform="translate(1354,0)"><use data-c="1D464" xlink:href="#MJX-27-TEX-I-1D464"></use></g><g data-mml-node="mi" transform="translate(2070,0)"><use data-c="1D442" xlink:href="#MJX-27-TEX-I-1D442"></use></g><g data-mml-node="mi" transform="translate(2833,0)"><use data-c="1D462" xlink:href="#MJX-27-TEX-I-1D462"></use></g><g data-mml-node="mi" transform="translate(3405,0)"><use data-c="1D461" xlink:href="#MJX-27-TEX-I-1D461"></use></g><g data-mml-node="mi" transform="translate(3766,0)"><use data-c="1D45D" xlink:href="#MJX-27-TEX-I-1D45D"></use></g><g data-mml-node="mi" transform="translate(4269,0)"><use data-c="1D462" xlink:href="#MJX-27-TEX-I-1D462"></use></g><g data-mml-node="mi" transform="translate(4841,0)"><use data-c="1D461" xlink:href="#MJX-27-TEX-I-1D461"></use></g><g data-mml-node="mi" transform="translate(5202,0)"><use data-c="1D439" xlink:href="#MJX-27-TEX-I-1D439"></use></g><g data-mml-node="mi" transform="translate(5951,0)"><use data-c="1D45F" xlink:href="#MJX-27-TEX-I-1D45F"></use></g><g data-mml-node="mi" transform="translate(6402,0)"><use data-c="1D44E" xlink:href="#MJX-27-TEX-I-1D44E"></use></g><g data-mml-node="mi" transform="translate(6931,0)"><use data-c="1D45A" xlink:href="#MJX-27-TEX-I-1D45A"></use></g><g data-mml-node="mi" transform="translate(7809,0)"><use data-c="1D452" xlink:href="#MJX-27-TEX-I-1D452"></use></g><g data-mml-node="mo" transform="translate(8552.8,0)"><use data-c="3D" xlink:href="#MJX-27-TEX-N-3D"></use></g><g data-mml-node="mo" transform="translate(9608.6,0)"><use data-c="6D" xlink:href="#MJX-27-TEX-N-6D"></use><use data-c="61" xlink:href="#MJX-27-TEX-N-61" transform="translate(833,0)"></use><use data-c="78" xlink:href="#MJX-27-TEX-N-78" transform="translate(1333,0)"></use></g><g data-mml-node="mrow" transform="translate(11636.2,0)"><g data-mml-node="mo" transform="translate(0 -0.5)"><use data-c="28" xlink:href="#MJX-27-TEX-LO-28"></use></g><g data-mml-node="mo" transform="translate(597,0)"><use data-c="28" xlink:href="#MJX-27-TEX-N-28"></use></g><g data-mml-node="mi" transform="translate(986,0)"><use data-c="1D43F" xlink:href="#MJX-27-TEX-I-1D43F"></use></g><g data-mml-node="mo" transform="translate(1889.2,0)"><use data-c="2B" xlink:href="#MJX-27-TEX-N-2B"></use></g><g data-mml-node="mn" transform="translate(2889.4,0)"><use data-c="31" xlink:href="#MJX-27-TEX-N-31"></use></g><g data-mml-node="mo" transform="translate(3389.4,0)"><use data-c="29" xlink:href="#MJX-27-TEX-N-29"></use></g><g data-mml-node="mo" transform="translate(4000.7,0)"><use data-c="2212" xlink:href="#MJX-27-TEX-N-2212"></use></g><g data-mml-node="mo" transform="translate(5000.9,0)"><use data-c="28" xlink:href="#MJX-27-TEX-N-28"></use></g><g data-mml-node="mi" transform="translate(5389.9,0)"><use data-c="1D43F" xlink:href="#MJX-27-TEX-I-1D43F"></use></g><g data-mml-node="mo" transform="translate(6293.1,0)"><use data-c="2B" xlink:href="#MJX-27-TEX-N-2B"></use></g><g data-mml-node="mn" transform="translate(7293.3,0)"><use data-c="31" xlink:href="#MJX-27-TEX-N-31"></use></g><g data-mml-node="mo" transform="translate(8015.6,0)"><use data-c="2212" xlink:href="#MJX-27-TEX-N-2212"></use></g><g data-mml-node="mi" transform="translate(9015.8,0)"><use data-c="1D43F" xlink:href="#MJX-27-TEX-I-1D43F"></use></g><g data-mml-node="mi" transform="translate(9696.8,0)"><use data-c="1D44E" xlink:href="#MJX-27-TEX-I-1D44E"></use></g><g data-mml-node="mi" transform="translate(10225.8,0)"><use data-c="1D460" xlink:href="#MJX-27-TEX-I-1D460"></use></g><g data-mml-node="mi" transform="translate(10694.8,0)"><use data-c="1D461" xlink:href="#MJX-27-TEX-I-1D461"></use></g><g data-mml-node="mi" transform="translate(11055.8,0)"><use data-c="1D442" xlink:href="#MJX-27-TEX-I-1D442"></use></g><g data-mml-node="mi" transform="translate(11818.8,0)"><use data-c="1D462" xlink:href="#MJX-27-TEX-I-1D462"></use></g><g data-mml-node="mi" transform="translate(12390.8,0)"><use data-c="1D461" xlink:href="#MJX-27-TEX-I-1D461"></use></g><g data-mml-node="mi" transform="translate(12751.8,0)"><use data-c="1D45D" xlink:href="#MJX-27-TEX-I-1D45D"></use></g><g data-mml-node="mi" transform="translate(13254.8,0)"><use data-c="1D462" xlink:href="#MJX-27-TEX-I-1D462"></use></g><g data-mml-node="mi" transform="translate(13826.8,0)"><use data-c="1D461" xlink:href="#MJX-27-TEX-I-1D461"></use></g><g data-mml-node="mi" transform="translate(14187.8,0)"><use data-c="1D439" xlink:href="#MJX-27-TEX-I-1D439"></use></g><g data-mml-node="mi" transform="translate(14936.8,0)"><use data-c="1D45F" xlink:href="#MJX-27-TEX-I-1D45F"></use></g><g data-mml-node="mi" transform="translate(15387.8,0)"><use data-c="1D44E" xlink:href="#MJX-27-TEX-I-1D44E"></use></g><g data-mml-node="mi" transform="translate(15916.8,0)"><use data-c="1D45A" xlink:href="#MJX-27-TEX-I-1D45A"></use></g><g data-mml-node="mi" transform="translate(16794.8,0)"><use data-c="1D452" xlink:href="#MJX-27-TEX-I-1D452"></use></g><g data-mml-node="mo" transform="translate(17260.8,0)"><use data-c="29" xlink:href="#MJX-27-TEX-N-29"></use></g><g data-mml-node="msup" transform="translate(17649.8,0)"><g data-mml-node="mi"><use data-c="1D452" xlink:href="#MJX-27-TEX-I-1D452"></use></g><g data-mml-node="TeXAtom" transform="translate(499,363) scale(0.707)" data-mjx-texclass="ORD"><g data-mml-node="mfrac"><g data-mml-node="mn" transform="translate(597.9,394) scale(0.707)"><use data-c="31" xlink:href="#MJX-27-TEX-N-31"></use></g><g data-mml-node="mrow" transform="translate(220,-345) scale(0.707)"><g data-mml-node="mi"><use data-c="1D43F" xlink:href="#MJX-27-TEX-I-1D43F"></use></g><g data-mml-node="mi" transform="translate(681,0)"><use data-c="1D441" xlink:href="#MJX-27-TEX-I-1D441"></use></g></g><rect width="1309.5" height="60" x="120" y="220"></rect></g></g></g><g data-mml-node="mo" transform="translate(19294.4,0)"><use data-c="2C" xlink:href="#MJX-27-TEX-N-2C"></use></g><g data-mml-node="mi" transform="translate(19739.1,0)"><use data-c="1D441" xlink:href="#MJX-27-TEX-I-1D441"></use></g><g data-mml-node="mi" transform="translate(20627.1,0)"><use data-c="1D452" xlink:href="#MJX-27-TEX-I-1D452"></use></g><g data-mml-node="mi" transform="translate(21093.1,0)"><use data-c="1D464" xlink:href="#MJX-27-TEX-I-1D464"></use></g><g data-mml-node="mi" transform="translate(21809.1,0)"><use data-c="1D43C" xlink:href="#MJX-27-TEX-I-1D43C"></use></g><g data-mml-node="mi" transform="translate(22313.1,0)"><use data-c="1D45B" xlink:href="#MJX-27-TEX-I-1D45B"></use></g><g data-mml-node="mi" transform="translate(22913.1,0)"><use data-c="1D45D" xlink:href="#MJX-27-TEX-I-1D45D"></use></g><g data-mml-node="mi" transform="translate(23416.1,0)"><use data-c="1D462" xlink:href="#MJX-27-TEX-I-1D462"></use></g><g data-mml-node="mi" transform="translate(23988.1,0)"><use data-c="1D461" xlink:href="#MJX-27-TEX-I-1D461"></use></g><g data-mml-node="mi" transform="translate(24349.1,0)"><use data-c="1D439" xlink:href="#MJX-27-TEX-I-1D439"></use></g><g data-mml-node="mi" transform="translate(25098.1,0)"><use data-c="1D45F" xlink:href="#MJX-27-TEX-I-1D45F"></use></g><g data-mml-node="mi" transform="translate(25549.1,0)"><use data-c="1D44E" xlink:href="#MJX-27-TEX-I-1D44E"></use></g><g data-mml-node="mi" transform="translate(26078.1,0)"><use data-c="1D45A" xlink:href="#MJX-27-TEX-I-1D45A"></use></g><g data-mml-node="mi" transform="translate(26956.1,0)"><use data-c="1D452" xlink:href="#MJX-27-TEX-I-1D452"></use></g><g data-mml-node="mo" transform="translate(27422.1,0) translate(0 -0.5)"><use data-c="29" xlink:href="#MJX-27-TEX-LO-29"></use></g></g></g></g></svg><mjx-assistive-mml unselectable="on" display="inline"><math xmlns="http://www.w3.org/1998/Math/MathML"><mi>N</mi><mi>e</mi><mi>w</mi><mi>O</mi><mi>u</mi><mi>t</mi><mi>p</mi><mi>u</mi><mi>t</mi><mi>F</mi><mi>r</mi><mi>a</mi><mi>m</mi><mi>e</mi><mo>=</mo><mo data-mjx-texclass="OP" movablelimits="true">max</mo><mrow data-mjx-texclass="INNER"><mo data-mjx-texclass="OPEN">(</mo><mo stretchy="false">(</mo><mi>L</mi><mo>+</mo><mn>1</mn><mo stretchy="false">)</mo><mo>−</mo><mo stretchy="false">(</mo><mi>L</mi><mo>+</mo><mn>1</mn><mo>−</mo><mi>L</mi><mi>a</mi><mi>s</mi><mi>t</mi><mi>O</mi><mi>u</mi><mi>t</mi><mi>p</mi><mi>u</mi><mi>t</mi><mi>F</mi><mi>r</mi><mi>a</mi><mi>m</mi><mi>e</mi><mo stretchy="false">)</mo><msup><mi>e</mi><mrow data-mjx-texclass="ORD"><mfrac><mn>1</mn><mrow><mi>L</mi><mi>N</mi></mrow></mfrac></mrow></msup><mo>,</mo><mi>N</mi><mi>e</mi><mi>w</mi><mi>I</mi><mi>n</mi><mi>p</mi><mi>u</mi><mi>t</mi><mi>F</mi><mi>r</mi><mi>a</mi><mi>m</mi><mi>e</mi><mo data-mjx-texclass="CLOSE">)</mo></mrow></math></mjx-assistive-mml></mjx-container><script type="math/tex">NewOutputFrame=\max\left((L+1)-(L+1-LastOutputFrame)e^{\frac{1}{LN}},NewInputFrame\right)</script></p><video width="100%"   controls muted autoplay loop>
+  <source src="https://github.com/zpatronus/StarTrailCUDA/raw/refs/heads/main/docs/videos/linearapprox.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video><center>LINEARAPPROX Algorithm</center><p><span>The LINEARAPPROX algorithm looks very similar to the LINEAR algorithm in controlling the tail length and window size except for being slightly darker. We suspect the difference mainly comes from floating point precision and rounding errors. Also, both of us think it actually looks better than the LINEAR algorithm because it emphasizes bright stars and suppresses the darker ones, creating a cleaner video.</span></p><p><span>In the baseline implementation, we compared the performance difference for the LINEAR algorithm and the LINEARAPPROX algorithm under default parameters given the test input (</span><mjx-container class="MathJax" jax="SVG" style="position: relative;"><svg xmlns="http://www.w3.org/2000/svg" width="7.651ex" height="1.731ex" role="img" focusable="false" viewBox="0 -683 3381.6 765" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" style="vertical-align: -0.186ex;"><defs><path id="MJX-28-TEX-I-1D44A" d="M436 683Q450 683 486 682T553 680Q604 680 638 681T677 682Q695 682 695 674Q695 670 692 659Q687 641 683 639T661 637Q636 636 621 632T600 624T597 615Q597 603 613 377T629 138L631 141Q633 144 637 151T649 170T666 200T690 241T720 295T759 362Q863 546 877 572T892 604Q892 619 873 628T831 637Q817 637 817 647Q817 650 819 660Q823 676 825 679T839 682Q842 682 856 682T895 682T949 681Q1015 681 1034 683Q1048 683 1048 672Q1048 666 1045 655T1038 640T1028 637Q1006 637 988 631T958 617T939 600T927 584L923 578L754 282Q586 -14 585 -15Q579 -22 561 -22Q546 -22 542 -17Q539 -14 523 229T506 480L494 462Q472 425 366 239Q222 -13 220 -15T215 -19Q210 -22 197 -22Q178 -22 176 -15Q176 -12 154 304T131 622Q129 631 121 633T82 637H58Q51 644 51 648Q52 671 64 683H76Q118 680 176 680Q301 680 313 683H323Q329 677 329 674T327 656Q322 641 318 637H297Q236 634 232 620Q262 160 266 136L501 550L499 587Q496 629 489 632Q483 636 447 637Q428 637 422 639T416 648Q416 650 418 660Q419 664 420 669T421 676T424 680T428 682T436 683Z"></path><path id="MJX-28-TEX-N-3D" d="M56 347Q56 360 70 367H707Q722 359 722 347Q722 336 708 328L390 327H72Q56 332 56 347ZM56 153Q56 168 72 173H708Q722 163 722 153Q722 140 707 133H70Q56 140 56 153Z"></path><path id="MJX-28-TEX-N-33" d="M127 463Q100 463 85 480T69 524Q69 579 117 622T233 665Q268 665 277 664Q351 652 390 611T430 522Q430 470 396 421T302 350L299 348Q299 347 308 345T337 336T375 315Q457 262 457 175Q457 96 395 37T238 -22Q158 -22 100 21T42 130Q42 158 60 175T105 193Q133 193 151 175T169 130Q169 119 166 110T159 94T148 82T136 74T126 70T118 67L114 66Q165 21 238 21Q293 21 321 74Q338 107 338 175V195Q338 290 274 322Q259 328 213 329L171 330L168 332Q166 335 166 348Q166 366 174 366Q202 366 232 371Q266 376 294 413T322 525V533Q322 590 287 612Q265 626 240 626Q208 626 181 615T143 592T132 580H135Q138 579 143 578T153 573T165 566T175 555T183 540T186 520Q186 498 172 481T127 463Z"></path><path id="MJX-28-TEX-N-30" d="M96 585Q152 666 249 666Q297 666 345 640T423 548Q460 465 460 320Q460 165 417 83Q397 41 362 16T301 -15T250 -22Q224 -22 198 -16T137 16T82 83Q39 165 39 320Q39 494 96 585ZM321 597Q291 629 250 629Q208 629 178 597Q153 571 145 525T137 333Q137 175 145 125T181 46Q209 16 250 16Q290 16 318 46Q347 76 354 130T362 333Q362 478 354 524T321 597Z"></path></defs><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="mi"><use data-c="1D44A" xlink:href="#MJX-28-TEX-I-1D44A"></use></g><g data-mml-node="mo" transform="translate(1325.8,0)"><use data-c="3D" xlink:href="#MJX-28-TEX-N-3D"></use></g><g data-mml-node="mn" transform="translate(2381.6,0)"><use data-c="33" xlink:href="#MJX-28-TEX-N-33"></use><use data-c="30" xlink:href="#MJX-28-TEX-N-30" transform="translate(500,0)"></use></g></g></g></svg><mjx-assistive-mml unselectable="on" display="inline"><math xmlns="http://www.w3.org/1998/Math/MathML"><mi>W</mi><mo>=</mo><mn>30</mn></math></mjx-assistive-mml></mjx-container><script type="math/tex">W=30</script><span>). The LINEAR algorithm takes 1125s to complete while the LINEARAPPROX only takes 152s, which is a huge 7.4x speedup gifted by math.</span></p><video width="100%"   controls muted autoplay loop>
+  <source src="https://github.com/zpatronus/StarTrailCUDA/raw/refs/heads/main/docs/videos/linearapprox_90w.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video><center>LINEARAPPROX Algorithm with a window size of 90 frames</center><h3 id='baseline-renderer'><span>BASELINE RENDERER</span></h3><p><span>The baseline implementation serves as our reference CPU-based serial processing pipeline, built entirely around the OpenCV library for comprehensive video processing operations. This implementation provides a clean, modular architecture that handles video input, frame-by-frame rendering computations, and video output encoding in a sequential manner.</span></p><p><img src="./final_report.assets/baseline.png" alt="img"></p><p><span>Architecture Overview:</span></p><ul><li><p><strong><span>Frame Reader Module</span></strong><span>: Implements a </span><code>FrameReader</code><span> class hierarchy that abstracts video input sources, supporting both video files and image folder sequences. The module handles frame extraction, format conversion, and provides a unified interface for accessing sequential video frames regardless of the input format.</span></p></li><li><p><strong><span>Video Renderer</span></strong><span>: Contains the core rendering logic with support for multiple star trail algorithms (MAX, LINEAR, LINEARAPPROX, etc.). The renderer processes frames sequentially on the CPU, applying the selected algorithm to generate star trail effects through pixel-wise operations and accumulation techniques.</span></p></li></ul><p><span>The baseline serves as both a correctness reference and a performance benchmark against which optimized implementations are measured. While this approach ensures maximum compatibility across different hardware configurations, it suffers from multiple performance bottlenecks. Beyond the purely serial nature of the rendering computations, the OpenCV-based software video decoding and encoding operations themselves become major time bottlenecks. In certain rendering algorithms, the combined decode and encode time can match or even exceed the algorithm computation time, making video I/O processing as critical a performance constraint as the rendering logic itself. For high-resolution 4K video inputs, these compounded inefficiencies result in total processing times extending to several hundred seconds.</span></p><p><strong><span>Performance Results:</span></strong></p><p><span>Average time: 152.33s</span></p><p><strong><span>Timing Breakdown from a Typical Run:</span></strong></p><figure class='table-figure'><table><thead><tr><th><span>Stage</span></th><th><span>Time (ms)</span></th><th><span>Percentage</span></th></tr></thead><tbody><tr><td><span>Decode</span></td><td><span>4,531.59</span></td><td><span>3.0%</span></td></tr><tr><td><span>Render</span></td><td><span>112,786</span></td><td><span>73.7%</span></td></tr><tr><td><span>Encode</span></td><td><span>35,687.5</span></td><td><span>23.3%</span></td></tr><tr><td><span>Total</span></td><td><span>153,005</span></td><td><span>100%</span></td></tr></tbody></table></figure><p><span>Comparing to LINEAR algorith, LINEARAPPROX has a speed up of approximatly 7.4x. As shown in the timing result above, the encode stage in the baseline consumes a non-negligible fraction of total runtime and therefore represents a clear optimization opportunity.</span></p><h3 id='baseline-renderer-with-hardware-codec'><span>BASELINE RENDERER WITH HARDWARE CODEC</span></h3><p><span>Given that it takes a long time to encode output frames to output videos as seen in the baseline, and that we plan to use NVIDIA GPU, we leverage NVIDIA&#39;s codec library to decode and encode videos using hardware acceleration.</span></p><p><img src="./final_report.assets/baseline_hardware.png" alt="img"></p><p><strong><span>Performance Results:</span></strong></p><p><span>Average time: 133.07s</span></p><p><strong><span>Timing Breakdown from a Typical Run:</span></strong></p><figure class='table-figure'><table><thead><tr><th><span>Stage</span></th><th><span>Time (ms)</span></th><th><span>Percentage</span></th></tr></thead><tbody><tr><td><span>Decode</span></td><td><span>13,023.2</span></td><td><span>9.8%</span></td></tr><tr><td><span>Render</span></td><td><span>111,430</span></td><td><span>84.4%</span></td></tr><tr><td><span>Encode</span></td><td><span>7,673.19</span></td><td><span>5.8%</span></td></tr><tr><td><span>Total</span></td><td><span>132,127</span></td><td><span>100%</span></td></tr></tbody></table></figure><p><span>The implementation shows significant improvement in encoding time compared to the baseline (reduced from 35.7s to 7.7s), demonstrating the efficiency of hardware-accelerated video processing.</span></p><p><span>The speedup so far is 8.5x</span></p><p><span>It is pretty clear that the bottleneck now is the rendering time.</span></p><h3 id='cuda-renderer'><span>CUDA RENDERER</span></h3><p><span>This implementation replaces the sequential CPU-based rendering computations with GPU-accelerated CUDA kernels that execute pixel-wise operations in parallel, dramatically reducing the rendering computation time.</span></p><p><img src="./final_report.assets/cuda.png" alt="img"></p><p><strong><span>Performance Results:</span></strong></p><p><span>Average time: 40.94s</span></p><p><strong><span>Timing Breakdown from a Typical Run:</span></strong></p><figure class='table-figure'><table><thead><tr><th><span>Stage</span></th><th><span>Time (ms)</span></th><th><span>Percentage</span></th></tr></thead><tbody><tr><td><span>Decode</span></td><td><span>19,553.5</span></td><td><span>39.1%</span></td></tr><tr><td><span>Render</span></td><td><span>12,100.1</span></td><td><span>24.2%</span></td></tr><tr><td><span>Encode</span></td><td><span>18,316.9</span></td><td><span>36.7%</span></td></tr><tr><td><span>Total</span></td><td><span>49,970.4</span></td><td><span>100%</span></td></tr></tbody></table></figure><p><span>The CUDA implementation dramatically improves rendering time with a 9.2x speedup (from 111.4s to 12.1s). The total speedup compared to the original baseline reaches 27.4x.</span></p><p><span>Can we improve from here? Yes! We&#39;re working on it. Please refer to the PLAN FOR THE NEXT WEEK part.</span></p><h2 id='current-concerns'><span>CURRENT CONCERNS</span></h2><p><span>No major concerns. Just a matter of coding and doing the work. The main concern is our unfamiliarity with video codecs and their respective SDKs. There might be some pitfalls, but so far the progress looks good.</span></p><h2 id='plan-for-the-next-week'><span>PLAN FOR THE NEXT WEEK</span></h2><p><span>Over the next week we will focus on a three-stage processing pipeline (decode → render → encode) so decoding, rendering and encoding can proceed concurrently. The goal is to overlap work across stages to substantially reduce end-to-end runtime for the current test dataset, with a target near 10 seconds.</span></p><p><span>We will proceed incrementally: first validate overlap with a small buffered design, then implement a full producer–consumer pipeline and measure improvements. Each step will include timing checks and visual verification to ensure we gain performance without changing output quality. Jiache ang Zijun will do the development and testing together.</span></p><h2 id='expected-deliverables-at-the-end'><span>EXPECTED DELIVERABLES AT THE END</span></h2><p><span>We will provide a pipeline-optimized CUDA implementation together, as well as the baseline, the baseline-with-hardware-codec and the cuda versions. The deliverables will include the original source video and rendered output videos and runtime results from algorithms and implementations for direct comparison.</span></p></div></div>
+</body>
+</html>
