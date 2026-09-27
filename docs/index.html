@@ -26,11 +26,11 @@ body.typora-export { padding-left: 30px; padding-right: 30px; }
 #write li > figure:last-child { margin-bottom: 0.5rem; }
 #write ol, #write ul { position: relative; }
 img { max-width: 100%; vertical-align: middle; image-orientation: from-image; }
+img:not([height]) { height: auto; }
 button, input, select, textarea { color: inherit; font: inherit; }
 input[type="checkbox"], input[type="radio"] { line-height: normal; padding: 0px; }
 *, ::after, ::before { box-sizing: border-box; }
-#write h1, #write h2, #write h3, #write h4, #write h5, #write h6, #write p, #write pre { width: inherit; position: relative; }
-#write svg h1, #write svg h2, #write svg h3, #write svg h4, #write svg h5, #write svg h6, #write svg p { position: static; }
+svg sub, svg sup { position: static; }
 .nodeLabel p { padding-right: 2px; padding-left: 2px; }
 .typora-export .nodeLabel p { padding-right: 0px; padding-left: 0px; }
 foreignobject { overflow: visible; }
@@ -68,7 +68,7 @@ div.hr:focus { cursor: none; }
 #write.fences-no-line-wrapping pre { white-space: pre; }
 #write pre.ty-contain-cm { white-space: normal; }
 .CodeMirror-gutters { margin-right: 4px; }
-.md-fences { font-size: 0.9rem; display: block; break-inside: avoid; text-align: left; overflow: visible; white-space: pre; background: inherit; position: relative !important; }
+.md-fences { font-size: 0.9rem; position: relative; display: block; break-inside: avoid; text-align: left; overflow: visible; white-space: pre; background: inherit; }
 .md-fences-adv-panel { width: 100%; margin-top: 10px; text-align: center; padding-top: 0px; padding-bottom: 8px; overflow-x: auto; }
 #write .md-fences.mock-cm { white-space: pre-wrap; }
 .md-fences.md-fences-with-lineno { padding-left: 0px; }
@@ -91,7 +91,7 @@ blockquote > :first-child, li > :first-child { margin-top: 0px; }
 @media print {
   body, html { border: 1px solid transparent; height: 99%; break-after: avoid; break-before: avoid; font-variant-ligatures: no-common-ligatures; }
   #write { margin-top: 0px; border-color: transparent !important; padding-top: 0px !important; padding-bottom: 0px !important; }
-  .typora-export * { -webkit-print-color-adjust: exact; }
+  .typora-export * { print-color-adjust: exact; }
   .typora-export #write { break-after: avoid; }
   .typora-export #write::after { height: 0px; }
   .is-mac table { break-inside: avoid; }
@@ -112,7 +112,7 @@ p > .md-image:only-child { display: inline-block; width: 100%; }
 [contenteditable="true"]:active, [contenteditable="true"]:focus, [contenteditable="false"]:active, [contenteditable="false"]:focus { outline: 0px; box-shadow: none; }
 .md-task-list-item { position: relative; list-style-type: none; }
 .task-list-item.md-task-list-item { padding-left: 0px; }
-.md-task-list-item > input { position: absolute; top: 0px; left: 0px; margin-left: -1.2em; margin-top: calc(1em - 10px); border: none; }
+.md-task-list-item > input { position: absolute; top: 0px; left: 0px; margin-left: -1.2em; margin-top: calc(1em - 10px); border-width: medium; border-style: none; border-color: currentcolor; border-image: initial; }
 .math { font-size: 1rem; }
 .md-toc { min-height: 3.58rem; position: relative; font-size: 0.9rem; border-radius: 10px; }
 .md-toc-content { position: relative; margin-left: 0px; }
@@ -142,14 +142,14 @@ code, pre, samp, tt { font-family: var(--monospace); }
 kbd { margin: 0px 0.1em; padding: 0.1em 0.6em; font-size: 0.8em; color: rgb(36, 39, 41); background: rgb(255, 255, 255); border: 1px solid rgb(173, 179, 185); border-radius: 3px; box-shadow: rgba(12, 13, 14, 0.2) 0px 1px 0px, rgb(255, 255, 255) 0px 0px 0px 2px inset; white-space: nowrap; vertical-align: middle; }
 .md-comment { color: rgb(162, 127, 3); opacity: 0.6; font-family: var(--monospace); }
 code { text-align: left; vertical-align: initial; }
-a.md-print-anchor { white-space: pre !important; border-width: initial !important; border-style: none !important; border-color: initial !important; display: inline-block !important; position: absolute !important; width: 1px !important; right: 0px !important; outline: 0px !important; background: 0px 0px !important; text-decoration: initial !important; text-shadow: initial !important; }
+a.md-print-anchor { white-space: pre !important; border-width: medium !important; border-style: none !important; border-color: currentcolor !important; display: inline-block !important; position: absolute !important; width: 1px !important; right: 0px !important; outline: 0px !important; background: 0px 0px !important; text-decoration: initial !important; text-shadow: initial !important; }
 .os-windows.monocolor-emoji .md-emoji { font-family: "Segoe UI Symbol", sans-serif; }
 .md-diagram-panel > svg { max-width: 100%; }
 [lang="flow"] svg, [lang="mermaid"] svg { max-width: 100%; height: auto; }
 [lang="mermaid"] .node text { font-size: 1rem; }
 table tr th { border-bottom: 0px; }
 video { max-width: 100%; display: block; margin: 0px auto; }
-iframe { max-width: 100%; width: 100%; border: none; }
+iframe { max-width: 100%; width: 100%; border-width: medium; border-style: none; border-color: currentcolor; border-image: initial; }
 .highlight td, .highlight tr { border: 0px; }
 mark { background: rgb(255, 255, 0); color: rgb(0, 0, 0); }
 .md-html-inline .md-plain, .md-html-inline strong, mark .md-inline-math, mark strong { color: inherit; }
@@ -1025,6 +1025,6 @@ input */
 <title>index</title>
 </head>
 <body class='typora-export'><div class='typora-export-content'>
-<div id='write'  class=''><h1 id='startrailcuda-gpu-accelerated-rendering-of-night-sky-star-trails-video'><strong><span>StarTrailCUDA: GPU-Accelerated Rendering of Night-Sky Star Trails Video</span></strong></h1><p><strong><span>Team Members:</span></strong><span> Zijun Yang &lt;zijuny@andrew.cmu.edu&gt; and Jiache Zhang &lt;jiachez@andrew.cmu.edu&gt;</span></p><p><img src="./project_proposal.assets/image-20251117192727072.png" alt="image-20251117192727072"></p><center><a href="https://www.bilibili.com/video/BV1Q64y1a7FE/?share_source=copy_web&vd_source=248bf19a901960bb7bbfb1705c664b9c&t=79">https://www.bilibili.com/video/BV1Q64y1a7FE/?share_source=copy_web&vd_source=248bf19a901960bb7bbfb1705c664b9c&t=79</a></center><h2 id='project-github'><span>PROJECT GITHUB</span></h2><p><a href='https://github.com/zpatronus/StarTrailCUDA'><span>https://github.com/zpatronus/StarTrailCUDA</span></a></p><h2 id='final-report'><span>FINAL REPORT</span></h2><p><a href='https://blog.zjyang.dev/StarTrailCUDA/final_report'><span>https://blog.zjyang.dev/StarTrailCUDA/final_report</span></a></p><h2 id='midway-milestone-report'><span>MIDWAY MILESTONE REPORT</span></h2><p><a href='https://blog.zjyang.dev/StarTrailCUDA/milestone'><span>https://blog.zjyang.dev/StarTrailCUDA/milestone</span></a></p><h2 id='project-proposal'><span>PROJECT PROPOSAL</span></h2><p><a href='https://blog.zjyang.dev/StarTrailCUDA/project_proposal'><span>https://blog.zjyang.dev/StarTrailCUDA/project_proposal</span></a></p><h2></h2></div></div>
+<div id='write'  class=''><h1 id='startrailcuda-gpu-accelerated-rendering-of-night-sky-star-trails-video'><strong><span>StarTrailCUDA: GPU-Accelerated Rendering of Night-Sky Star Trails Video</span></strong></h1><p><strong><span>Team Members:</span></strong><span> Zijun Yang &lt;zijuny@andrew.cmu.edu&gt; and Jiache Zhang &lt;jiachez@andrew.cmu.edu&gt;</span></p><p><img src="./project_proposal.assets/image-20251117192727072.png" alt="image-20251117192727072"></p><center><a href="https://www.bilibili.com/video/BV1Q64y1a7FE/?share_source=copy_web&vd_source=248bf19a901960bb7bbfb1705c664b9c&t=79">https://www.bilibili.com/video/BV1Q64y1a7FE/?share_source=copy_web&vd_source=248bf19a901960bb7bbfb1705c664b9c&t=79</a></center><h2 id='project-github'><span>PROJECT GITHUB</span></h2><p><a href='https://github.com/zpatronus/StarTrailCUDA'><span>https://github.com/zpatronus/StarTrailCUDA</span></a></p><h2 id='final-report'><span>FINAL REPORT</span></h2><p><a href='/StarTrailCUDA/final_report'><span>/StarTrailCUDA/final_report</span></a></p><h2 id='midway-milestone-report'><span>MIDWAY MILESTONE REPORT</span></h2><p><a href='/StarTrailCUDA/milestone'><span>/StarTrailCUDA/milestone</span></a></p><h2 id='project-proposal'><span>PROJECT PROPOSAL</span></h2><p><a href='/StarTrailCUDA/project_proposal'><span>/StarTrailCUDA/project_proposal</span></a></p><p>&nbsp;</p></div></div>
 </body>
 </html>

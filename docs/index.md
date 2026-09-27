@@ -12,14 +12,13 @@
 
 ## FINAL REPORT
 
-[https://blog.zjyang.dev/StarTrailCUDA/final_report](https://blog.zjyang.dev/StarTrailCUDA/final_report)
+[/StarTrailCUDA/final_report](/StarTrailCUDA/final_report)
 
 ## MIDWAY MILESTONE REPORT
 
-[https://blog.zjyang.dev/StarTrailCUDA/milestone](https://blog.zjyang.dev/StarTrailCUDA/milestone)
+[/StarTrailCUDA/milestone](/StarTrailCUDA/milestone)
 
 ## PROJECT PROPOSAL
 
-[https://blog.zjyang.dev/StarTrailCUDA/project_proposal](https://blog.zjyang.dev/StarTrailCUDA/project_proposal)
+[/StarTrailCUDA/project_proposal](/StarTrailCUDA/project_proposal)
 
-## 

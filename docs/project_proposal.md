@@ -1,7 +1,7 @@
 # **StarTrailCUDA: GPU-Accelerated Rendering of Night-Sky Star Trails Video** - Project Proposal
 **Team Members:** Zijun Yang <zijuny@andrew.cmu.edu> and Jiache Zhang <jiachez@andrew.cmu.edu>
 
-**Project Home Page:** [https://blog.zjyang.dev/StarTrailCUDA/](https://blog.zjyang.dev/StarTrailCUDA/)
+**Project Home Page:** [/StarTrailCUDA/](/StarTrailCUDA/)
 
 ![image-20251117192727072](./project_proposal.assets/image-20251117192727072.png)
 
